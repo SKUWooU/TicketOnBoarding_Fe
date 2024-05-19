@@ -1,13 +1,29 @@
 .LoginHeader {
-    width: 100%;
-    border-bottom: 1px solid #BCBCBC;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  width: 100%;
+  border-bottom: 1px solid #bcbcbc;
+  position: relative;
+  height: 100px; /* 헤더의 높이 지정 */
+  margin-bottom: 150px;
+}
+
+.imgContainer {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 20px; /* 좌측 여백 */
+}
+
+.textContainer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .pageText {
-    font-family: 'Pretendard';
-    font-size: 30px;
+  font-family: "Pretendard";
+  font-size: 30px;
+  font-weight: 500;
 }

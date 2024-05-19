@@ -1,64 +1,61 @@
-.innerContainer{
-    margin: 0 auto;
-    width: 390px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.innerContainer {
+  margin: 0 auto;
+  width: 390px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.innerContainer >*{
-    margin: 10px;
+.innerContainer > * {
+  margin: 10px;
 }
 
-
-.summary{
-    font-size: 16px;
+.summary {
+  font-size: 16px;
 }
 
-.emphasize{
-    font-size: 20px;
-    font-weight: 600;
+.emphasize {
+  font-size: 20px;
+  font-weight: 600;
 }
 
-
-.forgot{
-    font-size: 14px;
-    color: #6A6A6A;
+.forgot {
+  font-size: 14px;
+  color: #6a6a6a;
 }
 
-.forgot:hover{
-    cursor: pointer;
-    text-decoration-line: underline;
+.forgot:hover {
+  cursor: pointer;
+  text-decoration-line: underline;
 }
 
-.socialImgs{
-    width: 200px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+.socialImgs {
+  width: 200px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
-.signUp{
-    font-size: 14px;
-    color: #404040;
+.signUp {
+  font-size: 14px;
+  color: #404040;
 }
 
-.signUp:hover{
-    cursor: pointer;
-    text-decoration-line: underline;
+.signUp:hover {
+  cursor: pointer;
+  text-decoration-line: underline;
 }
 
-
-.itemText{
-    font-weight: 700;
-    margin-bottom: 4px;
-    text-align: left;
+.itemText {
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-align: left;
 }
-.temp{
-    display: flex;
-    justify-content: space-around;
+.temp {
+  display: flex;
+  justify-content: space-around;
 }
 
-.itemForId{
-    text-align: left;
+.itemForId {
+  text-align: left;
 }
