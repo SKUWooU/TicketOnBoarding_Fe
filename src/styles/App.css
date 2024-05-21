@@ -1,0 +1,34 @@
+/* 전역 css의 스타일링 */
+*{
+    font-family: 'Pretendard';
+    text-align: center;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+button:hover{
+    cursor: pointer;
+}
+
+img:hover{
+    cursor: pointer;
+}
+
+.innerContainer {
+    margin: 0 auto;
+    width: 390px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+.innerContainer > * {
+    margin: 10px;
+}
+
+

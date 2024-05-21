@@ -1,0 +1,24 @@
+.innerContainer {
+    margin: 0 auto;
+    width: 390px;
+}
+  
+.innerContainer > * {
+    margin-bottom: 30px;
+}
+
+.notice, .emphasize{
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.notice{
+    font-size: 17px;
+    color: #6a6a6a;
+}
+
+.apiResult{
+    color: #0ACF83;
+}
+
