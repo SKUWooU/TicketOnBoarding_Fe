@@ -4,9 +4,8 @@ import LoginHeader from '../components/LoginHeader'
 import SignUpItem from '../components/SignUpItem'
 import LoginBtn from '../components/LoginBtn'
 import SignUpText from '../components/SignUpText'
-import LoginInput from '../components/LoginInput'
 
-import "../styles/SignUp.scss"
+import style from "../styles/SignUp.module.scss"
 
 // 회원가입 완료 버튼은 각 필드의 입력값이 정규식을 통과해야 enabled 로 변경되게 로직 수정 필요.
 
@@ -91,46 +90,49 @@ const idValidCheck = (e)=>{
   return (
     <div>
         <LoginHeader page="회원가입"/>
-        <div className='innerContainer'>
-          <div className='item'>
-            <p className='itemText'>아이디</p>
-            <div className='temp'>
-              <LoginInput className="shortForVerify" type="text" placeholder="사용할 아이디를 입력해주세요"
-              value={id} onChange={idValidCheck}/>
-              <LoginBtn className="verifyBtn" buttonText="ID 중복체크"/>
+        <div className={style.innerContainer}>
+
+          <div className={style.item}>
+            <div className={style.tempContainer}>
+              <p className={style.tempText}>아이디</p>
+              <div className={style.tempInner}>
+              <input type="text" className={style.tempInput} placeholder='사용할 아이디를 입력해주세요'
+                value={id}/>
+                <button className={style.tempBtn}>ID 중복 체크</button>
+              </div>   
             </div>
           </div>
-          <div className='item'>
+          <div className={style.item}>
            <SignUpItem type="password" className='normal' item="비밀번호" placeholder="영문, 숫자, 특수문자 조합 8~15자 이내"
            value={pw} onChange={pwRexing}/>
            <SignUpText text ={pwError}/>
           </div>
-          <div className='item'>
+          <div className={style.item}>
            <SignUpItem type="password" className='normal'item="비밀번호 재확인" placeholder="비밀번호 재입력"
            value={pwConfirm} onChange={pwDoubleCheck}/>
            <SignUpText text ={pwConfirmError}/>
           </div>
-          <div className='item'>
+          <div className={style.item}>
             <SignUpItem type="text" className='normal' item="이메일" placeholder="example@naver.com"
             value={email} onChange={emailRexing}/>
             <SignUpText text ={emailError}/>
           </div>
-          <div className='item'>
+          <div className={style.item}>
            <SignUpItem type="text" className='normal' item="본인의 이름" placeholder="사용할 닉네임을 입력하세요"/>
           </div>
-          <div className='item'>
+          <div className={style.item}>
             <SignUpItem type="text" 
             className='normal'item="휴대폰 번호 인증" placeholder="전화 번호를 입력하세요('-' 제외)"
             value={phoneNumber} onChange={phoneNumberRexing}/>
             <SignUpText text ={phoneNumberError}/>
           </div>
           <LoginBtn className="blueBtn"buttonText="인증 번호 받기"/>
-          <div className='item'>
+          <div className={style.item}>
           {/* 인증번호 입력 input 태그와 인증 완료 btn은 인증번호 받기 API 요청 이후에 
             동적으로 생성되서 보이는 것으로 로직 수정 필요 - scss */}
            <SignUpItem item="인증번호" className='normal' placeholder="인증번호를 입력해주세요."/>
           </div>
-          <LoginBtn className="purpleBtn "buttonText="인증 및 가입하기"/>
+          <LoginBtn className="purpleBtn" buttonText="인증 및 가입하기"/>
          </div>
     </div>
   )

@@ -1,6 +1,6 @@
 import React from "react";
 
-function Main() {
+function Landing() {
   return (
     <div>
       <h1>메인페이지입니다.</h1>
@@ -8,4 +8,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default Landing;
