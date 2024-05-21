@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import logoPic from "../assets/logoPic.svg";
-import "../styles/LoginHeader.scss";
+import style from "../styles/LoginHeader.module.scss";
 
 function LoginHeader({ page }) {
   const navigate = useNavigate();
@@ -13,12 +13,12 @@ function LoginHeader({ page }) {
   };
 
   return (
-    <div className="LoginHeader">
-      <div className="imgContainer">
+    <div className={style.LoginHeader}>
+      <div className={style.imgContainer}>
         <img src={logoPic} alt="로고이미지" onClick={pageShift} />
       </div>
-      <div className="textContainer">
-        <p className="pageText">{page}</p>
+      <div className={style.textContainer}>
+        <p className={style.pageText}>{page}</p>
       </div>
     </div>
   );

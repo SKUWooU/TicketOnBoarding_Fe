@@ -1,9 +1,11 @@
 import React from 'react'
-import "../styles/LoginBtn.scss"
+import style from "../styles/LoginBtn.module.scss"
 
-function LoginBtn({className, buttonText}){
+function LoginBtn({className, buttonText, onClick}){
     return(
-        <button className={className}>{buttonText}</button>
+        <button className={style[className]} onClick={onClick}>
+        {buttonText}
+        </button>
     );
 }
 
