@@ -5,11 +5,14 @@ import ClassifyBtn from "../components/ClassifyBtn";
 
 import style from "../styles/Main.module.scss";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 function MainGenre() {
   const navigate = useNavigate();
+  const { genre } = useParams(); // genre 값 가져오기 (buttonText Props)
+  const [genreList, setGenreList] = useState([]);
 
   function gotoGenre() {
     navigate("/genre");
@@ -25,16 +28,16 @@ function MainGenre() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/main/region/seoul")
+      .get(`http://localhost:8080/main/genre/${genre}`)
       .then((response) => {
         console.log(response.data);
-        // setMostPopularConcertList(response.data.MostPopularConcertList || []);
-        // setOnTicketPickList(response.data.onTicketPickList || []);
+        setGenreList(response.data || []);
       })
       .catch((err) => {
         alert("Axios 통신에 실패하였습니다.\n" + err);
       });
-  }, []);
+  }, [genre]);
+
   return (
     <div className={style.mainContainer}>
       <MainHeader />
@@ -67,18 +70,42 @@ function MainGenre() {
       <div className="mainInner">
         <h1 className={style.division}>카테고리 : 연극</h1>
         <div className={style.showCards}>
-          <CardList />
-          <CardList />
-          <CardList />
-          <CardList />
+          {genreList.slice(0, 4).map((concert, index) => (
+            // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
+            <CardList
+              key={index}
+              concertID={concert.concertID}
+              concertName={concert.concertName}
+              startDate={concert.startDate}
+              endDate={concert.endDate}
+              averageRating={concert.averageRating}
+              price={concert.price}
+              sido={concert.sido}
+              gugun={concert.gugun}
+              posterUrl={concert.posterUrl}
+              placename={concert.placeName}
+            />
+          ))}
         </div>
       </div>
       <div className="mainInner">
         <div className={style.showCards}>
-          <CardList />
-          <CardList />
-          <CardList />
-          <CardList />
+          {genreList.slice(0, 4).map((concert, index) => (
+            // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
+            <CardList
+              key={index}
+              concertID={concert.concertID}
+              concertName={concert.concertName}
+              startDate={concert.startDate}
+              endDate={concert.endDate}
+              averageRating={concert.averageRating}
+              price={concert.price}
+              sido={concert.sido}
+              gugun={concert.gugun}
+              posterUrl={concert.posterUrl}
+              placename={concert.placeName}
+            />
+          ))}
         </div>
       </div>
       <MainFooter />
