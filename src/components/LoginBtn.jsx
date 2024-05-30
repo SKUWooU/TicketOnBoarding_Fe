@@ -1,12 +1,11 @@
-import React from 'react'
-import style from "../styles/LoginBtn.module.scss"
+import style from "../styles/LoginBtn.module.scss";
 
-function LoginBtn({className, buttonText, onClick}){
-    return(
-        <button className={style[className]} onClick={onClick}>
-        {buttonText}
-        </button>
-    );
+function LoginBtn({ className, buttonText, onClick }) {
+  return (
+    <button className={style[className]} onClick={onClick}>
+      {buttonText}
+    </button>
+  );
 }
 
 export default LoginBtn;
