@@ -11,6 +11,11 @@
 }
 
 .summary {
+  color: #6a6a6a;
+  margin-bottom: 10px;
+}
+
+.summary {
   font-size: 16px;
 }
 
@@ -19,6 +24,9 @@
   font-weight: 600;
 }
 
+.emphasize span {
+  color: #6e30bf;
+}
 .forgot {
   font-size: 14px;
   color: #6a6a6a;
@@ -58,4 +66,14 @@
 
 .itemForId {
   text-align: left;
+}
+
+.apiWarning {
+  font-size: 14px;
+  color: red;
+  align-self: flex-end;
+  margin: 0;
+  font-weight: 400;
+  margin-bottom: 20px;
+  visibility: hidden;
 }

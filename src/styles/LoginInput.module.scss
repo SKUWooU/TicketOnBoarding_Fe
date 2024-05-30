@@ -1,34 +1,33 @@
-.normal{
-    border: 1px solid #AAAAAA;
-    border-radius: 3px;
-    font-size: 15px;
-    width: 390px;
-    height: 62px;
-    text-align: left;
-    text-indent: 20px;
+.normal {
+  border: 1px solid #aaaaaa;
+  border-radius: 3px;
+  font-size: 15px;
+  width: 390px;
+  height: 62px;
+  text-align: left;
+  text-indent: 20px;
 }
 
-.shortForVerify{
-    border: 1px solid #AAAAAA;
-    border-radius: 3px;
-    font-size: 15px;
-    width: 244px;
-    height: 62px;
-    text-align: left;
-    text-indent: 20px;
+.shortForVerify {
+  border: 1px solid #aaaaaa;
+  border-radius: 3px;
+  font-size: 15px;
+  width: 244px;
+  height: 62px;
+  text-align: left;
+  text-indent: 20px;
 }
 
-.itemVertical{
-    display: flex;
-    flex-direction: row;
-    
+.itemVertical {
+  display: flex;
+  flex-direction: row;
 }
-input:focus{
-    outline: none;
+input:focus {
+  outline: none;
 }
 
-input::placeholder{
-    text-indent: 20px;
-    // text-indent 속성을 통해서 placeholder / 입력값 약간 위치 조정  
-    // left-padding 주면 input width 자체가 늘어남. 
+input::placeholder {
+  text-indent: 20px;
+  // text-indent 속성을 통해서 placeholder / 입력값 약간 위치 조정
+  // left-padding 주면 input width 자체가 늘어남.
 }

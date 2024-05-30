@@ -1,54 +1,62 @@
-.innerContainer{
-    margin: 0 auto;
-    width: 390px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.innerContainer {
+  margin: 0 auto;
+  width: 390px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.innerContainer > *{
-    margin: 7.5px 0;
+.innerContainer > * {
+  margin: 7.5px 0;
 }
 
 // 아래에 적힌 부분은 기존의 컴포넌트 스타일에서 벗어나, ID 를 입력받는 부분
-// input 과 btn 은 각각의 스타일을 가짐 
+// input 과 btn 은 각각의 스타일을 가짐
 
-
-.tempContainer{
-    width: 390px;
+.tempContainer {
+  width: 390px;
 }
 
 //아이디
-.tempText{
-    margin-bottom: 8px;
-    text-align: left;
-    font-weight: 700;
+.tempText {
+  margin-bottom: 8px;
+  text-align: left;
+  font-weight: 700;
 }
 
-//input 과 Btn : flex ( direction : row ) 
-.tempInner{
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
+//input 과 Btn : flex ( direction : row )
+.tempInner {
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
 }
 
-.tempInput{
-    border: 1px solid #AAAAAA;
-    border-radius: 3px;
-    font-size: 15px;
-    width: 244px;
-    height: 62px;
-    text-align: left;
-    text-indent: 20px;
+.tempInput {
+  border: 1px solid #aaaaaa;
+  border-radius: 3px;
+  font-size: 15px;
+  width: 244px;
+  height: 62px;
+  text-align: left;
+  text-indent: 20px;
 }
-.tempBtn{
-    width: 126px;
-    height: 62px;
-    text-align: center;
-    color: #5852d2;
-    background-color: #f0efff;
-    border: none;
-    font-weight: bold;
-    font-size: 15px;
-    border-radius: 8px;
+.tempBtn {
+  width: 126px;
+  height: 62px;
+  text-align: center;
+  color: #5852d2;
+  background-color: #f0efff;
+  border: none;
+  font-weight: bold;
+  font-size: 15px;
+  border-radius: 8px;
+}
+
+.apiWarning,
+.afterSent {
+  margin: 0;
+  text-align: left;
+  visibility: visible;
+  align-self: flex-end;
+  size: 10px;
 }

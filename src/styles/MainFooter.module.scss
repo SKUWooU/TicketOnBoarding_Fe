@@ -1,0 +1,43 @@
+.Container {
+  border-top: 1px solid #333333;
+  margin-bottom: 20px;
+}
+
+.introduce {
+  margin-top: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #6a6a6a;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.slogan,
+.service {
+  text-align: left;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.service {
+  color: #6e30bf;
+}
+
+.copyRight {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  color: #6a6a6a;
+  font-size: 12px;
+}
+
+.bottomNav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 40px;
+}
+
+.bottomNav p {
+  color: #6a6a6a;
+  font-size: 12px;
+}

@@ -1,0 +1,58 @@
+.mainContainer {
+  padding-left: 200px;
+  padding-right: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 50px;
+}
+
+.Category {
+  display: flex;
+  flex-direction: row;
+  gap: 45px;
+}
+
+.Category p {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.Category p:hover {
+  color: #6e30bf;
+}
+
+.mainInner {
+  margin-bottom: 56px;
+}
+.division {
+  margin-bottom: 56px;
+}
+
+.showCards {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+// 장르별, 지역별 페이지에 들어갈 카테고리별 div 및 내부 아이템 정렬을 위한 스타일
+.btnArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btnRow1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 30px;
+}
+
+.btnRow2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 30px;
+}

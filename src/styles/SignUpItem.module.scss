@@ -1,14 +1,14 @@
-.itemContainer{
-    display: flex;
-    flex-direction: column;
+.itemContainer {
+  display: flex;
+  flex-direction: column;
 }
 
-.itemName{
-    margin-bottom: 8px;
-    text-align: left;
-    font-weight: 700;
+.itemName {
+  margin-bottom: 8px;
+  text-align: left;
+  font-weight: 700;
 }
 
-.itemContainer > *{
-    margin: 4px 0;
+.itemContainer > * {
+  margin: 4px 0;
 }

@@ -1,0 +1,39 @@
+/* MainHeader.module.scss */
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar {
+  margin-left: 20px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.navbar:hover {
+  cursor: pointer;
+  color: #6e30bf;
+}
+
+.search {
+  margin-left: 10px;
+  border: 1px solid #aaaaaa;
+  border-radius: 3px;
+  font-size: 17px;
+  width: 659px;
+  height: 62px;
+  text-align: left;
+  text-indent: 20px;
+}
