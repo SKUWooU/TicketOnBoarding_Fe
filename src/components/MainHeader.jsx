@@ -1,21 +1,31 @@
+import { useState } from "react";
 import Logo from "../assets/logoPic.svg";
-
 import style from "../styles/MainHeader.module.scss";
 import { useNavigate } from "react-router-dom";
 
 function MainHeader() {
   const navigate = useNavigate();
+  const [query, setQuery] = useState("");
 
-  function login() {
+  const search = (event) => {
+    if (event.key === "Enter") {
+      navigate(`/search?concertname=${query}`);
+      //navigate("/search");
+    }
+  };
+
+  const login = () => {
     navigate("/login");
-  }
+  };
 
-  function signUp() {
+  const signUp = () => {
     navigate("/signUp");
-  }
-  function gotoMain() {
+  };
+
+  const gotoMain = () => {
     navigate("/");
-  }
+  };
+
   return (
     <div>
       <div className={style.headerContainer}>
@@ -25,6 +35,9 @@ function MainHeader() {
             type="text"
             placeholder="검색어를 입력해주세요"
             className={style.search}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={search} // onKeyDown : 해당 키를 입력했을 때의 이벤트 처리
           />
         </div>
         <div className={style.right}>

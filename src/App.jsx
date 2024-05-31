@@ -17,6 +17,7 @@ import AfterPwReset from "./pages/AfterPwReset";
 import ConcertDetail from "./pages/ConcertDetail";
 import MainGenre from "./pages/MainGenre";
 import MainLocation from "./pages/MainLocation";
+import SearchResult from "./pages/SearchResult";
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
 
         {/* 동적 라우팅 : 지역별 / 장르별에 맞는 버튼 클릭시 분기  */}
         <Route path="/genre/:genre" element={<MainGenre />} />
-        <Route path="/location/:location" element={<MainLocation />} />
+        <Route path="/region/:region" element={<MainLocation />} />
 
         {/* 로그인 관련 사이드  */}
         <Route path="/login" element={<Login />} />
@@ -43,6 +44,8 @@ function App() {
         <Route path="/idFound" element={<IdFound />} />
         <Route path="/pwReset" element={<PwReset />} />
         <Route path="/afterPwReset" element={<AfterPwReset />} />
+
+        <Route path="/search" element={<SearchResult />} />
       </Routes>
     </div>
   );
