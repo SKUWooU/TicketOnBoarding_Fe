@@ -15,7 +15,7 @@ function Main() {
   }
 
   function gotoLocation() {
-    navigate("/location/seoul");
+    navigate("/region/seoul");
   }
 
   function gotoHandover() {
@@ -69,7 +69,7 @@ function Main() {
           ))}
         </div>
       </div>
-      <div className="mainInner">
+      <div className={style.mainInner}>
         <h1 className={style.division}>MDs Pick</h1>
         <div className={style.showCards}>
           {onTicketPickList.map((concert, index) => (

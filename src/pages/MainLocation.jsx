@@ -4,30 +4,32 @@ import CardList from "../components/CardList";
 import ClassifyBtn from "../components/ClassifyBtn";
 
 import style from "../styles/Main.module.scss";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 function MainLocation() {
   const navigate = useNavigate();
+  const { region } = useParams(); // genre 값 가져오기 (buttonText Props)
+  const [regionList, setRegionList] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/main/genre/westmusic")
+      .get(`http://localhost:8080/main/region/${region}`)
       .then((response) => {
-        console.log(response.data);
+        setRegionList(response.data || []);
       })
       .catch((err) => {
         alert("Axios 통신에 실패하였습니다.\n" + err);
       });
-  }, []);
+  }, [region]);
 
   function gotoGenre() {
-    navigate("/genre");
+    navigate("/genre/musical");
   }
 
   function gotoLocation() {
-    navigate("/location");
+    navigate("/region/seoul");
   }
 
   function gotoHandover() {
@@ -64,20 +66,44 @@ function MainLocation() {
         </div>
       </div>
       <div className="mainInner">
-        <h1 className={style.division}>지역별 : 서울</h1>
+        <h1 className={style.division}>지역별 : {region}</h1>
         <div className={style.showCards}>
-          <CardList />
-          <CardList />
-          <CardList />
-          <CardList />
+          {regionList.slice(0, 4).map((concert) => (
+            // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
+            <CardList
+              key={concert.concertID}
+              concertID={concert.concertID}
+              concertName={concert.concertName}
+              startDate={concert.startDate}
+              endDate={concert.endDate}
+              averageRating={concert.averageRating}
+              price={concert.price}
+              sido={concert.sido}
+              gugun={concert.gugun}
+              posterUrl={concert.posterUrl}
+              placename={concert.placeName}
+            />
+          ))}
         </div>
       </div>
       <div className="mainInner">
         <div className={style.showCards}>
-          <CardList />
-          <CardList />
-          <CardList />
-          <CardList />
+          {regionList.slice(4, 8).map((concert) => (
+            // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
+            <CardList
+              key={concert.concertID}
+              concertID={concert.concertID}
+              concertName={concert.concertName}
+              startDate={concert.startDate}
+              endDate={concert.endDate}
+              averageRating={concert.averageRating}
+              price={concert.price}
+              sido={concert.sido}
+              gugun={concert.gugun}
+              posterUrl={concert.posterUrl}
+              placename={concert.placeName}
+            />
+          ))}
         </div>
       </div>
       <MainFooter />

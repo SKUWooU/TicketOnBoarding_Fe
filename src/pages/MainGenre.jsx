@@ -15,11 +15,11 @@ function MainGenre() {
   const [genreList, setGenreList] = useState([]);
 
   function gotoGenre() {
-    navigate("/genre");
+    navigate("/genre/musical");
   }
 
   function gotoLocation() {
-    navigate("/location");
+    navigate("/region/seoul");
   }
 
   function gotoHandover() {
@@ -68,12 +68,12 @@ function MainGenre() {
         </div>
       </div>
       <div className="mainInner">
-        <h1 className={style.division}>카테고리 : 연극</h1>
+        <h1 className={style.division}>카테고리 : {genre} </h1>
         <div className={style.showCards}>
-          {genreList.slice(0, 4).map((concert, index) => (
+          {genreList.slice(0, 4).map((concert) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
             <CardList
-              key={index}
+              key={concert.concertID}
               concertID={concert.concertID}
               concertName={concert.concertName}
               startDate={concert.startDate}
@@ -90,10 +90,10 @@ function MainGenre() {
       </div>
       <div className="mainInner">
         <div className={style.showCards}>
-          {genreList.slice(0, 4).map((concert, index) => (
+          {genreList.slice(4, 8).map((concert) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
             <CardList
-              key={index}
+              key={concert.concertID}
               concertID={concert.concertID}
               concertName={concert.concertName}
               startDate={concert.startDate}
