@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-function ConcertDetail() {
+function ConcertReservation() {
   const [concertDetail, setConcertDetail] = useState({});
   const { concertID } = useParams();
   const navigate = useNavigate();
@@ -71,8 +71,8 @@ function ConcertDetail() {
     ["공연 장르명", concertDetail.genre],
   ];
 
-  function reservation() {
-    navigate(`/concertReservation/${concertID}`);
+  function goBack() {
+    navigate(`/concertDetail/${concertID}`);
   }
 
   return (
@@ -112,28 +112,18 @@ function ConcertDetail() {
         </div>
       </div>
       <div className={style.btnContainer}>
-        <Btn
-          className="reservation"
-          buttonText="예매하기"
-          onClick={reservation}
-        />
+        <Btn className="reservation" buttonText="뒤로가기" onClick={goBack} />
       </div>
       <div>
-        <p className={style.mainStyle}>유저 한줄평</p>
-        <p className={style.subStyle}>최신순 댓글이 출력됩니다.</p>
+        <p className={style.mainStyle}>예매할 시간과 좌석을 선택하세요</p>
+        <p className={style.subStyle}>API 로 받아온 공연 기간 출력</p>
       </div>
       <div className={style.commentContainer}>
-        <div className={style.commentArea}>
-          <ConcertComment isInput={true} />
-          {concertDetail.comments &&
-            concertDetail.comments.map((comment, index) => (
-              <ConcertComment key={index} commentText={comment.text} />
-            ))}
-        </div>
+        <div className={style.commentArea}></div>
       </div>
       <Footer />
     </div>
   );
 }
 
-export default ConcertDetail;
+export default ConcertReservation;

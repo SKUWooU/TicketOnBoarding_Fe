@@ -18,6 +18,7 @@ import ConcertDetail from "./pages/ConcertDetail";
 import MainGenre from "./pages/MainGenre";
 import MainLocation from "./pages/MainLocation";
 import SearchResult from "./pages/SearchResult";
+import ConcertReservation from "./pages/ConcertReservation";
 
 function App() {
   return (
@@ -28,7 +29,10 @@ function App() {
 
         {/* 동적 라우팅 설정 : 각 공연에 맞는 상세 페이지  */}
         <Route path="/concertDetail/:concertID" element={<ConcertDetail />} />
-
+        <Route
+          path="/concertReservation/:concertID"
+          element={<ConcertReservation />}
+        />
         {/* 동적 라우팅 : 지역별 / 장르별에 맞는 버튼 클릭시 분기  */}
         <Route path="/genre/:genre" element={<MainGenre />} />
         <Route path="/region/:region" element={<MainLocation />} />
