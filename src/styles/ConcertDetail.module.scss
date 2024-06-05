@@ -74,6 +74,10 @@
   text-align: right;
 }
 
+.summary {
+  text-align: right;
+}
+
 .commentContainer {
   display: flex;
   flex-direction: row;
@@ -92,4 +96,147 @@
   flex-direction: column;
   width: calc(33.333% - 10px); /* 1/3 너비에서 간격을 뺀 값 */
   gap: 10px;
+}
+
+.calendarContainer {
+  text-align: left;
+}
+
+.performanceCard {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #ffffff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  cursor: pointer; /* 클릭 가능하게 변경 */
+  transition: background-color 0.3s; /* 부드러운 전환 효과 */
+
+  &:hover {
+    background-color: #f0f0f0; /* hover 상태 스타일 */
+  }
+}
+
+.selected {
+  background-color: #d0e6a5; /* 선택된 상태 스타일 */
+}
+
+.selectionArea {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+  justify-content: left;
+}
+
+.calendarContainer {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+
+.dateCalendar {
+  font-family: "Pretendard";
+}
+
+.screens {
+  margin-bottom: 20px;
+}
+
+.screen {
+  width: 300px;
+  color: white;
+  padding: 10px;
+  margin: 0 auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-color: #bbbbbb;
+}
+
+.seat_price {
+  margin-bottom: 20px;
+}
+
+.seat {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f0f0f0; /* hover 상태 스타일 */
+  }
+}
+
+.seat-available {
+  background-color: #4caf50;
+  color: #fff;
+  &:hover {
+    background-color: #66bb6a;
+  }
+}
+.seat.selected {
+  //선택한 좌석
+  background-color: #d0e6a5;
+  color: #fff;
+}
+.seat .reserved {
+  background-color: #ccc;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.spacer {
+  width: 40px;
+  height: 40px;
+}
+
+.seat-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.continue {
+  margin-top: 20px;
+}
+
+.reservationContainer {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gridContainer {
+  margin-bottom: 20px;
+}
+
+.summary p {
+  text-align: right;
 }

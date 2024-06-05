@@ -19,8 +19,14 @@ import MainGenre from "./pages/MainGenre";
 import MainLocation from "./pages/MainLocation";
 import SearchResult from "./pages/SearchResult";
 import ConcertReservation from "./pages/ConcertReservation";
+import ReservSuccess from "./pages/ReservSuccess";
 
-function App() {
+//DatePicker 관련
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import Payment from "./pages/Payment";
+
+function App({ children }) {
   return (
     <div className="App">
       <Routes>
@@ -33,6 +39,11 @@ function App() {
           path="/concertReservation/:concertID"
           element={<ConcertReservation />}
         />
+
+        <Route path="/genre/:genre" element={<MainGenre />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/reservSuccess" element={<ReservSuccess />} />
+
         {/* 동적 라우팅 : 지역별 / 장르별에 맞는 버튼 클릭시 분기  */}
         <Route path="/genre/:genre" element={<MainGenre />} />
         <Route path="/region/:region" element={<MainLocation />} />
@@ -51,6 +62,9 @@ function App() {
 
         <Route path="/search" element={<SearchResult />} />
       </Routes>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {children}
+      </LocalizationProvider>
     </div>
   );
 }

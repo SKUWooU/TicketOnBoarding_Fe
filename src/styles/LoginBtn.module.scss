@@ -42,14 +42,19 @@
   width: 126px;
   height: 62px;
   text-align: center;
-  color: #ffffff;
-  background-color: #6e30bf;
+  color: #5852d2;
+  background-color: #f0efff;
   // box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   border: none;
   font-weight: 500;
   font-size: 20px;
   border-radius: 8px;
-  margin-right: 20px;
+  margin: 0;
+}
+
+.reservation:hover {
+  color: #5852d2;
+  background-color: #f0efff;
 }
 
 .seeDetail {
