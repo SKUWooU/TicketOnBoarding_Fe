@@ -41,12 +41,16 @@ function Login() {
   function handleLogin(e) {
     e.preventDefault();
     axios
-      .post("http://localhost:8080/users/login", {
-        username: id,
-        password: pw,
-      })
+      .post(
+        "http://localhost:8080/auth/login",
+        {
+          username: id,
+          password: pw,
+        },
+        { withCredentials: true },
+      )
       .then((response) => {
-        // response에서 발급받은 JWT 토큰 저장하는 로직 필요
+        console.log(response);
         navigate("/");
       })
       .catch((error) => {

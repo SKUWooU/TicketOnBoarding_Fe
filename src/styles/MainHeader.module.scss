@@ -6,6 +6,14 @@
   padding: 10px 0;
 }
 
+.logoPic {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.logoPic:hover {
+  opacity: 0;
+}
+
 .left {
   display: flex;
   align-items: center;

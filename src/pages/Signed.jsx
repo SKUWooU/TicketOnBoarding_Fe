@@ -5,11 +5,12 @@ import LoginBtn from "../components/LoginBtn";
 import style from "../styles/IdResult.module.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 function Signed() {
-  const location = useLocation;
+  const location = useLocation();
   // 회원가입 페이지에서 state를 가져오기 위한 변수 선언
   const nickname = location.state.nickname;
 
   const navigate = useNavigate();
+
   function gotoLogin() {
     navigate("/login");
   }
@@ -23,7 +24,7 @@ function Signed() {
           완료되었어요 !{" "}
         </p>
         <p className={style.notice}>
-          티켓 온보딩만의 다양한 컨텐츠를 이용해보세요
+          티켓 온보딩만의 편리한 예매를 이용해보세요
         </p>
 
         <LoginBtn

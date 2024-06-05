@@ -31,7 +31,6 @@ function Forgot() {
       })
       .then((response) => {
         navigate("/idFound");
-        // 전달해야할 State : Id 및 가입 일자
         console.log(response);
       })
       .catch(() => {});

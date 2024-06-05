@@ -1,21 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Logo from "../assets/logoPic.svg";
 import style from "../styles/MainHeader.module.scss";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 function MainHeader() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/auth/valid", { withCredentials: true })
+      .then((response) => {
+        if (response.data.valid) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(() => {
+        setIsLoggedIn(false);
+      });
+  }, []);
 
   const search = (event) => {
     if (event.key === "Enter") {
       navigate(`/search?concertname=${query}`);
-      //navigate("/search");
     }
   };
 
   const login = () => {
     navigate("/login");
+  };
+
+  const logout = () => {
+    axios
+      .post("http://localhost:8080/auth/logout", {}, { withCredentials: true })
+      .then(() => {
+        setIsLoggedIn(false);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Logout failed", error);
+      });
   };
 
   const signUp = () => {
@@ -24,6 +51,10 @@ function MainHeader() {
 
   const gotoMain = () => {
     navigate("/");
+  };
+
+  const gotoMypage = () => {
+    navigate("/mypage");
   };
 
   return (
@@ -37,16 +68,29 @@ function MainHeader() {
             className={style.search}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={search} // onKeyDown : 해당 키를 입력했을 때의 이벤트 처리
+            onKeyDown={search}
           />
         </div>
         <div className={style.right}>
-          <span className={style.navbar} onClick={login}>
-            로그인
-          </span>
-          <span className={style.navbar} onClick={signUp}>
-            회원가입
-          </span>
+          {isLoggedIn ? (
+            <>
+              <span className={style.navbar} onClick={logout}>
+                로그아웃
+              </span>
+              <span className={style.navbar} onClick={gotoMypage}>
+                마이페이지
+              </span>
+            </>
+          ) : (
+            <>
+              <span className={style.navbar} onClick={login}>
+                로그인
+              </span>
+              <span className={style.navbar} onClick={signUp}>
+                회원가입
+              </span>
+            </>
+          )}
         </div>
       </div>
     </div>
