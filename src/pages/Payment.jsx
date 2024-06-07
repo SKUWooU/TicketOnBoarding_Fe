@@ -28,25 +28,26 @@ function Payment() {
       (rsp) => {
         if (rsp.success) {
           // 결제 성공 시 로직
-          reservationData.forEach((info) => {
-            axios
-              .post(
-                `http://localhost:8080/main/detail/${info.concertID}/reservation`,
-                //info 객체가 정확히 post에서 요청받는 body의 형태와 동일하다면 그대로 넣음.
-                info,
-              )
-              .then((response) => {
-                console.log("Reservation successful:", response.data);
-                navigate("/reservSuccess", {
-                  state: {
-                    name: name,
-                    amount: amount,
-                  },
+          reservationData
+            .forEach((info) => {
+              axios
+                .post(
+                  `http://localhost:8080/main/detail/${info.concertID}/reservation`,
+                  //info 객체가 정확히 post에서 요청받는 body의 형태와 동일하다면 그대로 넣음.
+                  info,
+                )
+                .then((response) => {
+                  console.log("Reservation successful:", response.data);
                 });
-              })
-              .catch((error) => {
-                console.error("Reservation failed:", error);
-              });
+            })
+            .catch((error) => {
+              console.error("Reservation failed:", error);
+            });
+          navigate("/reservSuccess", {
+            state: {
+              name: name,
+              amount: amount,
+            },
           });
         } else {
           // 결제 실패 시 로직

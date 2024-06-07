@@ -3,10 +3,13 @@ import Logo from "../assets/logoPic.svg";
 import style from "../styles/MainHeader.module.scss";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import AuthContext from "./AuthContext";
+
 function MainHeader() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
 
   useEffect(() => {
     axios

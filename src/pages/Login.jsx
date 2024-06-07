@@ -53,9 +53,7 @@ function Login() {
         console.log(response);
         navigate("/");
       })
-      .catch((error) => {
-        setError(error.response.data);
-      });
+      .catch((error) => {});
   }
   return (
     <div>

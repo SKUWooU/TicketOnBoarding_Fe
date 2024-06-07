@@ -6,6 +6,8 @@ import Btn from "../components/LoginBtn";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import AuthContext from "../components/AuthContext";
 
 import { Grid, Paper } from "@mui/material";
 
@@ -50,10 +52,10 @@ function ConcertReservation() {
   const [selectedPerformance, setSelectedPerformance] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 추가된 상태 변수
-
   const { concertID } = useParams();
   const navigate = useNavigate();
+
+  const { isLoggedIn } = useContext(AuthContext);
 
   const [seats, setSeats] = useState([
     [
@@ -160,6 +162,10 @@ function ConcertReservation() {
   };
 
   useEffect(() => {
+    console.log(availableSeat);
+  }, [availableSeat]);
+
+  useEffect(() => {
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbb84bd0dca9e92a68c8821c55a7666&autoload=false`;
     script.async = true;
@@ -238,7 +244,7 @@ function ConcertReservation() {
 
       return {
         // post 요청에 필요한 정보 Return
-        concertDate: dayjs(dateChosen).format("YYYY-MM-DD"),
+        concertDate: dayjs(dateChosen).format("YYYY-MM-`DD"),
         concertTimeId: selectedPerformance.id,
         concertTime: selectedPerformance.startTime,
         seatId: seat.seatId,
@@ -265,7 +271,7 @@ function ConcertReservation() {
 
   return (
     <div className={style.mainContainer}>
-      <Header loginCheck={setIsLoggedIn} />
+      <Header />
       <div className={style.concertName}>
         <h1>{concertDetail.concertName}</h1>
       </div>

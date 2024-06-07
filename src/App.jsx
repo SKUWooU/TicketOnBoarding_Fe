@@ -1,6 +1,7 @@
 import "./styles/App.css";
 
 import { Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./components/AuthContext";
 
 // 로그인 사이드
 import Main from "./pages/Main";
@@ -26,46 +27,46 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Payment from "./pages/Payment";
 
-function App({ children }) {
+function App({}) {
   return (
-    <div className="App">
-      <Routes>
-        {/* navBar를 통해 이동 : 정적 라우팅 */}
-        <Route path="/" element={<Main />} />
+    <AuthProvider>
+      <div className="App">
+        <Routes>
+          {/* navBar를 통해 이동 : 정적 라우팅 */}
+          <Route path="/" element={<Main />} />
 
-        {/* 동적 라우팅 설정 : 각 공연에 맞는 상세 페이지  */}
-        <Route path="/concertDetail/:concertID" element={<ConcertDetail />} />
-        <Route
-          path="/concertReservation/:concertID"
-          element={<ConcertReservation />}
-        />
+          {/* 동적 라우팅 설정 : 각 공연에 맞는 상세 페이지  */}
+          <Route path="/concertDetail/:concertID" element={<ConcertDetail />} />
+          <Route
+            path="/concertReservation/:concertID"
+            element={<ConcertReservation />}
+          />
 
-        <Route path="/genre/:genre" element={<MainGenre />} />
-        <Route path="/payment" element={<Payment />} />
-        <Route path="/reservSuccess" element={<ReservSuccess />} />
+          <Route path="/genre/:genre" element={<MainGenre />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/reservSuccess" element={<ReservSuccess />} />
 
-        {/* 동적 라우팅 : 지역별 / 장르별에 맞는 버튼 클릭시 분기  */}
-        <Route path="/genre/:genre" element={<MainGenre />} />
-        <Route path="/region/:region" element={<MainLocation />} />
+          {/* 동적 라우팅 : 지역별 / 장르별에 맞는 버튼 클릭시 분기  */}
+          <Route path="/genre/:genre" element={<MainGenre />} />
+          <Route path="/region/:region" element={<MainLocation />} />
 
-        {/* 로그인 관련 사이드  */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signUp" element={<SignUp />} />
-        <Route path="/signed" element={<Signed />} />
+          {/* 로그인 관련 사이드  */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signUp" element={<SignUp />} />
+          <Route path="/signed" element={<Signed />} />
 
-        {/* 계정 정보 찾기 */}
-        <Route path="/forgot" element={<Forgot />} />
-        <Route path="/forgotPw" element={<ForgotPw />} />
-        <Route path="/idFound" element={<IdFound />} />
-        <Route path="/pwReset" element={<PwReset />} />
-        <Route path="/afterPwReset" element={<AfterPwReset />} />
+          {/* 계정 정보 찾기 */}
+          <Route path="/forgot" element={<Forgot />} />
+          <Route path="/forgotPw" element={<ForgotPw />} />
+          <Route path="/idFound" element={<IdFound />} />
+          <Route path="/pwReset" element={<PwReset />} />
+          <Route path="/afterPwReset" element={<AfterPwReset />} />
 
-        <Route path="/search" element={<SearchResult />} />
-      </Routes>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        {children}
-      </LocalizationProvider>
-    </div>
+          <Route path="/search" element={<SearchResult />} />
+        </Routes>
+        <LocalizationProvider dateAdapter={AdapterDayjs} />
+      </div>
+    </AuthProvider>
   );
 }
 
