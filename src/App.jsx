@@ -27,7 +27,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Payment from "./pages/Payment";
 
-function App({}) {
+function App() {
   return (
     <AuthProvider>
       <div className="App">
@@ -41,8 +41,9 @@ function App({}) {
             path="/concertReservation/:concertID"
             element={<ConcertReservation />}
           />
-
           <Route path="/genre/:genre" element={<MainGenre />} />
+
+          {/*결제 관련 페이지*/}
           <Route path="/payment" element={<Payment />} />
           <Route path="/reservSuccess" element={<ReservSuccess />} />
 
