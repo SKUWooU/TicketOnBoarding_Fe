@@ -38,8 +38,15 @@ function Login() {
     navigate("/signup");
   }
 
-  function handleLogin(e) {
+  const handleLogin = (e) => {
     e.preventDefault();
+
+    if (e.type === "keydown" && e.key !== "Enter") {
+      return;
+      // 키 입력 이벤트 && 키 입력이 엔터가 아니라고 한다면 Return (함수 중단)
+    }
+
+    // 엔터 키 입력했을 때 아래 post요청 처리
     axios
       .post(
         "http://localhost:8080/auth/login",
@@ -53,8 +60,30 @@ function Login() {
         console.log(response);
         navigate("/");
       })
-      .catch((error) => {});
-  }
+      .catch(() => {
+        setError(true);
+      });
+  };
+
+  const submit = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      axios
+        .post(
+          "http://localhost:8080/auth/login",
+          {
+            username: id,
+            password: pw,
+          },
+          { withCredentials: true },
+        )
+        .then((response) => {
+          console.log(response);
+          navigate("/");
+        })
+        .catch(() => {});
+    }
+  };
   return (
     <div>
       <LoginHeader page="로그인" />
@@ -76,6 +105,7 @@ function Login() {
           placeholder="아이디를 입력하세요"
           value={id}
           onChange={handleIdChange}
+          onKeyDown={submit}
         />
 
         <LoginInput
@@ -84,6 +114,7 @@ function Login() {
           placeholder="비밀번호를 입력하세요"
           value={pw}
           onChange={handlePwChange}
+          onKeyDown={submit}
         />
 
         <p className={style.forgot} onClick={forgot}>
