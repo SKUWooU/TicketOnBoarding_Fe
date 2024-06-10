@@ -145,12 +145,37 @@ function ConcertReservation() {
       setSelectedPerformance(null); // 같은 공연 선택 -> 선택 취소
     } else {
       setSelectedPerformance(performance);
+
+      // 해당 공연의 특정 시간대를 ID로 get 호출 -> 공연 시간대 출력
       axios
         .get(
           `http://localhost:8080/main/detail/${concertID}/calendar/${performance.id}`,
         )
         .then((response) => {
-          setAvailableSeat(response.data);
+          const seatData = response.data;
+          // Api Response를 저장한 이후에
+          const updatedSeats = seats.map((row) =>
+            // 해당하는 seat를 돌면서 순회 -> seatNumber 와 seatId 매핑
+            row.map((seat) => {
+              if (seat) {
+                const foundSeat = seatData.find(
+                  (s) => s.seatNumber === seat.id,
+                );
+                return foundSeat
+                  ? //매핑한 결과를 토대로
+                    {
+                      ...seat,
+                      status: foundSeat.reserved ? "reserved" : "available",
+                      //reserved 혹은 available 판단해서 스타일 부여
+                    }
+                  : seat;
+              }
+              return seat;
+            }),
+          );
+          setAvailableSeat(seatData);
+          setSeats(updatedSeats);
+          console.log(response.data);
           console.log(availableSeat);
         })
         .catch((err) => {
@@ -264,6 +289,7 @@ function ConcertReservation() {
       state: {
         amount: totalPrice,
         name: concertDetail.concertName,
+        concertID,
         reservationData,
       },
     });
