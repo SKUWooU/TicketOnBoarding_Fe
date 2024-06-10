@@ -1,4 +1,3 @@
-import React from "react";
 import LoginHeader from "../components/LoginHeader";
 import LogoFont from "../assets/logoFont.svg";
 import LoginBtn from "../components/LoginBtn";

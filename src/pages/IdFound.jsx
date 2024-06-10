@@ -1,12 +1,14 @@
-import React from "react";
 import LoginHeader from "../components/LoginHeader";
 import LogoFont from "../assets/logoFont.svg";
 import LoginBtn from "../components/LoginBtn";
 
 import style from "../styles/IdResult.module.scss";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 function IdFound() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const id = location.state?.id || "아이디를 찾을 수 없습니다";
 
   function forgotPw() {
     navigate("/forgotPw");
@@ -19,9 +21,9 @@ function IdFound() {
         <img src={LogoFont} alt="로고 폰트" />
         <p className={style.notice}>입력하신 정보의 아이디를 찾았어요 !</p>
         <p className={style.emphasize}>
-          아이디 : <span className={style.apiResult}>DummyText</span>{" "}
+          아이디 : <span className={style.apiResult}>{id}</span>
         </p>
-        <p className={style.emphasize}>가입 일시 : 2024년 4월 29일 </p>
+        <p className={style.emphasize}>가입 일시 : api 수정되면 반영 </p>
 
         <LoginBtn
           className="purpleBtn"

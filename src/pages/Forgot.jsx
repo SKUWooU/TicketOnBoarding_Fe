@@ -13,6 +13,8 @@ function Forgot() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
 
+  const [apiResponse, setApiResponse] = useState([]);
+
   function forgot() {
     navigate("/forgot");
   }
@@ -30,8 +32,12 @@ function Forgot() {
         email: email,
       })
       .then((response) => {
-        navigate("/idFound");
-        console.log(response);
+        setApiResponse(response.data);
+        navigate("/idFound", {
+          state: {
+            id: response.data,
+          },
+        });
       })
       .catch(() => {});
   }
