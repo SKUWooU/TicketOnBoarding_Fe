@@ -1,20 +1,20 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import LoginHeader from "../components/LoginHeader";
 
 function Payment() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  //카카오페이 기준 : 노출되는 정보는 공연명과 가격
-
-  //예매 사이트에서 넘겨받은 데이터
-  const { name, amount, reservationData } = location.state;
+  // 카카오페이 기준 : 노출되는 정보는 공연명과 가격
+  // 예매 사이트에서 넘겨받은 데이터
+  const { name, amount, reservationData, concertID } = location.state;
 
   const requestPay = () => {
     window.IMP.request_pay(
       {
-        pg: "kakaopay.TC0ONETIME", //pg명
+        pg: "kakaopay.TC0ONETIME", // pg명
         pay_method: "card",
         merchant_uid: `mid_${new Date().getTime()}`,
         name: name,
@@ -28,26 +28,39 @@ function Payment() {
       (rsp) => {
         if (rsp.success) {
           // 결제 성공 시 로직
-          reservationData
-            .forEach((info) => {
-              axios
-                .post(
-                  `http://localhost:8080/main/detail/${info.concertID}/reservation`,
-                  //info 객체가 정확히 post에서 요청받는 body의 형태와 동일하다면 그대로 넣음.
-                  info,
-                )
-                .then((response) => {
-                  console.log("Reservation successful:", response.data);
-                });
-            })
-            .catch((error) => {
-              console.error("Reservation failed:", error);
-            });
-          navigate("/reservSuccess", {
-            state: {
-              name: name,
-              amount: amount,
-            },
+          let successCount = 0;
+          let failCount = 0;
+
+          reservationData.forEach((info) => {
+            axios
+              .post(
+                `http://localhost:8080/main/detail/${concertID}/reservation`,
+                info,
+                {
+                  withCredentials: true, // 쿠키를 포함하기 위해 추가
+                },
+              )
+              .then((response) => {
+                console.log("Reservation successful:", response.data);
+                successCount++;
+                // 모든 요청이 성공했을 때 navigate 호출
+                if (successCount === reservationData.length) {
+                  navigate("/reservSuccess", {
+                    state: {
+                      name: name,
+                      amount: amount,
+                    },
+                  });
+                }
+              })
+              .catch((error) => {
+                console.error("Reservation failed:", error);
+                failCount++;
+                // 하나의 요청이라도 실패하면 navigate 호출
+                if (failCount > 0) {
+                  navigate("/payment-fail");
+                }
+              });
           });
         } else {
           // 결제 실패 시 로직
@@ -69,7 +82,6 @@ function Payment() {
     };
 
     // 스크립트 로드 후 실행
-
     loadScript("https://cdn.iamport.kr/v1/iamport.js", () => {
       const IMP = window.IMP;
       // 가맹점 식별코드
@@ -86,8 +98,7 @@ function Payment() {
 
   return (
     <div>
-      <h1>결제 페이지</h1>
-      <p>결제를 진행 중입니다...</p>
+      <LoginHeader page="결제 페이지" />
     </div>
   );
 }
