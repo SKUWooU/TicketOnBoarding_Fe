@@ -9,7 +9,7 @@ import AuthContext from "./AuthContext";
 function MainHeader() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, loginInfo } = useContext(AuthContext);
 
   useEffect(() => {
     axios
@@ -77,12 +77,19 @@ function MainHeader() {
         <div className={style.right}>
           {isLoggedIn ? (
             <>
-              <span className={style.navbar} onClick={logout}>
-                로그아웃
-              </span>
-              <span className={style.navbar} onClick={gotoMypage}>
-                마이페이지
-              </span>
+              <div className={style.rightInner}>
+                <div>
+                  <span className={style.navbar} onClick={gotoMypage}>
+                    마이페이지
+                  </span>
+                  <span className={style.navbar} onClick={logout}>
+                    로그아웃
+                  </span>
+                  <span className={style.navbar}>
+                    {loginInfo.nickName}님 환영합니다.
+                  </span>
+                </div>
+              </div>
             </>
           ) : (
             <>
