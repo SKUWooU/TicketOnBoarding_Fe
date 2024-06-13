@@ -6,7 +6,6 @@ import LoginBtn from "../components/LoginBtn";
 
 import LogoFont from "../assets/logoFont.svg";
 import google from "../assets/google.svg";
-import kakao from "../assets/kakao.svg";
 import naver from "../assets/naver.svg";
 
 import style from "../styles/Login.module.scss";
@@ -84,6 +83,28 @@ function Login() {
         .catch(() => {});
     }
   };
+
+  // 소셜 로그인 - 네이버 관련
+
+  const NAVER_CLIENT_ID = "1E4kXs8Q1JPflvdpS2at"; // 발급받은 클라이언트 아이디
+  const REDIRECT_URI = "http://localhost:5173/auth/naver"; // Callback URL
+  const STATE = "false";
+  const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
+
+  // 소셜 로그인 - 구글 관련
+  const GOOGLE_CLIENT_ID =
+    "384888565973-aecmkcuo75p0048b39tejquipps2vq4v.apps.googleusercontent.com";
+  const GOOGLE_REDIRECT_URI = "http://localhost:5173/auth/google";
+  const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code
+  &scope=email profile`;
+
+  const GoogleLogin = () => {
+    window.location.href = GOOGLE_AUTH_URL;
+  };
+  const NaverLogin = () => {
+    window.location.href = NAVER_AUTH_URL;
+  };
+
   return (
     <div>
       <LoginHeader page="로그인" />
@@ -135,9 +156,8 @@ function Login() {
           {error}
         </p>
         <div className={style.socialImgs}>
-          <img src={google} alt="구글" />
-          <img src={kakao} alt="카카오톡" />
-          <img src={naver} alt="네이버" />
+          <img src={google} alt="구글" onClick={GoogleLogin} />
+          <img src={naver} alt="네이버" onClick={NaverLogin} />
         </div>
 
         <p className={style.signUp} onClick={signUp}>

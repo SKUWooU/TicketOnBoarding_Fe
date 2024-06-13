@@ -14,6 +14,10 @@ import Signed from "./pages/Signed";
 import PwReset from "./pages/PwReset";
 import AfterPwReset from "./pages/AfterPwReset";
 
+//소셜 사이드
+import NaverCallBack from "./pages/NaverCallBack";
+import GoogleCallBack from "./pages/GoogleCallBack";
+
 // 메인사이드
 import ConcertDetail from "./pages/ConcertDetail";
 import MainGenre from "./pages/MainGenre";
@@ -55,6 +59,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signUp" element={<SignUp />} />
           <Route path="/signed" element={<Signed />} />
+
+          {/* 소셜 관련 */}
+          <Route path="/auth/naver" element={<NaverCallBack />} />
+          <Route path="/auth/google" element={<GoogleCallBack />} />
 
           {/* 계정 정보 찾기 */}
           <Route path="/forgot" element={<Forgot />} />
