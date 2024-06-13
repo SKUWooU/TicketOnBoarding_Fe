@@ -21,6 +21,12 @@ function MainFooter() {
         <p>공지사항</p>
         <p>사이트맵</p>
       </div>
+      <df-messenger
+        intent="WELCOME"
+        chat-title="onticket"
+        agent-id="d88e6107-8dda-44a2-a91e-7b17b8c58242"
+        language-code="ko"
+      ></df-messenger>
     </div>
   );
 }
