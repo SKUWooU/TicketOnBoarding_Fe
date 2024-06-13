@@ -28,40 +28,26 @@ function Payment() {
       (rsp) => {
         if (rsp.success) {
           // 결제 성공 시 로직
-          let successCount = 0;
-          let failCount = 0;
-
-          reservationData.forEach((info) => {
-            axios
-              .post(
-                `http://localhost:8080/main/detail/${concertID}/reservation`,
-                info,
-                {
-                  withCredentials: true, // 쿠키를 포함하기 위해 추가
+          axios
+            .post(
+              `http://localhost:8080/main/detail/${concertID}/reservation`,
+              reservationData,
+              {
+                withCredentials: true, // 쿠키를 포함하기 위해 추가
+              },
+            )
+            .then((response) => {
+              console.log("Reservation successful:", response.data);
+              navigate("/reservSuccess", {
+                state: {
+                  name: name,
+                  amount: amount,
                 },
-              )
-              .then((response) => {
-                console.log("Reservation successful:", response.data);
-                successCount++;
-                // 모든 요청이 성공했을 때 navigate 호출
-                if (successCount === reservationData.length) {
-                  navigate("/reservSuccess", {
-                    state: {
-                      name: name,
-                      amount: amount,
-                    },
-                  });
-                }
-              })
-              .catch((error) => {
-                console.error("Reservation failed:", error);
-                failCount++;
-                // 하나의 요청이라도 실패하면 navigate 호출
-                if (failCount > 0) {
-                  navigate("/payment-fail");
-                }
               });
-          });
+            })
+            .catch((error) => {
+              console.error("Reservation failed:", error);
+            });
         } else {
           // 결제 실패 시 로직
           console.log("Payment failed", rsp.error_msg);
