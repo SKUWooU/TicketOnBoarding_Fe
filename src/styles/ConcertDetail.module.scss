@@ -107,9 +107,9 @@
   flex-direction: column;
   padding: 10px;
   background-color: #ffffff;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   border: 1px solid #ddd;
   margin-bottom: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -123,7 +123,8 @@
 }
 
 .selected {
-  background-color: #d0e6a5; /* 선택된 상태 스타일 */
+  background-color: #6e30bf; /* 선택된 상태 스타일 */
+  color: white;
 }
 
 .selectionArea {
@@ -161,10 +162,10 @@
   color: white;
   padding: 10px;
   margin: 0 auto;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  background-color: #bbbbbb;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: #888;
 }
 
 .seat_price {
@@ -180,31 +181,75 @@
   cursor: pointer;
   background-color: #ccc;
   border-radius: 4px;
-  transition: background-color 0.3s;
-  cursor: pointer;
 
-  &:hover {
-    background-color: #f0f0f0; /* hover 상태 스타일 */
+  &.available {
+    background-color: #fff;
+    color: #888;
+
+    &:hover {
+      background-color: #6e30bf;
+      color: white;
+      transition: background-color 0.3s;
+    }
+  }
+
+  &.selected {
+    background-color: #6e30bf;
+    color: #fff;
+  }
+
+  &.reserved {
+    background-color: #888; /* 어두운 색상으로 변경 */
+    color: #fff;
+    cursor: not-allowed; /* 커서를 not-allowed로 변경 */
+    pointer-events: none; /* hover를 완전히 제거 */
+  }
+
+  &.statusAvailable {
+    background-color: #fff;
+    color: #888;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  &.statusReserved {
+    background-color: #888; /* 어두운 색상으로 변경 */
+    color: #fff;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  &.statusSelected {
+    background-color: #6e30bf;
+    color: #fff;
+    pointer-events: none;
+    cursor: default;
   }
 }
 
-.seat-available {
-  background-color: #4caf50;
-  color: #fff;
-  &:hover {
-    background-color: #66bb6a;
-  }
-}
-.seat.selected {
-  background-color: #d0e6a5;
-  color: #fff;
-}
-.seat .reserved {
-  background-color: #ccc;
-  color: #fff;
-  cursor: not-allowed;
+.leftAlignedRow {
+  justify-content: flex-start !important;
 }
 
+.infoText {
+  text-align: center;
+  margin-top: 8px; /* 필요에 따라 조정 */
+  font-size: 14px;
+  color: #000;
+}
+
+.statusContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.statusItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 16px; /* 좌석 사이 간격을 조정 */
+}
 .spacer {
   width: 40px;
   height: 40px;
@@ -222,9 +267,9 @@
 }
 
 .reservationContainer {
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   padding: 10px;
   background-color: #ffffff;
   border: 1px solid #ddd;

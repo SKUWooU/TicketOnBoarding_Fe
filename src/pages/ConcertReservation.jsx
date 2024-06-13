@@ -21,41 +21,47 @@ dayjs.locale("ko");
 
 function ConcertReservation() {
   const [concertDetail, setConcertDetail] = useState({});
-  // 상단 공연 정보를 받아오는 API response 저장
+  // 공연 정보를 받아오는 API response State
   const [availableDates, setAvailableDates] = useState([]);
-  // 선택된 날짜의 예매 가능한 시간대 API response 저장
+  // 해당 공연의 예매 가능한 날짜 정보 API response State
 
-  /*
-  1. date**: "2024-06-15"
+  /* Response의 형태 
+  1. date: "2024-06-15"
   2. dayOfWeek: "토요일"
-  3. id: 1 / 특정 공연의 특정 시간대의 ID 
-  4. seatAmount: 16
+  3. id: 1 / 공연의 특정 시간대 ID 
+  4. seatAmount: 24
   5. seatList: null
   6. startTime: "17:00:00"
-  이러한 형태로 Response가 옴.
   */
   const [availableSeat, setAvailableSeat] = useState([]);
-  // 예매 가능한 시간대의 좌석 정보 API response를 저장
+  // 해당 시간의 좌석 정보 API response sTATE
 
   /* 
   array의 형태 
-  E.G ) [0] 번 index = A1
+  E.G ) [0] 번 index = A1이라고 할 때
 
-  reserved : false
-  seatId : 27
-  seatNumber : 'A1'
+  [0] : {seatId: 1, seatNumber: 'A1', reserved: true}
+  [1] : {seatId: 2, seatNumber: 'A2', reserved: false}
+
+  단 seatId 는 일련 번호와 같은 느낌으로 좌석의 수인 1~24 고정이 아님. 
   */
 
   const [selectedDatePerformances, setSelectedDatePerformances] = useState([]);
 
-  const [dateChosen, setDateChosen] = useState(null);
   const [selectedPerformance, setSelectedPerformance] = useState(null);
+  // 선택된 공연의 시간
+  const [dateChosen, setDateChosen] = useState(null);
+  //선택된 날짜
   const [selectedSeats, setSelectedSeats] = useState([]);
 
-  const { concertID } = useParams();
   const navigate = useNavigate();
 
   const { isLoggedIn } = useContext(AuthContext);
+  const { concertID } = useParams();
+
+  const price = 30000;
+  // 가격 고정
+  const totalPrice = price * selectedSeats.length;
 
   const [seats, setSeats] = useState([
     [
@@ -67,8 +73,8 @@ function ConcertReservation() {
       { id: "A5", status: "available" },
       { id: "A6", status: "available" },
       null,
+      { id: "A7", status: "available" },
       { id: "A8", status: "available" },
-      { id: "A9", status: "available" },
     ],
     [
       { id: "B1", status: "available" },
@@ -96,21 +102,24 @@ function ConcertReservation() {
     ],
   ]);
 
-  const price = 30000;
-  const totalPrice = price * selectedSeats.length;
-
   const handleSeatClick = (seat) => {
-    if (!dateChosen || !selectedPerformance) return; // 날짜와 시간이 선택되지 않았으면 클릭 무시
+    if (!dateChosen || !selectedPerformance) return;
+    // 날짜와 시간이 선택되지 않았으면 클릭 무시
 
-    if (seat.status === "reserved") return; // 예약된 자리일 경우 좌석 선택 불가
+    if (seat.status === "reserved") return;
+    // 예약된 자리일 경우 좌석 선택 불가
 
     if (selectedSeats.includes(seat.id)) {
+      //selectedSeates(배열) : 선택된 좌석으로 이루어짐. includes - 특정 요소 포함
       setSelectedSeats(selectedSeats.filter((s) => s !== seat.id));
+      //filter 로 새로운 좌석들만으로 배열 재구성
     } else {
       setSelectedSeats([...selectedSeats, seat.id]);
+      //스프레드 문법 [기존의 배열, 추가할 항목] : 배열 수정
     }
 
     seat.status = seat.status === "selected" ? "available" : "selected";
+    // seat.status <- ( 삼항조건식의 결과를 할당 하는 형태 )
   };
 
   // 공연 상세 정보 Axios.Get
@@ -225,7 +234,7 @@ function ConcertReservation() {
     };
   }, [concertDetail.la, concertDetail.lo]);
 
-  if (!concertDetail.concertName) return <div>Loading...</div>; // 로딩 페이지
+  if (!concertDetail.concertName) return <div>Loading...</div>;
 
   const tableRows = [
     ["공연 장소", concertDetail.placeName],
@@ -240,6 +249,10 @@ function ConcertReservation() {
   function goBack() {
     navigate(`/concertDetail/${concertID}`);
   }
+
+  const formatTime = (time) => {
+    return time.slice(0, 5);
+  };
 
   // 날짜 선택 불가 기능 추가
   const isDateAvailable = (date) => {
@@ -258,26 +271,15 @@ function ConcertReservation() {
     setSelectedDatePerformances(performances);
   };
 
-  const formatTime = (time) => {
-    return time.slice(0, 5);
-  };
-
   const handleReservation = () => {
-    const seatInfo = selectedSeats.map((seatId) => {
-      //기존의 좌석 정보와 seatId를 매핑
-      const seat = availableSeat.find((s) => s.seatNumber === seatId);
-
-      return {
-        // post 요청에 필요한 정보 Return
-        concertDate: dayjs(dateChosen).format("YYYY-MM-`DD"),
-        concertTimeId: selectedPerformance.id,
-        concertTime: selectedPerformance.startTime,
-        seatId: seat.seatId,
-        seatNumber: seat.seatNumber,
-      };
-    });
-    return seatInfo;
+    return {
+      concertDate: dayjs(dateChosen).format("YYYY-MM-DD"),
+      concertTimeId: selectedPerformance.id,
+      concertTime: selectedPerformance.startTime,
+      seatNumberList: selectedSeats,
+    };
   };
+
   function payment() {
     if (!isLoggedIn) {
       navigate("/login");
@@ -336,7 +338,17 @@ function ConcertReservation() {
       </div>
       <div>
         <p className={style.mainStyle}>예매할 시간과 좌석을 선택하세요</p>
-        <p className={style.subStyle}>API 로 받아온 공연 기간 출력</p>
+        {concertDetail.startDate !== concertDetail.endDate ? (
+          <p className={style.subStyle}>
+            {" "}
+            공연 기간 :{concertDetail.startDate} ~ {concertDetail.endDate}
+          </p>
+        ) : (
+          <p className={style.subStyle}>
+            {" "}
+            공연 기간 : {concertDetail.startDate} (1일)
+          </p>
+        )}
       </div>
       <div className={style.selectionArea}>
         <div className={style.calendarContainer}>
@@ -412,7 +424,26 @@ function ConcertReservation() {
                 </Grid>
               ))}
             </Grid>
-
+            <div className={style.statusContainer}>
+              <div className={style.statusItem}>
+                <Paper
+                  className={`${style.seat} ${style.statusAvailable}`}
+                ></Paper>
+                <p className={style.infoText}>선택 가능</p>
+              </div>
+              <div className={style.statusItem}>
+                <Paper
+                  className={`${style.seat} ${style.statusReserved}`}
+                ></Paper>
+                <p className={style.infoText}>예약 불가</p>
+              </div>
+              <div className={style.statusItem}>
+                <Paper
+                  className={`${style.seat} ${style.statusSelected}`}
+                ></Paper>
+                <p className={style.infoText}>선택 좌석</p>
+              </div>
+            </div>
             <p className={style.seatsSelect}>
               {selectedSeats.length
                 ? "선택한 좌석 수 : " +
