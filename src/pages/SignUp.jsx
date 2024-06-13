@@ -243,24 +243,26 @@ function SignUp() {
         >
           인증번호가 전송되었습니다.
         </p>
-        <div className={style.item}>
-          {/* 인증번호 입력 input 태그와 인증 완료 btn은 인증번호 받기 API 요청 이후에 
-            동적으로 생성되서 보이는 것으로 로직 수정 필요 - scss */}
-          <SignUpItem
-            item="인증번호"
-            className="normal"
-            placeholder="인증번호를 입력해주세요."
-            value={verifyCode}
-            onChange={(e) => {
-              setVerifyCode(e.target.value);
-            }}
-          />
-        </div>
-        <LoginBtn
-          className="purpleBtn"
-          buttonText="인증 및 가입하기"
-          onClick={signUp}
-        />
+        {isPhoneNumberSent && (
+          <>
+            <div className={style.item}>
+              <SignUpItem
+                item="인증번호"
+                className="normal"
+                placeholder="인증번호를 입력해주세요."
+                value={verifyCode}
+                onChange={(e) => {
+                  setVerifyCode(e.target.value);
+                }}
+              />
+            </div>
+            <LoginBtn
+              className="purpleBtn"
+              buttonText="인증 및 가입하기"
+              onClick={signUp}
+            />
+          </>
+        )}
         <p
           className={style.afterSent}
           style={{ visibility: signUpMsg ? "visible" : "hidden" }}
