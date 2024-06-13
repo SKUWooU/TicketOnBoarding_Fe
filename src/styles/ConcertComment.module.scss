@@ -85,3 +85,22 @@
   font-weight: 600;
   font-size: 13px;
 }
+
+.submitBtn:disabled {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.content {
+  text-align: left;
+}
+
+.logginedMenu {
+  display: flex;
+  gap: 10px;
+}
+
+.menu:hover {
+  color: #6e30bf;
+  cursor: pointer;
+}
