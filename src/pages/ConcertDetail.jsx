@@ -2,7 +2,9 @@ import Header from "../components/MainHeader";
 import Footer from "../components/MainFooter";
 import style from "../styles/ConcertDetail.module.scss";
 import Btn from "../components/LoginBtn";
-import ConcertComment from "../components/ConcertComment";
+import CommentWrite from "../components/CommentWrite";
+import Comment from "../components/Comment";
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -98,7 +100,7 @@ function ConcertDetail() {
             {rows.map((row, index) => (
               <tr key={index}>
                 <td>{row[0]}</td>
-                <td>{row[1]}</td>
+                <td>{row[1] && row[1].trim() !== "" ? row[1] : "-"}</td>
               </tr>
             ))}
           </tbody>
@@ -119,16 +121,15 @@ function ConcertDetail() {
         />
       </div>
       <div>
-        <p className={style.mainStyle}>유저 한줄평</p>
-        <p className={style.subStyle}>최신순 댓글이 출력됩니다.</p>
+        <p className={style.mainStyle}>
+          유저 한줄평 ({concertDetail.reviewList.length})
+        </p>
+        <p className={style.subStyle}>한줄평은 최신순으로 출력됩니다.</p>
       </div>
       <div className={style.commentContainer}>
         <div className={style.commentArea}>
-          <ConcertComment isInput={true} />
-          {concertDetail.comments &&
-            concertDetail.comments.map((comment, index) => (
-              <ConcertComment key={index} commentText={comment.text} />
-            ))}
+          <CommentWrite concertId={concertID} />
+          <Comment reviewList={concertDetail.reviewList} />
         </div>
       </div>
       <Footer />
