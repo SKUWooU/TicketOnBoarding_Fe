@@ -129,7 +129,10 @@ function ConcertDetail() {
       <div className={style.commentContainer}>
         <div className={style.commentArea}>
           <CommentWrite concertId={concertID} />
-          <Comment reviewList={concertDetail.reviewList} />
+          <Comment
+            reviewList={concertDetail.reviewList}
+            concertID={concertID}
+          />
         </div>
       </div>
       <Footer />
