@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import LoginHeader from "../components/LoginHeader";
 import LoginInput from "../components/LoginInput";
 import LoginBtn from "../components/LoginBtn";
-
+import AuthContext from "../components/AuthContext";
 import LogoFont from "../assets/logoFont.svg";
 import google from "../assets/google.svg";
 import naver from "../assets/naver.svg";
@@ -16,6 +16,7 @@ import axios from "axios";
 function Login() {
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
+  const { isLoggedIn, setIsLoggedIn, setLoginInfo } = useContext(AuthContext);
 
   const [error, setError] = useState(false);
 
@@ -55,7 +56,12 @@ function Login() {
         },
         { withCredentials: true },
       )
+      //로그인했을시 닉네임 저장
       .then((response) => {
+        if (response.data.valid) {
+          setIsLoggedIn(true);
+          setLoginInfo(response.data);
+        }
         console.log(response);
         navigate("/");
       })
@@ -77,6 +83,10 @@ function Login() {
           { withCredentials: true },
         )
         .then((response) => {
+          if (response.data.valid) {
+            setIsLoggedIn(true);
+            setLoginInfo(response.data);
+          }
           console.log(response);
           navigate("/");
         })

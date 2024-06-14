@@ -9,13 +9,15 @@ import AuthContext from "./AuthContext";
 function MainHeader() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const { isLoggedIn, setIsLoggedIn, loginInfo } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, loginInfo, setLoginInfo, resetLoginInfo } =
+    useContext(AuthContext);
 
   useEffect(() => {
     axios
       .get("http://localhost:8080/auth/valid", { withCredentials: true })
       .then((response) => {
         if (response.data.valid) {
+          setLoginInfo(response.data);
           setIsLoggedIn(true);
         } else {
           setIsLoggedIn(false);
@@ -41,6 +43,7 @@ function MainHeader() {
       .post("http://localhost:8080/auth/logout", {}, { withCredentials: true })
       .then(() => {
         setIsLoggedIn(false);
+        resetLoginInfo();
         navigate("/");
       })
       .catch((error) => {

@@ -7,11 +7,9 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [loginInfo, setLoginInfo] = useState({
-    data: {
-      code: null,
-      nickName: "",
-      valid: false,
-    },
+    code: null,
+    nickName: "",
+    valid: false,
   });
 
   useEffect(() => {
@@ -30,8 +28,26 @@ export const AuthProvider = ({ children }) => {
       });
   }, []);
 
+  const resetLoginInfo = () => {
+    //LoginInfo를 초기화하는 로직 추가
+    setIsLoggedIn(false);
+    setLoginInfo({
+      code: null,
+      nickName: "",
+      valid: false,
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, loginInfo }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        loginInfo,
+        setLoginInfo,
+        resetLoginInfo,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
