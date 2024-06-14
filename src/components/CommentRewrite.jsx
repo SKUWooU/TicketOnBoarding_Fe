@@ -6,14 +6,14 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "./AuthContext";
 import axios from "axios";
 
-function CommentWrite({ concertId }) {
+function CommentRewrite({ concertId, comment, setEditCommentId }) {
   const navigate = useNavigate();
   const { isLoggedIn, loginInfo } = useContext(AuthContext);
 
-  const [inputValue, setInputValue] = useState("");
-  const [rating, setRating] = useState(0);
+  const [inputValue, setInputValue] = useState(comment ? comment.content : "");
+  const [rating, setRating] = useState(comment ? comment.starCount : 0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [isWritten, setIsWritten] = useState(false);
+  const [isWritten, setIsWritten] = useState(!!comment);
 
   const handleInputChange = (event) => {
     const value = event.target.value;
@@ -34,10 +34,15 @@ function CommentWrite({ concertId }) {
   };
 
   function submit() {
+    console.log(
+      `Submitting to URL: http://localhost:8080/main/detail/${concertId}/rewrite/review`,
+    );
     axios
       .post(
-        `http://localhost:8080/main/detail/${concertId}/register/review`,
+        `http://localhost:8080/main/detail/${concertId}/rewrite/review`,
         {
+          reviewId: comment.id,
+          author: comment.author,
           content: inputValue,
           starCount: rating,
         },
@@ -45,12 +50,14 @@ function CommentWrite({ concertId }) {
       )
       .then((response) => {
         console.log(response.data);
-        alert("댓글이 등록되었습니다.");
-        navigate(0);
+        alert("댓글이 수정되었습니다.");
+        setEditCommentId(null); // 수정 모드 종료
+        navigate(0); // 페이지 새로고침
       })
       .catch((err) => {
         alert("Axios 통신에 실패하였습니다.\n" + err);
-        console.log(concertId);
+        console.log(`Error: ${err}`);
+        console.log(`concertId: ${concertId}`);
       });
   }
 
@@ -111,7 +118,7 @@ function CommentWrite({ concertId }) {
             onClick={submit}
             disabled={!isWritten}
           >
-            등록하기
+            수정하기
           </button>
         ) : (
           <button className={style.submitBtn} onClick={gotoLogin}>
@@ -123,4 +130,4 @@ function CommentWrite({ concertId }) {
   );
 }
 
-export default CommentWrite;
+export default CommentRewrite;
