@@ -25,6 +25,7 @@ import MainLocation from "./pages/MainLocation";
 import SearchResult from "./pages/SearchResult";
 import ConcertReservation from "./pages/ConcertReservation";
 import ReservSuccess from "./pages/ReservSuccess";
+import Mypage from "./pages/Mypage";
 
 //DatePicker 관련
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -38,6 +39,7 @@ function App() {
         <Routes>
           {/* navBar를 통해 이동 : 정적 라우팅 */}
           <Route path="/" element={<Main />} />
+          <Route path="/mypage" element={<Mypage />} />
 
           {/* 동적 라우팅 설정 : 각 공연에 맞는 상세 페이지  */}
           <Route path="/concertDetail/:concertID" element={<ConcertDetail />} />
