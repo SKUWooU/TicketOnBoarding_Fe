@@ -51,7 +51,13 @@ function Payment() {
         } else {
           // 결제 실패 시 로직
           console.log("Payment failed", rsp.error_msg);
-          navigate("/payment-fail");
+          navigate("/reservFail", {
+            state: {
+              concertID: concertID,
+              name: name,
+              amount: amount,
+            },
+          });
         }
       },
     );
