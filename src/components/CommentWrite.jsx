@@ -97,13 +97,13 @@ function CommentWrite({ concertId }) {
             <FaStar
               key={starValue}
               size={20}
-              color={starValue <= (hoverRating || rating) ? "skyblue" : "gray"}
+              color={starValue <= (hoverRating || rating) ? "#fff200" : "gray"}
               onMouseOver={isLoggedIn ? () => handleMouseOver(starValue) : null}
               onMouseLeave={isLoggedIn ? handleMouseLeave : null}
               onClick={isLoggedIn ? () => handleClick(starValue) : null}
             />
           ))}
-          <p className={style.point}>{hoverRating}</p>
+          <p className={style.point}>{hoverRating}점</p>
         </div>
         {isLoggedIn ? (
           <button

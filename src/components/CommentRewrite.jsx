@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import style from "../styles/ConcertComment.module.scss";
 import { LuUser2 } from "react-icons/lu";
 import { FaStar } from "react-icons/fa";
+import { FaXmark } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./AuthContext";
 import axios from "axios";
@@ -12,7 +13,9 @@ function CommentRewrite({ concertId, comment, setEditCommentId }) {
 
   const [inputValue, setInputValue] = useState(comment ? comment.content : "");
   const [rating, setRating] = useState(comment ? comment.starCount : 0);
-  const [hoverRating, setHoverRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(
+    comment ? comment.starCount : 0,
+  );
   const [isWritten, setIsWritten] = useState(!!comment);
 
   const handleInputChange = (event) => {
@@ -65,15 +68,22 @@ function CommentRewrite({ concertId, comment, setEditCommentId }) {
     navigate("/login");
   }
 
+  function quit() {
+    setEditCommentId(null); // 수정 모드 종료
+  }
+
   return (
     <div className={style.commentContainer}>
       <div className={style.commentHeader}>
-        <LuUser2 size={26} color="#6E30BF" />
-        {isLoggedIn ? (
-          <p className={style.id}>{loginInfo.nickName}</p>
-        ) : (
-          <p className={style.id}>로그인이 필요합니다.</p>
-        )}
+        <div className={style.userInfo}>
+          <LuUser2 size={26} color="#6E30BF" />
+          {isLoggedIn ? (
+            <p className={style.id}>{loginInfo.nickName}</p>
+          ) : (
+            <p className={style.id}>로그인이 필요합니다.</p>
+          )}
+        </div>
+        <FaXmark size={15} className={style.closeIcon} onClick={quit} />
       </div>
       {isLoggedIn ? (
         <textarea
@@ -104,13 +114,13 @@ function CommentRewrite({ concertId, comment, setEditCommentId }) {
             <FaStar
               key={starValue}
               size={20}
-              color={starValue <= (hoverRating || rating) ? "skyblue" : "gray"}
+              color={starValue <= (hoverRating || rating) ? "#fff200" : "gray"}
               onMouseOver={isLoggedIn ? () => handleMouseOver(starValue) : null}
               onMouseLeave={isLoggedIn ? handleMouseLeave : null}
               onClick={isLoggedIn ? () => handleClick(starValue) : null}
             />
           ))}
-          <p className={style.point}>{hoverRating}</p>
+          <p className={style.point}>{hoverRating}점</p>
         </div>
         {isLoggedIn ? (
           <button

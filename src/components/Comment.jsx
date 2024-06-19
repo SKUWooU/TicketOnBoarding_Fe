@@ -66,24 +66,30 @@ function Comment({ reviewList, concertID }) {
                       key={starValue}
                       size={20}
                       color={
-                        starValue <= comment.starCount ? "skyblue" : "gray"
+                        starValue <= comment.starCount ? "#fff200" : "gray"
                       }
                     />
                   ))}
-                  <p className={style.point}>{comment.starCount}</p>
+                  <p className={style.point}>{comment.starCount}점</p>
                 </div>
                 {isLoggedIn && comment.nickName === loginInfo.nickName ? (
                   <div className={style.logginedMenu}>
-                    <LuPencil
-                      size={20}
-                      className={style.menu}
-                      onClick={() => handleEdit(comment.id)}
-                    />
-                    <FaRegTrashCan
-                      size={20}
-                      className={style.menu}
-                      onClick={() => commentDelete(comment.id, comment.author)}
-                    />
+                    <div title="수정하기">
+                      <LuPencil
+                        size={20}
+                        className={style.menu}
+                        onClick={() => handleEdit(comment.id)}
+                      />
+                    </div>
+                    <div title="삭제하기">
+                      <FaRegTrashCan
+                        size={20}
+                        className={style.menu}
+                        onClick={() =>
+                          commentDelete(comment.id, comment.author)
+                        }
+                      />
+                    </div>
                   </div>
                 ) : null}
               </div>
