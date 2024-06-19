@@ -3,7 +3,7 @@
   border-bottom: 1px solid #bcbcbc;
   position: relative;
   height: 100px; /* 헤더의 높이 지정 */
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 }
 
 .imgContainer {
@@ -26,4 +26,12 @@
   font-family: "Pretendard";
   font-size: 30px;
   font-weight: 500;
+}
+
+.logoImg {
+  transition: transform 0.3s ease-in-out; /* 불투명도와 크기 변경에 대한 전환 효과 */
+}
+
+.logoImg:hover {
+  transform: scale(1.03);
 }

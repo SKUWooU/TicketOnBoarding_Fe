@@ -9,6 +9,14 @@
   font-weight: 700;
   font-size: 20px;
   border-radius: 8px;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.blueBtn:hover {
+  background-color: #d2d1ff; /* 호버 시 배경색 변경 */
+  color: #6e30bf; /* 호버 시 텍스트 색상 변경 */
 }
 
 .purpleBtn {
@@ -22,6 +30,14 @@
   font-weight: 700;
   font-size: 20px;
   border-radius: 8px;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.purpleBtn:hover {
+  color: #5852d2;
+  background-color: #f0efff;
 }
 
 .verifyBtn {
@@ -37,6 +53,11 @@
   border-radius: 8px;
 }
 
+.verifyBtn:hover {
+  color: #ffffff;
+  background-color: #6e30bf;
+}
+
 // 공연 상세 페이지에 있는 버튼 ( 예매하기 및 상세 정보 )
 .reservation {
   width: 126px;
@@ -48,13 +69,17 @@
   border: none;
   font-weight: 500;
   font-size: 20px;
+  font-weight: 700;
   border-radius: 8px;
   margin: 0;
 }
 
 .reservation:hover {
-  color: #5852d2;
-  background-color: #f0efff;
+  background-color: #d2d1ff; /* 호버 시 배경색 변경 */
+  color: #6e30bf; /* 호버 시 텍스트 색상 변경 */
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
 .seeDetail {
