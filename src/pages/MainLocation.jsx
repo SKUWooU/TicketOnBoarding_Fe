@@ -25,24 +25,24 @@ function MainLocation() {
   }, [region]);
 
   function gotoGenre() {
-    navigate("/genre/musical");
+    navigate("/genre/play");
   }
 
   function gotoLocation() {
     navigate("/region/seoul");
   }
 
-  function gotoHandover() {
+  function gotoMain() {
     navigate("/");
   }
+
   return (
     <div className={style.mainContainer}>
       <MainHeader />
       <div className={style.Category}>
-        <p onClick={gotoHandover}>이 달의 인기 공연</p>
+        <p onClick={gotoMain}>이 달의 인기 공연</p>
         <p onClick={gotoGenre}>장르별</p>
         <p onClick={gotoLocation}>지역별</p>
-        <p onClick={gotoHandover}>티켓 양도</p>
       </div>
       <div className={style.btnArea}>
         <div className={style.btnRow1}>
@@ -65,8 +65,13 @@ function MainLocation() {
           <ClassifyBtn buttonText="제주" />
         </div>
       </div>
+      <div>
+        <h1 className={style.division}>지역별 : {region} </h1>
+        <p className={style.totalNum}>
+          {regionList.length}개의 공연이 존재합니다.
+        </p>
+      </div>
       <div className="mainInner">
-        <h1 className={style.division}>지역별 : {region}</h1>
         <div className={style.showCards}>
           {regionList.slice(0, 4).map((concert) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
