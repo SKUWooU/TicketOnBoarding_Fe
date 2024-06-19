@@ -1,10 +1,12 @@
 .mainContainer {
-  padding-left: 200px;
-  padding-right: 200px;
+  padding-left: 100px;
+  padding-right: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 50px;
+  max-width: 1800px;
+  margin: 0 auto;
 }
 
 .Category {
@@ -15,25 +17,50 @@
 
 .Category p {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 600;
+  position: relative; /* ::after 가상 요소를 사용하기 위해 position 설정 */
+  padding-bottom: 5px; /* 밑줄과 텍스트 사이의 간격을 조정 */
+  transition: transform 0.5s ease;
 }
 
 .Category p:hover {
   color: #6e30bf;
+  transform: scale(1.05);
+}
+
+.Category p::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px; /* 밑줄 두께 */
+  background-color: #6e30bf; /* 밑줄 색상 */
+  transition: 0.1s ease; /* 부드러운 전환 효과 */
+}
+
+.Category p:hover::after {
+  width: 100%;
 }
 
 .mainInner {
   margin-bottom: 56px;
 }
+
 .division {
-  margin-bottom: 56px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .showCards {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-around;
   gap: 10px;
+}
+
+.slick-slide {
+  height: auto;
 }
 
 .btnArea {
@@ -43,16 +70,17 @@
   gap: 20px;
 }
 
-.btnRow1 {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 30px;
-}
-
+.btnRow1,
 .btnRow2 {
   display: flex;
   flex-direction: row;
   justify-content: center;
   gap: 30px;
+  white-space: nowrap; /* 한 줄로 유지 */
+}
+
+.totalNum {
+  font-size: 25px;
+  color: #bcbcbc;
+  font-weight: 400;
 }
