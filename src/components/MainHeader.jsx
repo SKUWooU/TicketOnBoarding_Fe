@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Logo from "../assets/logoPic.svg";
 import style from "../styles/MainHeader.module.scss";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useContext } from "react";
 import AuthContext from "./AuthContext";
+
+import { IoTicketOutline } from "react-icons/io5";
+import { HiMiniMagnifyingGlass } from "react-icons/hi2";
 
 function MainHeader() {
   const navigate = useNavigate();
@@ -67,33 +69,45 @@ function MainHeader() {
     <div>
       <div className={style.headerContainer}>
         <div className={style.left}>
-          <img src={Logo} alt="로고 이미지" onClick={gotoMain} />
-          <input
-            type="text"
-            placeholder="검색어를 입력해주세요"
-            className={style.search}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={search}
-          />
+          <div className={style.logoImg} title="홈으로 이동하기">
+            <img
+              src={Logo}
+              alt="로고 이미지"
+              onClick={gotoMain}
+              className={style.logoImg}
+            />
+          </div>
+          <div className={style.searchContainer}>
+            <HiMiniMagnifyingGlass className={style.searchIcon} />
+            <input
+              type="text"
+              placeholder="검색어를 입력해주세요"
+              className={style.search}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={search}
+            />
+          </div>
         </div>
         <div className={style.right}>
           {isLoggedIn ? (
-            <>
-              <div className={style.rightInner}>
-                <div>
-                  <span className={style.navbar} onClick={gotoMypage}>
-                    마이페이지
-                  </span>
-                  <span className={style.navbar} onClick={logout}>
-                    로그아웃
-                  </span>
-                  <span className={style.navbar}>
-                    {loginInfo.nickName}님 환영합니다.
-                  </span>
-                </div>
+            <div className={style.rightInner}>
+              <div>
+                <span className={style.navbar} onClick={gotoMypage}>
+                  마이페이지
+                </span>
+                <span className={style.navbar} onClick={logout}>
+                  로그아웃
+                </span>
+                <span className={style.welcome}>
+                  <span className={style.nickName}>
+                    {loginInfo.nickName}
+                    <IoTicketOutline />
+                  </span>{" "}
+                  님 환영합니다!
+                </span>
               </div>
-            </>
+            </div>
           ) : (
             <>
               <span className={style.navbar} onClick={login}>

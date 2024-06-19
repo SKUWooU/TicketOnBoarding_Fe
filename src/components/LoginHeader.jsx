@@ -15,12 +15,15 @@ function LoginHeader({ page }) {
   return (
     <div className={style.LoginHeader}>
       <div className={style.imgContainer}>
-        <img
-          src={logoPic}
-          alt="로고이미지"
-          onClick={pageShift}
-          className={style.logoPic}
-        />
+        <div>
+          <img
+            src={logoPic}
+            alt="로고이미지"
+            onClick={pageShift}
+            className={style.logoImg}
+            title="홈으로 이동하기"
+          />
+        </div>
       </div>
       <div className={style.textContainer}>
         <p className={style.pageText}>{page}</p>
