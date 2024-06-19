@@ -1,16 +1,18 @@
 .categoryBtn {
   padding: 10px 30px;
-  background-color: #f0efff;
-  color: #6e30bf;
   font-size: 20px;
-  text-align: center;
+  color: #5852d2;
+  background-color: #f0efff;
+  // box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   border: none;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: 8px;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
 .categoryBtn:hover {
-  cursor: pointer;
-  color: #ffffff;
-  background-color: #6e30bf;
+  background-color: #d2d1ff; /* 호버 시 배경색 변경 */
+  color: #6a10df; /* 호버 시 텍스트 색상 변경 */
 }
