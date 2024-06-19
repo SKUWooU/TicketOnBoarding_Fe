@@ -27,9 +27,16 @@ function CardList({
       <img className={style.img} src={posterUrl} alt="Concert List" />
       <div>
         <p className={style.concertName}>{concertName}</p>
-        <p className={style.period}>
-          {startDate} ~ {endDate}{" "}
-        </p>
+
+        {startDate === endDate ? (
+          <p className={style.period}> {startDate} (1일)</p>
+        ) : (
+          <p className={style.period}>
+            {" "}
+            {startDate} ~ {endDate}
+          </p>
+        )}
+        <p className={style.period}></p>
       </div>
 
       <div>
