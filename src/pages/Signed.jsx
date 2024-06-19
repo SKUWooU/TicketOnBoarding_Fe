@@ -28,7 +28,7 @@ function Signed() {
         </p>
 
         <LoginBtn
-          className="purpleBtn"
+          className="blueBtn"
           buttonText="로그인 페이지로 이동"
           onClick={gotoLogin}
         />
