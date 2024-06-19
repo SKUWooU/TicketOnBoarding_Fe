@@ -1,6 +1,7 @@
 .cardContainer {
   display: flex;
   flex-direction: column;
+  width: 360px;
   padding: 10px;
   background-color: white;
   border-radius: 10px;
@@ -9,7 +10,6 @@
     0 6px 20px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
   gap: 10px;
-  width: 360px;
 }
 
 .cardContainer:hover {
@@ -36,9 +36,9 @@
 
 .concertName {
   font-weight: bold;
-  white-space: pre-wrap; /* 긴 텍스트 줄 바꿈 설정 */
-  word-wrap: break-word; /* 텍스트 줄 바꿈 설정 */
-  overflow-wrap: break-word; /* 텍스트 줄 바꿈 설정 */
+  white-space: nowrap; /* 텍스트를 한 줄로 유지 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 생략 부호(...) 추가 */
 }
 
 .period {
@@ -48,8 +48,14 @@
 .listDetail {
   color: #666;
   font-weight: 500;
+  white-space: nowrap; /* 텍스트를 한 줄로 유지 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 생략 부호(...) 추가 */
 }
 
 .emphasize {
   color: #6e30bf;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
