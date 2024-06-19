@@ -236,7 +236,7 @@ function ConcertReservation() {
 
   if (!concertDetail.concertName) return <div>Loading...</div>;
 
-  const tableRows = [
+  const rows = [
     ["공연 장소", concertDetail.placeName],
     ["공연 시간", concertDetail.startTime],
     ["관람 연령", concertDetail.age],
@@ -317,10 +317,10 @@ function ConcertReservation() {
             </tr>
           </thead>
           <tbody>
-            {tableRows.map((row, index) => (
+            {rows.map((row, index) => (
               <tr key={index}>
                 <td>{row[0]}</td>
-                <td>{row[1]}</td>
+                <td>{row[1] && row[1].trim() !== "" ? row[1] : "-"}</td>
               </tr>
             ))}
           </tbody>

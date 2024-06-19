@@ -107,7 +107,9 @@ function ConcertDetail() {
         </table>
         <div className={style.mapContainer}>
           <div>
-            <p className={style.mainStyle}>{concertDetail.placeName}</p>
+            <p className={style.mainStyle} title="concertDetail.placeName">
+              {concertDetail.placeName}
+            </p>
             <p className={style.subStyle}>{concertDetail.addr}</p>
           </div>
           <div id="map" className={style.kakaoMap}></div>

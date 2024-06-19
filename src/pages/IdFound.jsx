@@ -8,7 +8,8 @@ function IdFound() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const id = location.state?.id || "아이디를 찾을 수 없습니다";
+  const userId = location.state.id || "아이디를 찾을 수 없습니다";
+  const date = location.state.date;
 
   function forgotPw() {
     navigate("/forgotPw");
@@ -21,12 +22,12 @@ function IdFound() {
         <img src={LogoFont} alt="로고 폰트" />
         <p className={style.notice}>입력하신 정보의 아이디를 찾았어요 !</p>
         <p className={style.emphasize}>
-          아이디 : <span className={style.apiResult}>{id}</span>
+          아이디 : <span className={style.apiResult}>{userId}</span>
         </p>
-        <p className={style.emphasize}>가입 일시 : api 수정되면 반영 </p>
+        <p className={style.emphasize}>가입 일시 : {date} </p>
 
         <LoginBtn
-          className="purpleBtn"
+          className="blueBtn"
           buttonText="비밀번호 찾기"
           onClick={forgotPw}
         />
