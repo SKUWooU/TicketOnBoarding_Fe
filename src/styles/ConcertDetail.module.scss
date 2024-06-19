@@ -5,10 +5,13 @@
   flex-direction: column;
   justify-content: center;
   gap: 50px;
+  max-width: 1800px;
+  margin: 0 auto;
 }
 
 .concertName {
   border-bottom: 1px solid #333333;
+  white-space: nowrap; /* 한 줄로 유지 */
 }
 .concertName h1 {
   text-align: left;
@@ -19,6 +22,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  white-space: nowrap; /* 한 줄로 유지 */
 }
 
 .poster {
@@ -47,6 +51,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-width: 550px;
 }
 
 .kakaoMap {
@@ -68,6 +73,14 @@
   color: #bcbcbc;
   text-align: left;
   font-weight: 400;
+}
+
+.mainStyle,
+.subStyle {
+  overflow: hidden; /* 넘치는 텍스트 숨김 */
+  text-overflow: ellipsis; /* 말줄임표 추가 */
+  white-space: nowrap; /* 한 줄로 유지 */
+  max-width: 100%; /* 부모 요소의 width에 맞춤 */
 }
 
 .btnContainer {
@@ -275,10 +288,14 @@
   border: 1px solid #ddd;
   margin-bottom: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 500px;
 }
 
 .gridContainer {
   margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .summary p {
