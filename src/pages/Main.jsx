@@ -7,18 +7,24 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+// React-slick 을 위한 Import
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { NextArrow, PrevArrow } from "../components/CustomArrow";
+
 function Main() {
   const navigate = useNavigate();
 
   function gotoGenre() {
-    navigate("/genre/musical");
+    navigate("/genre/play");
   }
 
   function gotoLocation() {
     navigate("/region/seoul");
   }
 
-  function gotoHandover() {
+  function gotoMain() {
     navigate("/");
   }
 
@@ -30,7 +36,6 @@ function Main() {
     axios
       .get("http://localhost:8080/main")
       .then((response) => {
-        console.log(response.data);
         setMostPopularConcertList(response.data.MostPopularConcertList || []);
         setOnTicketPickList(response.data.onTicketPickList || []);
       })
@@ -39,35 +44,49 @@ function Main() {
       });
   }, []);
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    draggable: false,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    centerMode: true, // 추가
+    centerPadding: "35px", // 좌우 여유 공간 설정
+  };
+
   return (
     <div className={style.mainContainer}>
       <MainHeader />
       <div className={style.Category}>
-        <p onClick={gotoHandover}>이 달의 인기 공연</p>
+        <p onClick={gotoMain}>이 달의 인기 공연</p>
         <p onClick={gotoGenre}>장르별</p>
         <p onClick={gotoLocation}>지역별</p>
-        <p onClick={gotoHandover}>티켓 양도</p>
       </div>
-      <div className="mainInner">
-        <h1 className={style.division}>이 달의 인기 공연</h1>
-        <div className={style.showCards}>
+      <h1 className={style.division}>이 달의 인기 공연</h1>
+      <div className={style.sliderContainer}>
+        <Slider {...settings}>
           {mostPopularConcertList.map((concert, index) => (
-            // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
-            <CardList
-              key={index}
-              concertID={concert.concertID}
-              concertName={concert.concertName}
-              startDate={concert.startDate}
-              endDate={concert.endDate}
-              averageRating={concert.averageRating}
-              price={concert.price}
-              sido={concert.sido}
-              gugun={concert.gugun}
-              posterUrl={concert.posterUrl}
-              placename={concert.placeName}
-            />
+            <div key={index}>
+              <CardList
+                concertID={concert.concertID}
+                concertName={concert.concertName}
+                startDate={concert.startDate}
+                endDate={concert.endDate}
+                averageRating={concert.averageRating}
+                price={concert.price}
+                sido={concert.sido}
+                gugun={concert.gugun}
+                posterUrl={concert.posterUrl}
+                placename={concert.placeName}
+              />
+            </div>
           ))}
-        </div>
+        </Slider>
       </div>
       <div className={style.mainInner}>
         <h1 className={style.division}>MDs Pick</h1>
