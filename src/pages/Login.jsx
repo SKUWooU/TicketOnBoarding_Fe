@@ -9,14 +9,25 @@ import google from "../assets/google.svg";
 import naver from "../assets/naver.svg";
 
 import style from "../styles/Login.module.scss";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login() {
-  const [id, setId] = useState("");
-  const [pw, setPw] = useState("");
   const { isLoggedIn, setIsLoggedIn, setLoginInfo } = useContext(AuthContext);
+
+  const [id, setId] = useState("");
+
+  const [pw, setPw] = useState("");
+  const [type, setType] = useState("password");
+  const [icon, setIcon] = useState(AiFillEye);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleToggle = () => {
+    setShowPassword(!showPassword);
+    setType(showPassword ? "password" : "text");
+  };
 
   const [error, setError] = useState(false);
 
@@ -90,7 +101,9 @@ function Login() {
           console.log(response);
           navigate("/");
         })
-        .catch(() => {});
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
@@ -139,14 +152,24 @@ function Login() {
           onKeyDown={submit}
         />
 
-        <LoginInput
-          className="normal"
-          type="password"
-          placeholder="비밀번호를 입력하세요"
-          value={pw}
-          onChange={handlePwChange}
-          onKeyDown={submit}
-        />
+        <div className={style.eyeCombined}>
+          <LoginInput
+            className="normal"
+            type={type}
+            placeholder="비밀번호를 입력하세요"
+            value={pw}
+            onChange={handlePwChange}
+            onKeyDown={submit}
+          />
+          {showPassword ? (
+            <AiFillEyeInvisible
+              className={style.pwIcon}
+              onClick={handleToggle}
+            />
+          ) : (
+            <AiFillEye className={style.pwIcon} onClick={handleToggle} />
+          )}
+        </div>
 
         <p className={style.forgot} onClick={forgot}>
           아이디 / 비밀번호 찾기
