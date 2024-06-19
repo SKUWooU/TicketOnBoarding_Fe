@@ -8,6 +8,8 @@ import LoginBtn from "../components/LoginBtn";
 import SignUpText from "../components/SignUpText"; // 이 부분을 signUpText로 되어 있던 것을 수정
 import style from "../styles/ForgotPw.module.scss";
 
+import { IoIosArrowBack } from "react-icons/io";
+
 function ForgotPw() {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -73,10 +75,21 @@ function ForgotPw() {
       });
   }
 
+  function goBack() {
+    navigate("/login");
+  }
+
   return (
     <div>
       <LoginHeader page="계정 찾기" />
       <div className={style.innerContainer}>
+        <div className={style.arrowContainer}>
+          <IoIosArrowBack
+            size={30}
+            onClick={goBack}
+            style={{ cursor: "pointer" }}
+          />
+        </div>
         <div className={style.menuContainer}>
           <div className={style.menuInner1}>
             <p className={style.id} onClick={forgot}>

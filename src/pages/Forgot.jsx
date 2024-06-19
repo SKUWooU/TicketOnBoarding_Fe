@@ -7,13 +7,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 
+import { IoIosArrowBack } from "react-icons/io";
+
 function Forgot() {
   const navigate = useNavigate();
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
-
-  const [apiResponse, setApiResponse] = useState([]);
 
   function forgot() {
     navigate("/forgot");
@@ -32,19 +32,33 @@ function Forgot() {
         email: email,
       })
       .then((response) => {
-        setApiResponse(response.data);
+        console.log(response.data);
+        const userId = response.data.username;
+        const createDate = response.data.createdate;
         navigate("/idFound", {
           state: {
-            id: response.data,
+            id: userId,
+            date: createDate.slice(0, 10),
           },
         });
       })
       .catch(() => {});
   }
+  function goBack() {
+    navigate("/login");
+  }
+
   return (
     <div>
       <LoginHeader page="계정 찾기" />
       <div className={style.innerContainer}>
+        <div className={style.arrowContainer}>
+          <IoIosArrowBack
+            size={30}
+            onClick={goBack}
+            style={{ cursor: "pointer" }}
+          />
+        </div>
         <div className={style.menuContainer}>
           <div className={style.menuInner1}>
             <p className={style.id} onClick={forgot}>
@@ -74,7 +88,7 @@ function Forgot() {
           onChange={(e) => setEmail(e.target.value)}
         />
         <LoginBtn
-          className="purpleBtn"
+          className="blueBtn"
           buttonText="아이디 찾기"
           onClick={idFind}
         />

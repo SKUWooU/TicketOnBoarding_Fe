@@ -6,6 +6,7 @@ import LoginBtn from "../components/LoginBtn";
 import SignUpText from "../components/SignUpText";
 
 import style from "../styles/SignUp.module.scss";
+import { IoIosArrowBack } from "react-icons/io";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -143,13 +144,24 @@ function SignUp() {
       })
       .catch((error) => {
         setSignUpMsg(error.response.data);
+        console.log(error);
       });
+  }
+
+  function goBack() {
+    navigate("/login");
   }
 
   return (
     <div>
       <LoginHeader page="회원가입" />
       <div className={style.innerContainer}>
+        <IoIosArrowBack
+          size={30}
+          style={{ textAlign: "left" }}
+          onClick={goBack}
+          cursor="pointer"
+        />
         <div className={style.item}>
           <div className={style.tempContainer}>
             <p className={style.tempText}>아이디</p>
