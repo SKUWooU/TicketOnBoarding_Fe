@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import logoPic from "../assets/logoPic.svg";
 import style from "../styles/LoginHeader.module.scss";
 
-function LoginHeader({ page }) {
+function LoginHeader({ page, className = "" }) {
   const navigate = useNavigate();
 
   // useNavigate 호출 -> navigate 함수를 반환
@@ -13,7 +13,7 @@ function LoginHeader({ page }) {
   };
 
   return (
-    <div className={style.LoginHeader}>
+    <div className={`${style.LoginHeader} ${className}`}>
       <div className={style.imgContainer}>
         <div>
           <img

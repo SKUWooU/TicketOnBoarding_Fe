@@ -1,0 +1,136 @@
+.mainContainer {
+  padding-left: 100px;
+  padding-right: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 50px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.Category {
+  display: flex;
+  flex-direction: row;
+  gap: 45px;
+}
+
+.Category p {
+  font-size: 20px;
+  font-weight: 600;
+  position: relative; /* ::after 가상 요소를 사용하기 위해 position 설정 */
+  padding-bottom: 5px; /* 밑줄과 텍스트 사이의 간격을 조정 */
+  transition: transform 0.5s ease;
+}
+
+.Category p:hover {
+  color: #6e30bf;
+  transform: scale(1.05);
+}
+
+.Category p::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px; /* 밑줄 두께 */
+  background-color: #6e30bf; /* 밑줄 색상 */
+  transition: 0.1s ease; /* 부드러운 전환 효과 */
+}
+
+.Category p:hover::after {
+  width: 100%;
+}
+
+.mainInner {
+  margin-bottom: 56px;
+}
+
+.division {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.noMarginBottom {
+  margin-bottom: 0;
+}
+
+/* 테이블 스타일 추가 */
+.outPutTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f4f4f4;
+    text-align: left;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .starEmoji {
+    vertical-align: middle;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+  .starEmoji:hover {
+    transform: scale(1.5);
+  }
+}
+
+.showCards {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.h2Explain {
+  margin: 0;
+  color: #bcbcbc;
+}
+.extraExplain {
+  margin: 0;
+  color: #bcbcbc;
+  text-align: left;
+}
+
+.grant {
+  transition: transform 0.1s ease;
+}
+.grant:hover {
+  cursor: pointer;
+  transform: scale(1.5);
+}
+
+.deleteIcon {
+  color: red;
+  transition: transform 0.1s ease;
+}
+
+.deleteIcon:hover {
+  cursor: pointer;
+  transform: scale(1.5);
+}
+
+.concertName {
+  transition: transform 0.1s ease;
+}
+.concertName:hover {
+  cursor: pointer;
+  color: #6e30bf;
+  transform: scale(1.03);
+}

@@ -36,6 +36,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Payment from "./pages/Payment";
 import ReservedList from "./pages/ReservedList";
+import AdminPage from "./pages/AdminPage";
+import AdminPagePick from "./pages/AdminPagePick";
+import AdminPageUsers from "./pages/AdminPageUsers";
 
 function App() {
   return (
@@ -44,7 +47,7 @@ function App() {
         <Routes>
           {/* navBar를 통해 이동 : 정적 라우팅 */}
           <Route path="/" element={<Main />} />
-          <Route path="/mypage" element={<Mypage />} />
+
           <Route path="/search" element={<SearchResult />} />
 
           {/* 동적 라우팅 설정 : 각 공연에 맞는 상세 페이지  */}
@@ -81,7 +84,13 @@ function App() {
           <Route path="/afterPwReset" element={<AfterPwReset />} />
 
           {/* 마이페이지 관련 */}
+          <Route path="/mypage" element={<Mypage />} />
           <Route path="/reservedList" element={<ReservedList />} />
+
+          {/* 관리자 페이지 관련*/}
+          <Route path="/adminPage" element={<AdminPage />} />
+          <Route path="/adminPage/pick" element={<AdminPagePick />} />
+          <Route path="/adminPage/users" element={<AdminPageUsers />} />
         </Routes>
         <LocalizationProvider dateAdapter={AdapterDayjs} />
       </div>

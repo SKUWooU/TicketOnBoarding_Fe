@@ -19,6 +19,18 @@ function MyPage() {
     navigate("/reservedList");
   }
 
+  function gotoPwChange() {
+    navigate("/pwReset");
+  }
+
+  function userDelete() {
+    return;
+  }
+
+  function gotoAdminaPage() {
+    navigate("/adminPage");
+  }
+
   return (
     <div>
       <LoginHeader page="마이페이지" />
@@ -44,7 +56,7 @@ function MyPage() {
             {/* </span> */}
           </p>
           {loginInfo.code === 3 ? (
-            <p>
+            <p onClick={gotoAdminaPage}>
               <FaGear /> 관리자 페이지로 이동하기
             </p>
           ) : null}
