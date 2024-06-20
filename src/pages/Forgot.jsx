@@ -4,7 +4,7 @@ import LoginBtn from "../components/LoginBtn";
 
 import style from "../styles/Forgot.module.scss";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 import { useState } from "react";
 
 import { IoIosArrowBack } from "react-icons/io";
@@ -26,8 +26,8 @@ function Forgot() {
   function idFind(e) {
     // ID 찾기 Post request
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/users/findid", {
+    axiosBackend
+      .post("/users/findid", {
         phonenumber: phoneNumber,
         email: email,
       })

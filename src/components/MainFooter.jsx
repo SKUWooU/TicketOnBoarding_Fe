@@ -1,7 +1,7 @@
 import style from "../styles/MainFooter.module.scss";
-import { FaInfoCircle } from "react-icons/fa";
 
 function MainFooter() {
+  const agentId = import.meta.env.VITE_REACT_APP_DIALOGFLOW_ID;
   return (
     <div className={style.Container}>
       <p className={style.introduce}>
@@ -28,7 +28,7 @@ function MainFooter() {
       <df-messenger
         intent="WELCOME"
         chat-title="편리한 원클릭 예매 - 티켓온보딩 "
-        agent-id="d88e6107-8dda-44a2-a91e-7b17b8c58242"
+        agent-id={agentId}
         language-code="ko"
       ></df-messenger>
     </div>

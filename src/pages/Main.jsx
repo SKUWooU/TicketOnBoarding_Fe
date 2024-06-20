@@ -5,7 +5,7 @@ import CardList from "../components/CardList";
 import style from "../styles/Main.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 // React-slick 을 위한 Import
 import Slider from "react-slick";
@@ -33,8 +33,8 @@ function Main() {
   const [onTicketPickList, setOnTicketPickList] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/main")
+    axiosBackend
+      .get("/main")
       .then((response) => {
         setMostPopularConcertList(response.data.MostPopularConcertList || []);
         setOnTicketPickList(response.data.onTicketPickList || []);
@@ -56,7 +56,7 @@ function Main() {
     autoplay: true,
     autoplaySpeed: 4000,
     centerMode: true, // 추가
-    centerPadding: "35px", // 좌우 여유 공간 설정
+    centerPadding: "30px", // 좌우 여유 공간 설정
   };
 
   return (
@@ -88,8 +88,8 @@ function Main() {
           ))}
         </Slider>
       </div>
+      <h1 className={style.division}>MD's Pick</h1>
       <div className={style.mainInner}>
-        <h1 className={style.division}>MDs Pick</h1>
         <div className={style.showCards}>
           {onTicketPickList.map((concert, index) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달

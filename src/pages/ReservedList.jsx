@@ -8,7 +8,7 @@ import { FaGear } from "react-icons/fa6";
 import { IoTicketOutline } from "react-icons/io5";
 import { useContext, useEffect } from "react";
 import AuthContext from "../components/AuthContext";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 function ReservedList() {
   const navigate = useNavigate();
@@ -17,8 +17,8 @@ function ReservedList() {
   const { loginInfo } = useContext(AuthContext);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/mypage/reservationlist")
+    axiosBackend
+      .get("/mypage/reservationlist")
       .then((response) => {
         console.log(response.data);
       })

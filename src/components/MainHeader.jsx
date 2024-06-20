@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import Logo from "../assets/logoPic.svg";
 import style from "../styles/MainHeader.module.scss";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 import AuthContext from "./AuthContext";
 
 import { IoTicketOutline } from "react-icons/io5";
@@ -15,8 +15,8 @@ function MainHeader() {
     useContext(AuthContext);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/auth/valid", { withCredentials: true })
+    axiosBackend
+      .get("/auth/valid", { withCredentials: true })
       .then((response) => {
         if (response.data.valid) {
           setLoginInfo(response.data);
@@ -41,8 +41,8 @@ function MainHeader() {
   };
 
   const logout = () => {
-    axios
-      .post("http://localhost:8080/auth/logout", {}, { withCredentials: true })
+    axiosBackend
+      .post("/auth/logout", {}, { withCredentials: true })
       .then(() => {
         setIsLoggedIn(false);
         resetLoginInfo();

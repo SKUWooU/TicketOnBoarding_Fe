@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 
 import LoginHeader from "../components/LoginHeader";
 import LoginInput from "../components/LoginInput";
@@ -12,7 +12,7 @@ import style from "../styles/Login.module.scss";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 function Login() {
   const { isLoggedIn, setIsLoggedIn, setLoginInfo } = useContext(AuthContext);
@@ -58,9 +58,9 @@ function Login() {
     }
 
     // 엔터 키 입력했을 때 아래 post요청 처리
-    axios
+    axiosBackend
       .post(
-        "http://localhost:8080/auth/login",
+        "/auth/login",
         {
           username: id,
           password: pw,
@@ -84,9 +84,9 @@ function Login() {
   const submit = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      axios
+      axiosBackend
         .post(
-          "http://localhost:8080/auth/login",
+          "/auth/login",
           {
             username: id,
             password: pw,
@@ -109,15 +109,15 @@ function Login() {
 
   // 소셜 로그인 - 네이버 관련
 
-  const NAVER_CLIENT_ID = "1E4kXs8Q1JPflvdpS2at"; // 발급받은 클라이언트 아이디
-  const REDIRECT_URI = "http://localhost:5173/auth/naver"; // Callback URL
+  const NAVER_CLIENT_ID = import.meta.env.VITE_REACT_APP_NAVER_CLIENT_ID;
+  const NAVER_REDIRECT_URI = import.meta.env.VITE_REACT_APP_NAVER_REDIRECT_URI;
   const STATE = "false";
-  const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
+  const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${NAVER_REDIRECT_URI}`;
 
   // 소셜 로그인 - 구글 관련
-  const GOOGLE_CLIENT_ID =
-    "384888565973-aecmkcuo75p0048b39tejquipps2vq4v.apps.googleusercontent.com";
-  const GOOGLE_REDIRECT_URI = "http://localhost:5173/auth/google";
+  const GOOGLE_CLIENT_ID = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID;
+  const GOOGLE_REDIRECT_URI = import.meta.env
+    .VITE_REACT_APP_GOOGLE_REDIRECT_URI;
   const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code
   &scope=email profile`;
 

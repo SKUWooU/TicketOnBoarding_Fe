@@ -8,7 +8,7 @@ import SignUpText from "../components/SignUpText";
 import style from "../styles/SignUp.module.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 function PwReset() {
   const navigate = useNavigate();
@@ -51,8 +51,8 @@ function PwReset() {
   };
 
   function pwReset() {
-    axios
-      .post("http://localhost:8080/users/changepwd", {
+    axiosBackend
+      .post("/users/changepwd", {
         phonenumber: phoneNumber.phonenumber,
         password1: pw,
         password2: pwConfirm,

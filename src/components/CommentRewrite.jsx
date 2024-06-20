@@ -5,7 +5,7 @@ import { FaStar } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./AuthContext";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 function CommentRewrite({ concertId, comment, setEditCommentId }) {
   const navigate = useNavigate();
@@ -37,12 +37,10 @@ function CommentRewrite({ concertId, comment, setEditCommentId }) {
   };
 
   function submit() {
-    console.log(
-      `Submitting to URL: http://localhost:8080/main/detail/${concertId}/rewrite/review`,
-    );
-    axios
+    console.log(`Submitting to URL: /main/detail/${concertId}/rewrite/review`);
+    axiosBackend
       .post(
-        `http://localhost:8080/main/detail/${concertId}/rewrite/review`,
+        `/main/detail/${concertId}/rewrite/review`,
         {
           reviewId: comment.id,
           author: comment.author,

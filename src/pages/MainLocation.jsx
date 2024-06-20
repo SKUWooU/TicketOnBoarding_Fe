@@ -7,7 +7,7 @@ import Pagination from "../components/Pagination"; // Pagination 컴포넌트 im
 import style from "../styles/Main.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 import "../styles/Pagination.css"; // Pagination.css import
 
@@ -19,8 +19,8 @@ function MainLocation() {
   const itemsPerPage = 8; // 페이지당 항목 수
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/main/region/${region}`)
+    axiosBackend
+      .get(`/main/region/${region}`)
       .then((response) => {
         setRegionList(response.data || []);
       })

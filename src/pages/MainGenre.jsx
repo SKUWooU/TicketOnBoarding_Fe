@@ -7,7 +7,7 @@ import Pagination from "../components/Pagination"; // Pagination 컴포넌트 im
 import style from "../styles/Main.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 import { useParams } from "react-router-dom";
 
 import "../styles/Pagination.css"; // Pagination.css import
@@ -32,8 +32,8 @@ function MainGenre() {
   }
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/main/genre/${genre}`)
+    axiosBackend
+      .get(`/main/genre/${genre}`)
       .then((response) => {
         console.log(response.data);
         setGenreList(response.data || []);

@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 const AuthContext = createContext();
 
@@ -13,8 +13,8 @@ export const AuthProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/auth/valid", { withCredentials: true })
+    axiosBackend
+      .get("/auth/valid", { withCredentials: true })
       .then((response) => {
         if (response.data.valid) {
           setIsLoggedIn(true);

@@ -8,7 +8,7 @@ import SignUpText from "../components/SignUpText";
 import style from "../styles/SignUp.module.scss";
 import { IoIosArrowBack } from "react-icons/io";
 
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 import { useNavigate } from "react-router-dom";
 // 회원가입 완료 버튼은 각 필드의 입력값이 정규식을 통과해야 enabled 로 변경되게 로직 수정 필요.
 
@@ -96,8 +96,8 @@ function SignUp() {
   function idConfirm(e) {
     // 아이디 중복검사 POST Requested
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/users/signup/check", {
+    axiosBackend
+      .post("/users/signup/check", {
         username: id,
       })
       .then(() => {
@@ -113,8 +113,8 @@ function SignUp() {
   function phoneNumberVerify(e) {
     // 인증 번호 받기 Post Requested
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/users/smscode", {
+    axiosBackend
+      .post("/users/smscode", {
         to: phoneNumber,
       })
       .then(() => {
@@ -128,8 +128,8 @@ function SignUp() {
   function signUp(e) {
     // 회원가입 Post Requested
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/users/signup", {
+    axiosBackend
+      .post("/users/signup", {
         username: id,
         password1: pw,
         password2: pwConfirm,

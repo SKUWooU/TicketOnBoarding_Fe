@@ -7,7 +7,7 @@ import Comment from "../components/Comment";
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 import Pagination from "../components/Pagination";
 
@@ -18,9 +18,10 @@ function ConcertDetail() {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 6;
 
+  const mapServiceKey = import.meta.env.VITE_REACT_APP_KAKAOMAP_SERVICE_KEY;
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/main/detail/${concertID}`)
+    axiosBackend
+      .get(`/main/detail/${concertID}`)
       .then((response) => {
         setConcertDetail(response.data);
         console.log(response);
@@ -32,7 +33,7 @@ function ConcertDetail() {
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbb84bd0dca9e92a68c8821c55a7666&autoload=false`;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${mapServiceKey}&autoload=false`;
     script.async = true;
     document.head.appendChild(script);
 

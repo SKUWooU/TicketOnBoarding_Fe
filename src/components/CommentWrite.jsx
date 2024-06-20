@@ -4,7 +4,7 @@ import { LuUser2 } from "react-icons/lu";
 import { FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./AuthContext";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 function CommentWrite({ concertId }) {
   const navigate = useNavigate();
@@ -34,9 +34,9 @@ function CommentWrite({ concertId }) {
   };
 
   function submit() {
-    axios
+    axiosBackend
       .post(
-        `http://localhost:8080/main/detail/${concertId}/register/review`,
+        `/main/detail/${concertId}/register/review`,
         {
           content: inputValue,
           starCount: rating,

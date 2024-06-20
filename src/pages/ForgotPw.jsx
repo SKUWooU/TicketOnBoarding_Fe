@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 
 import LoginHeader from "../components/LoginHeader";
 import SignUpItem from "../components/SignUpItem";
@@ -42,8 +42,8 @@ function ForgotPw() {
   function phoneNumberVerify(e) {
     // 인증 번호 받기 Post Requested
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/users/smscode", {
+    axiosBackend
+      .post("/users/smscode", {
         to: phoneNumber,
       })
       .then(() => {
@@ -57,8 +57,8 @@ function ForgotPw() {
   function verifyCodeConfirm(e) {
     //인증번호 확인
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/users/issmscode", {
+    axiosBackend
+      .post("/users/issmscode", {
         smscode: verifyCode,
       })
       .then(() => {

@@ -5,7 +5,7 @@ import { FaStar } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { LuPencil } from "react-icons/lu";
 import AuthContext from "./AuthContext";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 import { useNavigate } from "react-router-dom";
 import CommentRewrite from "./CommentRewrite";
 
@@ -24,9 +24,9 @@ function Comment({
   const [editCommentId, setEditCommentId] = useState(null);
 
   function commentDelete(reviewId, author) {
-    axios
+    axiosBackend
       .post(
-        `http://localhost:8080/main/detail/${concertID}/delete/review`,
+        `/main/detail/${concertID}/delete/review`,
         {
           reviewId: reviewId,
           author: author,

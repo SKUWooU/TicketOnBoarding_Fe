@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 import LoginHeader from "../components/LoginHeader";
 
 function Payment() {
@@ -10,6 +10,8 @@ function Payment() {
   // 카카오페이 기준 : 노출되는 정보는 공연명과 가격
   // 예매 사이트에서 넘겨받은 데이터
   const { name, amount, reservationData, concertID } = location.state;
+
+  const paymentKey = import.meta.env.VITE_REACT_APP_PAYMENT_KEY;
 
   const requestPay = () => {
     window.IMP.request_pay(
@@ -28,14 +30,10 @@ function Payment() {
       (rsp) => {
         if (rsp.success) {
           // 결제 성공 시 로직
-          axios
-            .post(
-              `http://localhost:8080/main/detail/${concertID}/reservation`,
-              reservationData,
-              {
-                withCredentials: true, // 쿠키를 포함하기 위해 추가
-              },
-            )
+          axiosBackend
+            .post(`/main/detail/${concertID}/reservation`, reservationData, {
+              withCredentials: true, // 쿠키를 포함하기 위해 추가
+            })
             .then((response) => {
               console.log("Reservation successful:", response.data);
               navigate("/reservSuccess", {
@@ -77,7 +75,7 @@ function Payment() {
     loadScript("https://cdn.iamport.kr/v1/iamport.js", () => {
       const IMP = window.IMP;
       // 가맹점 식별코드
-      IMP.init("imp72175255");
+      IMP.init(paymentKey);
       requestPay();
     });
 

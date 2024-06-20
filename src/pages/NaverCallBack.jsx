@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 import { useNavigate } from "react-router-dom";
 
 const NaverCallBack = () => {
@@ -11,9 +11,9 @@ const NaverCallBack = () => {
     const state = urlParams.get("state");
 
     if (code) {
-      axios
+      axiosBackend
         .post(
-          "http://localhost:8080/auth/naver",
+          "/auth/naver",
           {
             code,
             state,

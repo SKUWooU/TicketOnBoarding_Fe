@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axiosBackend from "../AxiosConfig";
 import axios from "axios";
 
-const GOOGLE_CLIENT_ID =
-  "384888565973-aecmkcuo75p0048b39tejquipps2vq4v.apps.googleusercontent.com";
-const GOOGLE_CLIENT_SECRET = "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";
-const GOOGLE_REDIRECT_URI = "http://localhost:5173/auth/google";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = import.meta.env
+  .VITE_REACT_APP_GOOGLE_CLIENT_SERCRET;
+const GOOGLE_REDIRECT_URI = import.meta.env.VITE_REACT_APP_GOOGLE_REDIRECT_URI;
 
 const GoogleCallBack = () => {
   const location = useLocation();
@@ -50,8 +51,8 @@ const GoogleCallBack = () => {
           const userInfo = userInfoResponse.data;
 
           // 사용자 정보를 서버로 보내는 요청
-          await axios.post(
-            "http://localhost:8080/auth/google",
+          await axiosBackend.post(
+            "/auth/google",
             {
               user: userInfo,
             },

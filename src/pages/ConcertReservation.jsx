@@ -5,7 +5,7 @@ import Btn from "../components/LoginBtn";
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import axiosBackend from "../AxiosConfig";
 import { useContext } from "react";
 import AuthContext from "../components/AuthContext";
 
@@ -24,6 +24,7 @@ function ConcertReservation() {
   // 공연 정보를 받아오는 API response State
   const [availableDates, setAvailableDates] = useState([]);
   // 해당 공연의 예매 가능한 날짜 정보 API response State
+  const mapServiceKey = import.meta.VITE_REACT_APP_KAKAOMAP_SERVICE_KEY;
 
   /* Response의 형태 
   1. date: "2024-06-15"
@@ -124,8 +125,8 @@ function ConcertReservation() {
 
   // 공연 상세 정보 Axios.Get
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/main/detail/${concertID}`)
+    axiosBackend
+      .get(`/main/detail/${concertID}`)
       .then((response) => {
         setConcertDetail(response.data);
         console.log(response);
@@ -137,8 +138,8 @@ function ConcertReservation() {
 
   // 공연 예매 가능 날짜 Axios.Get
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/main/detail/${concertID}/calendar`)
+    axiosBackend
+      .get(`/main/detail/${concertID}/calendar`)
       .then((response) => {
         setAvailableDates(response.data); // 날짜 데이터를 상태에 저장
         console.log(response.data);
@@ -156,10 +157,8 @@ function ConcertReservation() {
       setSelectedPerformance(performance);
 
       // 해당 공연의 특정 시간대를 ID로 get 호출 -> 공연 시간대 출력
-      axios
-        .get(
-          `http://localhost:8080/main/detail/${concertID}/calendar/${performance.id}`,
-        )
+      axiosBackend
+        .get(`/main/detail/${concertID}/calendar/${performance.id}`)
         .then((response) => {
           const seatData = response.data;
           // Api Response를 저장한 이후에
@@ -201,7 +200,7 @@ function ConcertReservation() {
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=5cbb84bd0dca9e92a68c8821c55a7666&autoload=false`;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${mapServiceKey}&autoload=false`;
     script.async = true;
     document.head.appendChild(script);
 
