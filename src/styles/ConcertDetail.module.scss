@@ -93,15 +93,8 @@
 
 .commentContainer {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-}
-
-.commentContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 10px;
 }
 
 .commentArea {
@@ -300,4 +293,11 @@
 
 .summary p {
   text-align: right;
+}
+
+.showComments {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 45px;
 }
