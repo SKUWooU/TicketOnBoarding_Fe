@@ -9,10 +9,14 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
+import Pagination from "../components/Pagination";
+
 function ConcertDetail() {
   const [concertDetail, setConcertDetail] = useState({});
   const { concertID } = useParams();
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     axios
@@ -77,6 +81,18 @@ function ConcertDetail() {
     navigate(`/concertReservation/${concertID}`);
   }
 
+  const reviewList = (concertDetail.reviewList || []).reverse(); // 최신순 정렬 : Reverse
+  const pageCount = Math.ceil(reviewList.length / itemsPerPage);
+
+  // 페이지네이션 처리
+  const indexOfLastItem = (currentPage + 1) * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = reviewList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+
   return (
     <div className={style.mainContainer}>
       <Header />
@@ -122,20 +138,36 @@ function ConcertDetail() {
           onClick={reservation}
         />
       </div>
+
+      <p className={style.mainStyle}>한줄평 작성하기</p>
+
+      <div className={style.commentWrite}>
+        <CommentWrite concertId={concertID} />
+      </div>
+
       <div>
         <p className={style.mainStyle}>
           유저 한줄평 ({concertDetail.reviewList.length})
         </p>
         <p className={style.subStyle}>한줄평은 최신순으로 출력됩니다.</p>
       </div>
+
       <div className={style.commentContainer}>
-        <div className={style.commentArea}>
-          <CommentWrite concertId={concertID} />
-          <Comment
-            reviewList={concertDetail.reviewList}
-            concertID={concertID}
-          />
+        <div className={style.showComments}>
+          {currentItems.slice(0, 3).map((comment, index) => (
+            <Comment key={index} {...comment} concertID={concertID} />
+          ))}
         </div>
+        <div className={style.showComments}>
+          {currentItems.slice(3, 6).map((comment, index) => (
+            <Comment key={index} {...comment} concertID={concertID} />
+          ))}
+        </div>
+        <Pagination
+          pageCount={pageCount}
+          onPageChange={handlePageClick}
+          currentPage={currentPage}
+        />
       </div>
       <Footer />
     </div>

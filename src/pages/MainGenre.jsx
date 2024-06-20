@@ -2,6 +2,7 @@ import MainHeader from "../components/MainHeader";
 import MainFooter from "../components/MainFooter";
 import CardList from "../components/CardList";
 import ClassifyBtn from "../components/ClassifyBtn";
+import Pagination from "../components/Pagination"; // Pagination 컴포넌트 import
 
 import style from "../styles/Main.module.scss";
 import { useNavigate } from "react-router-dom";
@@ -9,10 +10,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
+import "../styles/Pagination.css"; // Pagination.css import
+
 function MainGenre() {
   const navigate = useNavigate();
   const { genre } = useParams(); // genre 값 가져오기 (buttonText Props)
   const [genreList, setGenreList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // 현재 페이지 상태 추가
+  const itemsPerPage = 8; // 페이지당 항목 수
 
   function gotoGenre() {
     navigate("/genre/play");
@@ -37,6 +42,18 @@ function MainGenre() {
         alert("Axios 통신에 실패하였습니다.\n" + err);
       });
   }, [genre]);
+
+  // 페이지네이션 관련 함수
+  const handlePageClick = (data) => {
+    setCurrentPage(data.selected);
+  };
+
+  const indexOfLastItem = (currentPage + 1) * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = genreList.slice(indexOfFirstItem, indexOfLastItem);
+
+  // 총 페이지 수 계산
+  const pageCount = Math.ceil(genreList.length / itemsPerPage);
 
   return (
     <div className={style.mainContainer}>
@@ -67,7 +84,7 @@ function MainGenre() {
 
       <div className="mainInner">
         <div className={style.showCards}>
-          {genreList.slice(0, 4).map((concert) => (
+          {currentItems.slice(0, 4).map((concert) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
             <CardList
               key={concert.concertID}
@@ -87,7 +104,7 @@ function MainGenre() {
       </div>
       <div className="mainInner">
         <div className={style.showCards}>
-          {genreList.slice(4, 8).map((concert) => (
+          {currentItems.slice(4, 8).map((concert) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
             <CardList
               key={concert.concertID}
@@ -105,6 +122,11 @@ function MainGenre() {
           ))}
         </div>
       </div>
+      <Pagination
+        pageCount={pageCount}
+        onPageChange={handlePageClick}
+        currentPage={currentPage}
+      />
       <MainFooter />
     </div>
   );

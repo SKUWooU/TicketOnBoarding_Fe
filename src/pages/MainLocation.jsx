@@ -2,16 +2,21 @@ import MainHeader from "../components/MainHeader";
 import MainFooter from "../components/MainFooter";
 import CardList from "../components/CardList";
 import ClassifyBtn from "../components/ClassifyBtn";
+import Pagination from "../components/Pagination"; // Pagination 컴포넌트 import
 
 import style from "../styles/Main.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+import "../styles/Pagination.css"; // Pagination.css import
+
 function MainLocation() {
   const navigate = useNavigate();
   const { region } = useParams(); // genre 값 가져오기 (buttonText Props)
   const [regionList, setRegionList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // 현재 페이지 상태 추가
+  const itemsPerPage = 8; // 페이지당 항목 수
 
   useEffect(() => {
     axios
@@ -35,6 +40,18 @@ function MainLocation() {
   function gotoMain() {
     navigate("/");
   }
+
+  // 페이지네이션 관련 함수
+  const handlePageClick = (data) => {
+    setCurrentPage(data.selected);
+  };
+
+  const indexOfLastItem = (currentPage + 1) * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = regionList.slice(indexOfFirstItem, indexOfLastItem);
+
+  // 총 페이지 수 계산
+  const pageCount = Math.ceil(regionList.length / itemsPerPage);
 
   return (
     <div className={style.mainContainer}>
@@ -73,7 +90,7 @@ function MainLocation() {
       </div>
       <div className="mainInner">
         <div className={style.showCards}>
-          {regionList.slice(0, 4).map((concert) => (
+          {currentItems.slice(0, 4).map((concert) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
             <CardList
               key={concert.concertID}
@@ -93,7 +110,7 @@ function MainLocation() {
       </div>
       <div className="mainInner">
         <div className={style.showCards}>
-          {regionList.slice(4, 8).map((concert) => (
+          {currentItems.slice(4, 8).map((concert) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
             <CardList
               key={concert.concertID}
@@ -111,6 +128,11 @@ function MainLocation() {
           ))}
         </div>
       </div>
+      <Pagination
+        pageCount={pageCount}
+        onPageChange={handlePageClick}
+        currentPage={currentPage}
+      />
       <MainFooter />
     </div>
   );
