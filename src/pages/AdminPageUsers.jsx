@@ -30,6 +30,10 @@ function AdminPageUsers() {
     navigate("/adminPage/pick");
   }
 
+  const allTickets = () => {
+    navigate("/adminPage/allTickets");
+  };
+
   useEffect(() => {
     axiosBackend
       .get("/admin/users", { withCredentials: true })
@@ -62,30 +66,38 @@ function AdminPageUsers() {
   };
 
   function grant(username) {
-    axiosBackend
-      .post("/admin/users", { username: username }, { withCredentials: true })
-      .then((response) => {
-        alert("관리자 권한이 부여되었습니다.");
-        console.log(response);
-      })
-      .catch((err) => {
-        alert("Axios 통신에 실패하였습니다.\n" + err);
-      });
+    const confirmGrant = window.confirm(
+      `${username} 계정에 관리자 권한을 부여하시겠습니까?`,
+    );
+    if (confirmGrant) {
+      axiosBackend
+        .post("/admin/users", { username: username }, { withCredentials: true })
+        .then((response) => {
+          alert("관리자 권한이 부여되었습니다.");
+          alert(0);
+        })
+        .catch((err) => {
+          alert("Axios 통신에 실패하였습니다.\n" + err);
+        });
+    } else {
+      alert("권한 부여가 취소되었습니다.");
+    }
   }
 
   function deleteUser(username) {
-    const deleteConfirmed = confirm(
-      `정말로 해당 계정 (${username})을 삭제하시겠습니까? 해당 데이터는 복구되지 않습니다.`,
+    const confirmDelete = window.confirm(
+      `${username} 계정을 정말로 삭제하시겠습니까?\n삭제 처리 이후에는 복구되지 않습니다.`,
     );
 
-    if (deleteConfirmed) {
+    if (confirmDelete) {
       axiosBackend
-        .post(`/admin/users/delete/${username}`, { withCredentials: true })
+        .post(`/admin/users/delete/${username}`, {}, { withCredentials: true })
         .then(() => {
           alert("계정이 삭제되었습니다.");
           navigate(0);
         })
         .catch((err) => {
+          console.log(err);
           alert("Axios 통신에 실패하였습니다.\n" + err);
         });
     } else {
@@ -103,6 +115,7 @@ function AdminPageUsers() {
         <p onClick={goBack}>돌아가기 </p>
         <p onClick={allConcerts}>공연 조회 </p>
         <p onClick={allUsers}>고객 조회</p>
+        <p onClick={allTickets}>예매 조회</p>
         <p onClick={claims}>환불 처리</p>
         <p onClick={gotoPick}>Md's Pick</p>
       </div>
@@ -112,7 +125,8 @@ function AdminPageUsers() {
         </h1>
         <h2 className={style.h2Explain}>
           {" "}
-          아이콘을 클릭해 관리자 권한 부여 및 계정 삭제가 가능합니다.{" "}
+          <PiSwordDuotone className={style.grant} color="grey" /> 아이콘을
+          클릭해 관리자 권한 부여 및 계정 삭제가 가능합니다.{" "}
         </h2>
       </div>
 
@@ -120,6 +134,10 @@ function AdminPageUsers() {
         <p className={style.extraExplain}>
           계정 가입 정보에 따라 특정 Column은 비어있을 수 있습니다. ( 소셜
           로그인 시 )
+        </p>
+        <p className={style.extraExplain}>
+          관리자 권한 부여됨 : ({" "}
+          <PiSwordDuotone className={style.grant} color="gold" /> )
         </p>
         <table className={style.outPutTable}>
           <thead>
