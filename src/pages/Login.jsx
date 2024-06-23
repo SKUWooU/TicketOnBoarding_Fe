@@ -29,7 +29,7 @@ function Login() {
     setType(showPassword ? "password" : "text");
   };
 
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
   const handleIdChange = (e) => {
     setId(e.target.value);
@@ -103,6 +103,7 @@ function Login() {
         })
         .catch((error) => {
           console.log(error);
+          setError(error.response.data);
         });
     }
   };
