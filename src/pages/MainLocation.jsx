@@ -12,8 +12,26 @@ import axiosBackend from "../AxiosConfig";
 import "../styles/Pagination.css"; // Pagination.css import
 
 function MainLocation() {
+  const regions = {
+    "seoul": "서울",
+    "busan": "부산",
+    "incheon": "인천",
+    "daegu": "대구",
+    "daejeon": "대전",
+    "gwangju": "광주",
+    "gyeonggi": "경기",
+    "kangwon": "강원",
+    "chungbuk": "충북",
+    "chungnam": "충남",
+    "jeonbuk": "전북",
+    "jeonnam": "전남",
+    "gyeongbuk": "경북",
+    "gyeongnam": "경남",
+    "jeju": "제주",
+  };
+
   const navigate = useNavigate();
-  const { region } = useParams(); // genre 값 가져오기 (buttonText Props)
+  const { region } = useParams(); // region 값 가져오기 (buttonText Props)
   const [regionList, setRegionList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // 현재 페이지 상태 추가
   const itemsPerPage = 8; // 페이지당 항목 수
@@ -83,7 +101,7 @@ function MainLocation() {
         </div>
       </div>
       <div>
-        <h1 className={style.division}>지역별 : {region} </h1>
+        <h1 className={style.division}>지역별 : {regions[region]}</h1>
         <p className={style.totalNum}>
           {regionList.length}개의 공연이 존재합니다.
         </p>

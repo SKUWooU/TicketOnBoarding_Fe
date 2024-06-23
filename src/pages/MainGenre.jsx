@@ -13,6 +13,17 @@ import { useParams } from "react-router-dom";
 import "../styles/Pagination.css"; // Pagination.css import
 
 function MainGenre() {
+  const genres = {
+    "play": "연극",
+    "musical": "뮤지컬",
+    "westmusic": "서양음악(클래식)",
+    "koreanmusic": "한국음악(국악)",
+    "circus": "서커스/마술",
+    "complex": "복합",
+    "contemporarymusic": "대중음악",
+    "dance": "무용",
+  };
+
   const navigate = useNavigate();
   const { genre } = useParams(); // genre 값 가져오기 (buttonText Props)
   const [genreList, setGenreList] = useState([]);
@@ -76,7 +87,7 @@ function MainGenre() {
         </div>
       </div>
       <div>
-        <h1 className={style.division}>카테고리 : {genre} </h1>
+        <h1 className={style.division}>장르별 : {genres[genre]}</h1>
         <p className={style.totalNum}>
           {genreList.length}개의 공연이 존재합니다.
         </p>
