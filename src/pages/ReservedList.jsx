@@ -1,12 +1,9 @@
 import LoginHeader from "../components/LoginHeader";
-import LogoFont from "../assets/logoFont.svg";
-
-import style from "../styles/IdResult.module.scss";
+import ReservedCard from "../components/ReservedCard";
+import style from "../styles/ReservedList.module.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { FaGear } from "react-icons/fa6";
-import { IoTicketOutline } from "react-icons/io5";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthContext from "../components/AuthContext";
 import axiosBackend from "../AxiosConfig";
 
@@ -14,31 +11,73 @@ function ReservedList() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [reservedList, setReservedList] = useState([]);
+
   const { loginInfo } = useContext(AuthContext);
 
   useEffect(() => {
     axiosBackend
-      .get("/mypage/reservationlist")
+      .get("/mypage/reservationlist", { withCredentials: true })
       .then((response) => {
         console.log(response.data);
+        const filteredList = response.data.filter(
+          (concert) => concert.status === "결제완료",
+        );
+        setReservedList(filteredList);
       })
       .catch((err) => {
         alert("Axios 통신에 실패하였습니다.\n" + err);
       });
   }, []);
 
+  function goBack() {
+    navigate("/mypage");
+  }
+
+  function gotoReserved() {
+    navigate("/mypage/reservedList");
+  }
+
+  function gotoWaiting() {
+    navigate("/mypage/watingRefund");
+  }
+
+  function gotoRefunded() {
+    navigate("/mypage/ticketRefunded");
+  }
+
   return (
-    <div>
-      <LoginHeader page="예매한 티켓 확인" />
-      <div className={style.innerContainer}>
-        <img src={LogoFont} alt="로고 폰트" />
-        <p className={style.emphasize}>
-          <span className={style.apiResult}>
-            {loginInfo.nickName} <IoTicketOutline />
-          </span>{" "}
-          님 안녕하세요 !
+    <div className={style.mainContainer}>
+      <LoginHeader page="구매한 티켓 조회" />
+      <div className={style.Category}>
+        <p onClick={goBack}>뒤로가기</p>
+        <p onClick={gotoReserved}>예매한 티켓</p>
+        <p onClick={gotoWaiting}>취소 신청</p>
+        <p onClick={gotoRefunded}>환불 완료</p>
+      </div>
+      <h1 className={style.division}>
+        예약된 티켓은 총 {reservedList.length} 장 입니다.
+        <p className={style.notice}>
+          환불 신청을 할 경우 관리자 승인 이후 자동 환불처리 됩니다.
         </p>
-        <p className={style.notice}>현재 보유한 티켓은 n 장 입니다.</p>
+      </h1>
+      <div className={style.mainInner}>
+        <div className={style.showCards}>
+          {reservedList.map((concert, index) => (
+            <ReservedCard
+              key={index}
+              posterUrl={concert.posterUrl}
+              concertName={concert.concertName}
+              concertDate={concert.concertDate}
+              concertTime={concert.concertTime}
+              createdAt={concert.createdAt}
+              seatNumber={concert.seatNumber}
+              reservationId={concert.id}
+              status={concert.status}
+              concertId={concert.concertId}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
