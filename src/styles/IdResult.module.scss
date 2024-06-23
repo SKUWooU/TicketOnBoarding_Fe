@@ -42,3 +42,45 @@
   color: #6e30bf;
   transform: scale(1.05);
 }
+
+.buttonArea {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.backButton {
+  width: 390px;
+  height: 62px;
+  font-weight: 700;
+  font-size: 20px;
+  background-color: #cccccc;
+  color: white;
+  border: none;
+
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.backButton:hover {
+  background-color: #999999;
+}
+
+.deleteButton {
+  width: 390px;
+  height: 62px;
+  font-weight: 700;
+  font-size: 20px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.deleteButton:hover {
+  background-color: #cc0000;
+}
