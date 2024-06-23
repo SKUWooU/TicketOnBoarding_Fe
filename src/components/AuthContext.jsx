@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     axiosBackend
-      .get("/auth/valid", { withCredentials: true })
+      .get("/auth/valid", {}, { withCredentials: true })
       .then((response) => {
         if (response.data.valid) {
           setIsLoggedIn(true);
