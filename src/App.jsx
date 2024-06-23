@@ -13,6 +13,7 @@ import IdFound from "./pages/IdFound";
 import Signed from "./pages/Signed";
 import PwReset from "./pages/PwReset";
 import AfterPwReset from "./pages/AfterPwReset";
+import AfterPwResetValid from "./pages/AfterPwResetValid";
 
 // 소셜 사이드
 import NaverCallBack from "./pages/NaverCallBack";
@@ -39,6 +40,12 @@ import ReservedList from "./pages/ReservedList";
 import AdminPage from "./pages/AdminPage";
 import AdminPagePick from "./pages/AdminPagePick";
 import AdminPageUsers from "./pages/AdminPageUsers";
+import AdminPageClaim from "./pages/AdminPageClaim";
+import AdminPageAllTickets from "./pages/AdminPageAllTickets";
+import DeleteId from "./pages/DeleteId";
+import PwResetValid from "./pages/PwResetValid";
+import WatingRefund from "./pages/WatingRefund";
+import TicketRefunded from "./pages/TicketRefunded";
 
 function App() {
   return (
@@ -85,12 +92,22 @@ function App() {
 
           {/* 마이페이지 관련 */}
           <Route path="/mypage" element={<Mypage />} />
-          <Route path="/reservedList" element={<ReservedList />} />
+          <Route path="/mypage/reservedList" element={<ReservedList />} />
+          <Route path="/mypage/watingRefund" element={<WatingRefund />} />
+          <Route path="/mypage/ticketRefunded" element={<TicketRefunded />} />
+          <Route path="/mypage/pwReset" element={<PwResetValid />} />
+          <Route path="/mypage/pwAfterReset" element={<AfterPwResetValid />} />
+          <Route path="/mypage/deleteId" element={<DeleteId />} />
 
           {/* 관리자 페이지 관련*/}
           <Route path="/adminPage" element={<AdminPage />} />
           <Route path="/adminPage/pick" element={<AdminPagePick />} />
           <Route path="/adminPage/users" element={<AdminPageUsers />} />
+          <Route path="/adminPage/claims" element={<AdminPageClaim />} />
+          <Route
+            path="/adminPage/allTickets"
+            element={<AdminPageAllTickets />}
+          />
         </Routes>
         <LocalizationProvider dateAdapter={AdapterDayjs} />
       </div>
