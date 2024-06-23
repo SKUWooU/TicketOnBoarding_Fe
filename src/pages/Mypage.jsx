@@ -16,15 +16,15 @@ function MyPage() {
   const { loginInfo } = useContext(AuthContext);
 
   function gotoList() {
-    navigate("/reservedList");
+    navigate("/mypage/reservedList");
   }
 
   function gotoPwChange() {
-    navigate("/pwReset");
+    navigate("/mypage/pwReset");
   }
 
   function userDelete() {
-    return;
+    navigate("/mypage/deleteId");
   }
 
   function gotoAdminaPage() {
@@ -47,10 +47,10 @@ function MyPage() {
           <p onClick={gotoList}>
             <FaGear /> 예매한 티켓 확인하기
           </p>
-          <p>
+          <p onClick={gotoPwChange}>
             <FaGear /> 비밀번호 변경하기
           </p>
-          <p>
+          <p onClick={userDelete}>
             {/* <span className={style.delete}> */}
             <FaGear /> 회원 탈퇴하기
             {/* </span> */}
