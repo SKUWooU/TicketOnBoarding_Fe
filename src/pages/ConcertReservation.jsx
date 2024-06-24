@@ -24,7 +24,7 @@ function ConcertReservation() {
   // 공연 정보를 받아오는 API response State
   const [availableDates, setAvailableDates] = useState([]);
   // 해당 공연의 예매 가능한 날짜 정보 API response State
-  const mapServiceKey = import.meta.VITE_REACT_APP_KAKAOMAP_SERVICE_KEY;
+  const mapServiceKey = import.meta.env.VITE_REACT_APP_KAKAOMAP_SERVICE_KEY;
 
   /* Response의 형태 
   1. date: "2024-06-15"
