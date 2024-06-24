@@ -46,6 +46,7 @@ import DeleteId from "./pages/DeleteId";
 import PwResetValid from "./pages/PwResetValid";
 import WatingRefund from "./pages/WatingRefund";
 import TicketRefunded from "./pages/TicketRefunded";
+import PaymentInosis from "./pages/PaymentInosis";
 
 function App() {
   return (
@@ -66,7 +67,8 @@ function App() {
           <Route path="/genre/:genre" element={<MainGenre />} />
           <Route path="/search" element={<SearchResult />} />
           {/*결제 관련 페이지*/}
-          <Route path="/payment" element={<Payment />} />
+          <Route path="/payment/kakao" element={<Payment />} />
+          <Route path="/payment/inosis" element={<PaymentInosis />} />
           <Route path="/reservSuccess" element={<ReservSuccess />} />
           <Route path="/reservFail" element={<ReservFail />} />
 
