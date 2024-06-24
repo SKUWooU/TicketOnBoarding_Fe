@@ -33,12 +33,12 @@ function SearchResult() {
   return (
     <div className={style.mainContainer}>
       <MainHeader />
+      <h1 className={style.division}>
+        {result.length > 0
+          ? `${result.length}개의 공연이 존재합니다.`
+          : "검색 결과가 없습니다."}
+      </h1>
       <div className={style.mainInner}>
-        <h1 className={style.division}>
-          {result.length > 0
-            ? `${result.length}개의 공연이 존재합니다.`
-            : "검색 결과가 없습니다."}
-        </h1>
         <div className={style.showCards}>
           {result.slice(0, 4).map((concert) => (
             // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달

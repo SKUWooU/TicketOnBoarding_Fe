@@ -55,8 +55,6 @@ function Main() {
     draggable: false,
     autoplay: true,
     autoplaySpeed: 4000,
-    centerMode: true, // 추가
-    centerPadding: "30px", // 좌우 여유 공간 설정
   };
 
   return (
