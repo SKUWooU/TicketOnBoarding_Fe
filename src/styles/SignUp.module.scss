@@ -41,7 +41,7 @@
 }
 .tempBtn {
   width: 126px;
-  height: 62px;
+  height: 66px;
   text-align: center;
   color: #5852d2;
   background-color: #f0efff;
@@ -49,6 +49,14 @@
   font-weight: bold;
   font-size: 15px;
   border-radius: 8px;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.tempBtn:hover {
+  background-color: #d2d1ff; /* 호버 시 배경색 변경 */
+  color: #6e30bf; /* 호버 시 텍스트 색상 변경 */
 }
 
 .apiWarning,
