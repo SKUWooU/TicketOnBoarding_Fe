@@ -47,7 +47,16 @@ function MainHeader() {
 
   const logout = () => {
     axiosBackend
-      .post("/auth/logout", {}, { withCredentials: true })
+      .post(
+        "/auth/logout",
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      )
       .then(() => {
         setIsLoggedIn(false);
         resetLoginInfo();
@@ -57,7 +66,6 @@ function MainHeader() {
         console.error("Logout failed", error);
       });
   };
-
   const signUp = () => {
     navigate("/signUp");
   };
