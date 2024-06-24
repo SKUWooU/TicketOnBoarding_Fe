@@ -2,16 +2,19 @@ import LoginHeader from "../components/LoginHeader";
 import ReservedCard from "../components/ReservedCard";
 import style from "../styles/ReservedList.module.scss";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../components/AuthContext";
 import axiosBackend from "../AxiosConfig";
+import Pagination from "../components/Pagination";
 
 function WatingRefund() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { loginInfo } = useContext(AuthContext);
 
   const [reservedList, setReservedList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // Initialize currentPage state
+  const itemsPerPage = 8; // Number of items per page
 
   useEffect(() => {
     axiosBackend
@@ -43,6 +46,18 @@ function WatingRefund() {
   function gotoRefunded() {
     navigate("/mypage/ticketRefunded");
   }
+
+  // Pagination related functions
+  const handlePageClick = (data) => {
+    setCurrentPage(data.selected);
+  };
+
+  const indexOfLastItem = (currentPage + 1) * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = reservedList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const pageCount = Math.ceil(reservedList.length / itemsPerPage);
+
   return (
     <div className={style.mainContainer}>
       <LoginHeader page="환불 신청 티켓" />
@@ -55,14 +70,14 @@ function WatingRefund() {
       <h1 className={style.division}>
         환불 대기중인 티켓은 총 {reservedList.length} 장 입니다.
         <p className={style.notice}>
-          환불 신청을 할 경우 관리자 승인 이후 자동 환불처리 됩니다.
+          환불 신청 시, 관리자 승인 이후 자동 환불처리 됩니다.
         </p>
       </h1>
       <div className={style.mainInner}>
         <div className={style.showCards}>
-          {reservedList.map((concert, index) => (
+          {currentItems.slice(0, 4).map((concert) => (
             <ReservedCard
-              key={index}
+              key={concert.concertId}
               posterUrl={concert.posterUrl}
               concertName={concert.concertName}
               concertDate={concert.concertDate}
@@ -76,6 +91,30 @@ function WatingRefund() {
           ))}
         </div>
       </div>
+      <div className={style.mainInner}>
+        <div className={style.showCards}>
+          {currentItems.slice(4, 8).map((concert) => (
+            // 메인에는 실시간 4개씩 -> map으로 순회하면서 컴포넌트에 Props 전달
+            <ReservedCard
+              key={concert.concertId}
+              posterUrl={concert.posterUrl}
+              concertName={concert.concertName}
+              concertDate={concert.concertDate}
+              concertTime={concert.concertTime}
+              createdAt={concert.createdAt}
+              seatNumber={concert.seatNumber}
+              reservationId={concert.id}
+              status={concert.status}
+              concertId={concert.concertId}
+            />
+          ))}
+        </div>
+      </div>
+      <Pagination
+        pageCount={pageCount}
+        onPageChange={handlePageClick}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

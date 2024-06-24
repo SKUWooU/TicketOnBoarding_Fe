@@ -55,7 +55,8 @@
 .showCards {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start; /* Flexbox의 시작 지점에서 카드 배치 */
+  gap: 50px;
 }
 
 .notice,
