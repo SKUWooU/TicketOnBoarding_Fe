@@ -313,3 +313,36 @@
   justify-content: flex-start;
   gap: 45px;
 }
+
+.afterChoose {
+  font-weight: 700;
+  font-size: 25px;
+}
+
+.totalPrice {
+  font-weight: 500;
+  font-size: 20px;
+}
+.selectedDate {
+  color: #bbbbbb;
+  font-size: 20px;
+}
+
+.payment {
+  margin-top: 50px;
+  text-align: right;
+}
+
+.payment .afterChoose {
+  margin-bottom: 10px;
+}
+
+.paymentBtnContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+}
+.kakaoPay {
+  text-align: right;
+  width: 150px;
+}

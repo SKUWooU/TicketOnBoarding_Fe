@@ -19,6 +19,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/ko";
 dayjs.locale("ko");
 
+import kakaoPay from "../assets/kakaoPay.svg";
+
 function ConcertReservation() {
   const [concertDetail, setConcertDetail] = useState({});
   // 공연 정보를 받아오는 API response State
@@ -279,14 +281,31 @@ function ConcertReservation() {
     };
   };
 
-  function payment() {
+  function paymentKakao() {
     if (!isLoggedIn) {
       navigate("/login");
       return;
     }
 
     const reservationData = handleReservation();
-    navigate("/payment", {
+    navigate("/payment/kakao", {
+      state: {
+        amount: totalPrice,
+        name: concertDetail.concertName,
+        concertID,
+        reservationData,
+      },
+    });
+  }
+
+  function paymentDefault() {
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
+
+    const reservationData = handleReservation();
+    navigate("/payment/inosis", {
       state: {
         amount: totalPrice,
         name: concertDetail.concertName,
@@ -456,25 +475,35 @@ function ConcertReservation() {
         </div>
       </div>
       <div className={style.summary}>
-        {selectedSeats.length !== 0 && ( //해당 부분 : 좌석을 골랐을때 < > 를 통해서 동적으로 생성되는 영역
+        {selectedSeats.length !== 0 && (
           <>
             <p className={style.afterChoose}>총 결제 금액</p>
             <p className={style.totalPrice}>
               {selectedSeats.length}석 일반석 : {totalPrice}원
             </p>
             <p className={style.selectedDate}>
-              선택한 날짜 :{" "}
-              {dayjs(dateChosen).format("YYYY년 MM월 DD일") +
-                " " +
-                (selectedPerformance
-                  ? formatTime(selectedPerformance.startTime) + "시 공연"
-                  : "")}
+              선택한 날짜 : {dayjs(dateChosen).format("YYYY년 MM월 DD일")} 및{" "}
+              {selectedPerformance
+                ? formatTime(selectedPerformance.startTime) + "시 공연"
+                : ""}
             </p>
-            <Btn
-              className="reservation"
-              buttonText="결제하기"
-              onClick={payment}
-            />
+
+            <div className={style.payment}>
+              <p className={style.afterChoose}>결제 수단을 선택해주세요</p>
+              <div className={style.paymentBtnContainer}>
+                <img
+                  className={style.kakaoPay}
+                  src={kakaoPay}
+                  alt="카카오페이 이미지"
+                  onClick={paymentKakao}
+                />
+                <Btn
+                  className="reservation"
+                  buttonText="일반 결제"
+                  onClick={paymentDefault}
+                />
+              </div>
+            </div>
           </>
         )}
       </div>
