@@ -38,15 +38,27 @@
 
 .table th,
 .table td {
-  border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  font-weight: 700;
+  border-top: 1px solid #ddd; /* 각 행의 위쪽에 border 추가 */
 }
 
 .table th {
   background-color: #f2f2f2;
 }
 
+/* 첫 번째 행의 border-top은 제거 */
+.table tr:first-child td,
+.table tr:first-child th {
+  border-top: none;
+}
+
+/* 마지막 행의 border-bottom은 제거 */
+.table tr:last-child td,
+.table tr:last-child th {
+  border-bottom: 1px solid #ddd;
+}
 .mapContainer {
   display: flex;
   flex-direction: column;

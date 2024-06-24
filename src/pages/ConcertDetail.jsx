@@ -109,8 +109,8 @@ function ConcertDetail() {
         <table className={style.table}>
           <thead>
             <tr>
-              <th>항목명</th>
-              <th>세부 내용</th>
+              {/* <th>항목명</th>
+              <th>세부 내용</th> */}
             </tr>
           </thead>
           <tbody>
