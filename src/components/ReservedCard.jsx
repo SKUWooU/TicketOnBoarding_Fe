@@ -4,7 +4,7 @@ import style from "../styles/cardList.module.scss";
 import axiosBackend from "../AxiosConfig";
 
 function ReservedCard({
-  concertID,
+  concertId,
   posterUrl,
   concertName,
   concertDate,
@@ -17,7 +17,7 @@ function ReservedCard({
   const navigate = useNavigate();
   const [refundRequested, setRefundRequested] = useState(false);
 
-  const gotoDetail = () => {
+  const gotoDetail = (concertID) => {
     navigate(`/concertDetail/${concertID}`);
   };
 
@@ -53,8 +53,13 @@ function ReservedCard({
   }
 
   return (
-    <div className={style.cardContainer} onClick={() => gotoDetail(concertID)}>
-      <img className={style.img} src={posterUrl} alt="Concert List" />
+    <div className={style.cardContainer}>
+      <img
+        className={style.img}
+        src={posterUrl}
+        onClick={() => gotoDetail(concertId)}
+        alt="Concert List"
+      />
       <div>
         <p className={style.concertName}>{concertName}</p>
         <p className={style.period}>공연 날짜 : {concertDate}</p>
