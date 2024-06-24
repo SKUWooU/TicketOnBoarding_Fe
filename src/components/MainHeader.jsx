@@ -16,7 +16,12 @@ function MainHeader() {
 
   useEffect(() => {
     axiosBackend
-      .get("/auth/valid", {}, { withCredentials: true })
+      .get("/auth/valid", {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
       .then((response) => {
         if (response.data.valid) {
           setLoginInfo(response.data);
