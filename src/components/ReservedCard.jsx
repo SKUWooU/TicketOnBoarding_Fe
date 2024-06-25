@@ -55,7 +55,7 @@ function ReservedCard({
   return (
     <div className={style.cardContainer}>
       <img
-        className={style.img}
+        className={`${style.img} ${status === "취소완료" ? style.canceled : ""}`}
         src={posterUrl}
         onClick={() => gotoDetail(concertId)}
         alt="Concert List"
@@ -81,6 +81,13 @@ function ReservedCard({
         {status === "취소신청" && (
           <button className={`${style.refundButton} ${style.disabled}`}>
             환불 대기중
+          </button>
+        )}
+        {status === "취소완료" && (
+          <button
+            className={`${style.refundButton} ${style.completedRefundButton}`}
+          >
+            환불 완료
           </button>
         )}
       </div>

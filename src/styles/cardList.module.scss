@@ -28,6 +28,10 @@
   margin: 0 auto;
 }
 
+.canceled {
+  filter: blur(4px); /* 블러 효과 추가 */
+}
+
 .cardContainer p {
   text-align: left;
   padding-left: 10px;
@@ -61,6 +65,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .refundButton {
   background-color: #ff4d4d;
   color: white;
@@ -84,4 +89,10 @@
     background-color: #ccc; /* 회색 배경 */
     cursor: default;
   }
+}
+
+.completedRefundButton {
+  background-color: #ccc; /* 회색 배경 */
+  color: #888; /* 회색 텍스트 */
+  cursor: default;
 }
