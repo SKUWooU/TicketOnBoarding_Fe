@@ -197,10 +197,6 @@ function ConcertReservation() {
   };
 
   useEffect(() => {
-    console.log(availableSeat);
-  }, [availableSeat]);
-
-  useEffect(() => {
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${mapServiceKey}&autoload=false`;
     script.async = true;
@@ -375,7 +371,33 @@ function ConcertReservation() {
               value={dateChosen}
               onChange={handleDateChange}
               shouldDisableDate={(date) => !isDateAvailable(date)}
-              className={style.dateCalendar}
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: "18px",
+                  fontFamily: "pretendard",
+                  fontWeight: "700",
+                },
+                "& .MuiPickersDay-root": {
+                  fontSize: "18px",
+                  fontFamily: "pretendard",
+                  fontWeight: "500",
+                  borderRadius: "8px",
+                  "&.Mui-selected": {
+                    backgroundColor: "#6E30BF",
+                    color: "#FFFFFF",
+                    fontWeight: "700",
+                  },
+                  "&.MuiPickersDay-today": {
+                    border: "2px solid #9C27B0",
+                  },
+                  "&:hover": {
+                    backgroundColor: "#E1BEE7",
+                  },
+                  "&:focus": {
+                    backgroundColor: "#CE93D8",
+                  },
+                },
+              }}
             />
           </LocalizationProvider>
         </div>
