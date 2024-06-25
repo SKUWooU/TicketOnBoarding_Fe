@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import AuthContext from "../components/AuthContext";
 import axiosBackend from "../AxiosConfig";
 import Pagination from "../components/Pagination"; // Import Pagination component
+import MainFooter from "../components/MainFooter";
 
 function ReservedList() {
   const navigate = useNavigate();
@@ -115,6 +116,7 @@ function ReservedList() {
         onPageChange={handlePageClick}
         currentPage={currentPage}
       />
+      <MainFooter />
     </div>
   );
 }

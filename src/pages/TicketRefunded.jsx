@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import AuthContext from "../components/AuthContext";
 import axiosBackend from "../AxiosConfig";
 import Pagination from "../components/Pagination";
+import MainFooter from "../components/MainFooter";
 
 function TicketRefunded() {
   const navigate = useNavigate();
@@ -114,6 +115,7 @@ function TicketRefunded() {
         onPageChange={handlePageClick}
         currentPage={currentPage}
       />
+      <MainFooter />
     </div>
   );
 }
