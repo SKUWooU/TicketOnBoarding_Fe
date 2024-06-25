@@ -4,7 +4,7 @@ import style from "../styles/AdminPage.module.scss";
 import { useNavigate } from "react-router-dom";
 import axiosBackend from "../AxiosConfig";
 import Pagination from "../components/Pagination";
-import { HiMiniXMark } from "react-icons/hi2";
+import { CiCircleCheck } from "react-icons/ci";
 
 function AdminPageAllTickets() {
   const navigate = useNavigate();
@@ -92,13 +92,15 @@ function AdminPageAllTickets() {
         <h1 className={style.division}>
           총 {ticketList.length} 개의 예매 내역이 조회되었습니다.
         </h1>
-        <h2 className={style.h2Explain}>더미텍스트입니다.</h2>
       </div>
 
       <div className={style.mainInner}>
         <p className={style.extraExplain}>
-          예매된 모든 내역들을 출력합니다. 공연명 클릭시 공연 상세페이지로
-          이동합니다.
+          모든 티켓의 상태값은{" "}
+          <span className={style.emphasize}>
+            [ 결제 완료, 취소 신청, 취소 완료 ]
+          </span>{" "}
+          로 구분됩니다.
         </p>
         <table className={style.outPutTable}>
           <thead>
@@ -111,7 +113,7 @@ function AdminPageAllTickets() {
               <th>좌석 번호</th>
               <th>상태</th>
               <th>아이디</th>
-              <th>환불 처리</th>
+              <th>환불 여부</th>
             </tr>
           </thead>
           <tbody>
@@ -132,11 +134,8 @@ function AdminPageAllTickets() {
                 <td>{item.status}</td>
                 <td>{item.username}</td>
                 <td>
-                  {item.status === "취소신청" ? (
-                    <HiMiniXMark
-                      className={style.deleteIcon}
-                      onClick={() => refund(item.id)}
-                    />
+                  {item.status === "취소완료" ? (
+                    <CiCircleCheck className={style.deleteIcon} />
                   ) : null}
                 </td>
               </tr>
