@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axiosBackend from "../AxiosConfig";
 import LoginHeader from "../components/LoginHeader";
+import AuthContext from "../components/AuthContext";
 
 function Payment() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { loginInfo } = useContext(AuthContext);
 
   // 카카오페이 기준 : 노출되는 정보는 공연명과 가격
   // 예매 사이트에서 넘겨받은 데이터
@@ -22,7 +25,7 @@ function Payment() {
         name: name,
         amount: 100,
         buyer_email: "gildong@gmail.com",
-        buyer_name: "홍길동",
+        buyer_name: loginInfo.nickName,
         buyer_tel: "010-4242-4242",
         buyer_addr: "서울특별시 강남구 신사동",
         buyer_postcode: "01181",
