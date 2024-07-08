@@ -48,7 +48,8 @@ $ npm run dev
 
 
 ## 📺 화면 구성 및 주요 기능
-[티켓 온보딩 시연 영상](http://www.example.com)
+[티켓 온보딩 시연 영상](https://www.youtube.com/watch?v=QWxK0tgqDms)
+
 * **로그인 페이지**
 ![login](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/ee338976-1ef5-47b1-b05a-a06534bd2de4)  
 OAuth 기반 소셜 로그인 지원 및 회원가입, 계정 정보 찾기  
