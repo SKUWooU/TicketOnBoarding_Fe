@@ -14,7 +14,7 @@ Kopis 와 연계된 141개의 예매처, 공연시설 및 기획제작사들이 
 * 역할분배  
     컴퓨터공학과 19 김온유 : 기획/디자인 및 프론트엔드  
     컴퓨터공학과 18 박건우 : 백엔드 및 인프라 구축
-
+*[시연 영상 보기](http://www.example.com)
 
 ## 시작 가이드
 #### Frontend Requirements
@@ -48,24 +48,24 @@ $ npm run dev
 
 
 ## 📺 화면 구성 및 주요 기능
-
-* 로그인 페이지
+[티켓 온보딩 시연 영상](http://www.example.com)
+* **로그인 페이지**
 ![login](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/ee338976-1ef5-47b1-b05a-a06534bd2de4)  
 OAuth 기반 소셜 로그인 지원 및 회원가입, 계정 정보 찾기  
 
-* 메인페이지, 장르별, 지역별 상세 탐색 (Nav Bar)  
+* **메인페이지, 장르별, 지역별 상세 탐색 (Nav Bar)**
 ![landing](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/aa7b7039-6912-44f1-9143-30d27b2fa761)  
 Card Design Component를 통한 공연 정보 전달  
 유저들이 부여한 평점 기반 상위 8 개의 공연 (Horizontal Scroll) 정보 제공  
 Md's Pick 으로 선정된 4 개의 공연 정보 제공
 
-* 공연 상세  
+* **공연 상세** 
 ![detail](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/c81a5b64-68aa-4879-89de-091ce311bf49)  
 실제 공연의 데이터 ( 포스터, 상세 정보, 실제 공연 장소 - kakaopMap 기반) 제공  
 ![detail2](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/f2756d60-745b-4275-8f10-19a91327a2cd)  
 사용자들의 평점 및 한줄평  작성 및 조회 기능 제공 
 
-* 결제 관련  
+* **결제 관련**  
 ![payment](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/174c4691-595b-49fb-ab8e-8a675c395658)  
 ![process](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/d5bc2dc9-4f36-41de-93f5-38ee25dce116)  
 실제 공연의 공연일 기반, 좌석 선택 및 결제 기능 제공.  
@@ -73,22 +73,22 @@ Md's Pick 으로 선정된 4 개의 공연 정보 제공
 아임포트 Api - 카카오 및 네이버 페이 가상 결제 동작 확인   
 
 
-* 마이 페이지  
+* **마이 페이지**  
 ![mypage](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/7d3e16c3-0ca9-4161-bf05-46a99a715011)  
 로그인 상태 판별 이후 (Context API 를 통한 전역 State 관리) 간단한 기능 제공
 
-* 마이 페이지 : 티켓 관련 클레임 핸들링   
+* **마이 페이지 : 티켓 관련 클레임 핸들링**   
 ![handling](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/06575e8a-de47-4a51-9848-3746735d856e)  
  예매한 티켓 조회, 환불 신청 및 환불 완료된 티켓 정보 제공 
 
-* 관리자 페이지  
+* **관리자 페이지**  
 ![adminpage](https://github.com/SKUWooU/TicketOnBoarding_Fe/assets/108880488/bb66c0ea-6574-469d-b193-faabcaa7f83b)  
 DB에 적재된 공연 데이터의 전체 조회 및 삭제 기능 구현(Md's Pick 선정 및 평균 평점 확인 가능)  
 Input Value Onchange 를 통한 특정 공연 검색  
 가입된 전체 사용자의 정보 조회  
 플랫폼 내부의 전체 예매 조회 및 유저의 환불 요청에 관한 핸들링 가능 
 
-* 그 외  
+* **그 외**  
  ➕ Google DialogFlow를 이용한 사용자 클레임 핸들링 및 기본적인 정보 전달의 Chatbot 구현 
 
 ## 시스템 구성도 
