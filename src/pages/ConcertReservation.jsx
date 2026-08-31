@@ -2,14 +2,19 @@ import Header from "../components/MainHeader";
 import Footer from "../components/MainFooter";
 import style from "../styles/ConcertDetail.module.scss";
 import Btn from "../components/LoginBtn";
+import SeatSelectionGrid from "../components/SeatSelectionGrid";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosBackend from "../AxiosConfig";
 import { useContext } from "react";
 import AuthContext from "../components/AuthContext";
 
-import { Grid, Paper } from "@mui/material";
+import {
+  SEAT_AVAILABILITY,
+  isSeatSelectable,
+  mapSeatResponseToLayout,
+} from "../utils/seatAvailability";
 
 // MUIX DateCalendar를 위한 import 구문
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -20,6 +25,22 @@ import "dayjs/locale/ko";
 dayjs.locale("ko");
 
 import kakaoPay from "../assets/kakaoPay.svg";
+
+const INITIAL_SEAT_LAYOUT = [
+  ["A1", "A2", null, "A3", "A4", "A5", "A6", null, "A7", "A8"],
+  ["B1", "B2", null, "B3", "B4", "B5", "B6", null, "B7", "B8"],
+  ["C1", "C2", null, "C3", "C4", "C5", "C6", null, "C7", "C8"],
+].map((row) =>
+  row.map((seatNumber) =>
+    seatNumber
+      ? {
+          id: seatNumber,
+          availability: SEAT_AVAILABILITY.UNAVAILABLE,
+          holdExpiresAt: null,
+        }
+      : null,
+  ),
+);
 
 function ConcertReservation() {
   const [concertDetail, setConcertDetail] = useState({});
@@ -36,19 +57,6 @@ function ConcertReservation() {
   5. seatList: null
   6. startTime: "17:00:00"
   */
-  const [availableSeat, setAvailableSeat] = useState([]);
-  // 해당 시간의 좌석 정보 API response sTATE
-
-  /* 
-  array의 형태 
-  E.G ) [0] 번 index = A1이라고 할 때
-
-  [0] : {seatId: 1, seatNumber: 'A1', reserved: true}
-  [1] : {seatId: 2, seatNumber: 'A2', reserved: false}
-
-  단 seatId 는 일련 번호와 같은 느낌으로 좌석의 수인 1~24 고정이 아님. 
-  */
-
   const [selectedDatePerformances, setSelectedDatePerformances] = useState([]);
 
   const [selectedPerformance, setSelectedPerformance] = useState(null);
@@ -56,6 +64,7 @@ function ConcertReservation() {
   const [dateChosen, setDateChosen] = useState(null);
   //선택된 날짜
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const seatRequestSequence = useRef(0);
 
   const navigate = useNavigate();
 
@@ -66,63 +75,19 @@ function ConcertReservation() {
   // 가격 고정
   const totalPrice = price * selectedSeats.length;
 
-  const [seats, setSeats] = useState([
-    [
-      { id: "A1", status: "available" },
-      { id: "A2", status: "available" },
-      null,
-      { id: "A3", status: "available" },
-      { id: "A4", status: "available" },
-      { id: "A5", status: "available" },
-      { id: "A6", status: "available" },
-      null,
-      { id: "A7", status: "available" },
-      { id: "A8", status: "available" },
-    ],
-    [
-      { id: "B1", status: "available" },
-      { id: "B2", status: "available" },
-      null,
-      { id: "B3", status: "available" },
-      { id: "B4", status: "available" },
-      { id: "B5", status: "available" },
-      { id: "B6", status: "available" },
-      null,
-      { id: "B7", status: "available" },
-      { id: "B8", status: "available" },
-    ],
-    [
-      { id: "C1", status: "available" },
-      { id: "C2", status: "available" },
-      null,
-      { id: "C3", status: "available" },
-      { id: "C4", status: "available" },
-      { id: "C5", status: "available" },
-      { id: "C6", status: "available" },
-      null,
-      { id: "C7", status: "available" },
-      { id: "C8", status: "available" },
-    ],
-  ]);
+  const [seats, setSeats] = useState(INITIAL_SEAT_LAYOUT);
 
   const handleSeatClick = (seat) => {
     if (!dateChosen || !selectedPerformance) return;
     // 날짜와 시간이 선택되지 않았으면 클릭 무시
 
-    if (seat.status === "reserved") return;
-    // 예약된 자리일 경우 좌석 선택 불가
+    if (!isSeatSelectable(seat)) return;
 
-    if (selectedSeats.includes(seat.id)) {
-      //selectedSeates(배열) : 선택된 좌석으로 이루어짐. includes - 특정 요소 포함
-      setSelectedSeats(selectedSeats.filter((s) => s !== seat.id));
-      //filter 로 새로운 좌석들만으로 배열 재구성
-    } else {
-      setSelectedSeats([...selectedSeats, seat.id]);
-      //스프레드 문법 [기존의 배열, 추가할 항목] : 배열 수정
-    }
-
-    seat.status = seat.status === "selected" ? "available" : "selected";
-    // seat.status <- ( 삼항조건식의 결과를 할당 하는 형태 )
+    setSelectedSeats((currentSeats) =>
+      currentSeats.includes(seat.id)
+        ? currentSeats.filter((seatNumber) => seatNumber !== seat.id)
+        : [...currentSeats, seat.id],
+    );
   };
 
   // 공연 상세 정보 Axios.Get
@@ -131,7 +96,6 @@ function ConcertReservation() {
       .get(`/main/detail/${concertID}`)
       .then((response) => {
         setConcertDetail(response.data);
-        console.log(response);
       })
       .catch((err) => {
         alert("Axios 통신에 실패하였습니다.\n" + err);
@@ -144,7 +108,6 @@ function ConcertReservation() {
       .get(`/main/detail/${concertID}/calendar`)
       .then((response) => {
         setAvailableDates(response.data); // 날짜 데이터를 상태에 저장
-        console.log(response.data);
       })
       .catch((err) => {
         alert("Axios 통신에 실패하였습니다.\n" + err);
@@ -154,41 +117,30 @@ function ConcertReservation() {
   const handlePerformanceClick = (performance) => {
     //performance는 달력에서 특정 날짜 선택 -> 특정 시간 선택 시의 이벤트 핸들러
     if (selectedPerformance === performance) {
+      seatRequestSequence.current += 1;
       setSelectedPerformance(null); // 같은 공연 선택 -> 선택 취소
+      setSelectedSeats([]);
+      setSeats(INITIAL_SEAT_LAYOUT);
     } else {
       setSelectedPerformance(performance);
+      setSelectedSeats([]);
+      setSeats(INITIAL_SEAT_LAYOUT);
+      const requestSequence = ++seatRequestSequence.current;
 
       // 해당 공연의 특정 시간대를 ID로 get 호출 -> 공연 시간대 출력
       axiosBackend
         .get(`/main/detail/${concertID}/calendar/${performance.id}`)
         .then((response) => {
+          if (requestSequence !== seatRequestSequence.current) return;
+
           const seatData = response.data;
-          // Api Response를 저장한 이후에
-          const updatedSeats = seats.map((row) =>
-            // 해당하는 seat를 돌면서 순회 -> seatNumber 와 seatId 매핑
-            row.map((seat) => {
-              if (seat) {
-                const foundSeat = seatData.find(
-                  (s) => s.seatNumber === seat.id,
-                );
-                return foundSeat
-                  ? //매핑한 결과를 토대로
-                    {
-                      ...seat,
-                      status: foundSeat.reserved ? "reserved" : "available",
-                      //reserved 혹은 available 판단해서 스타일 부여
-                    }
-                  : seat;
-              }
-              return seat;
-            }),
-          );
-          setAvailableSeat(seatData);
-          setSeats(updatedSeats);
-          console.log(response.data);
-          console.log(availableSeat);
+          setSeats(mapSeatResponseToLayout(INITIAL_SEAT_LAYOUT, seatData));
         })
         .catch((err) => {
+          if (requestSequence !== seatRequestSequence.current) return;
+
+          setSelectedSeats([]);
+          setSeats(INITIAL_SEAT_LAYOUT);
           alert("Axios 통신에 실패하였습니다.\n" + err);
         });
     }
@@ -258,7 +210,11 @@ function ConcertReservation() {
   };
 
   const handleDateChange = (newValue) => {
+    seatRequestSequence.current += 1;
     setDateChosen(newValue);
+    setSelectedPerformance(null);
+    setSelectedSeats([]);
+    setSeats(INITIAL_SEAT_LAYOUT);
     const formattedDate = dayjs(newValue).format("YYYY-MM-DD");
 
     // 선택된 날짜에 해당하는 공연 시간 가져오기
@@ -429,61 +385,11 @@ function ConcertReservation() {
                   "시 공연"
                 : "먼저 날짜와 시간을 선택해주세요!"}
             </p>
-            <Grid
-              container
-              spacing={1}
-              justifyContent="center"
-              className={style.gridContainer}
-            >
-              {seats.map((row, rowIndex) => (
-                <Grid
-                  container
-                  item
-                  spacing={1}
-                  justifyContent="center"
-                  key={rowIndex}
-                >
-                  {row.map((seat, seatIndex) => (
-                    <Grid item key={seatIndex}>
-                      {seat ? (
-                        <Paper
-                          className={`${style.seat} ${style[seat.status]} ${
-                            selectedSeats.includes(seat.id)
-                              ? style.selected
-                              : ""
-                          }`}
-                          onClick={() => handleSeatClick(seat)}
-                        >
-                          {seat.id}
-                        </Paper>
-                      ) : (
-                        <div className={style.spacer}></div>
-                      )}
-                    </Grid>
-                  ))}
-                </Grid>
-              ))}
-            </Grid>
-            <div className={style.statusContainer}>
-              <div className={style.statusItem}>
-                <Paper
-                  className={`${style.seat} ${style.statusAvailable}`}
-                ></Paper>
-                <p className={style.infoText}>선택 가능</p>
-              </div>
-              <div className={style.statusItem}>
-                <Paper
-                  className={`${style.seat} ${style.statusReserved}`}
-                ></Paper>
-                <p className={style.infoText}>예약 불가</p>
-              </div>
-              <div className={style.statusItem}>
-                <Paper
-                  className={`${style.seat} ${style.statusSelected}`}
-                ></Paper>
-                <p className={style.infoText}>선택 좌석</p>
-              </div>
-            </div>
+            <SeatSelectionGrid
+              seats={seats}
+              selectedSeats={selectedSeats}
+              onSeatClick={handleSeatClick}
+            />
             <p className={style.seatsSelect}>
               {selectedSeats.length
                 ? "선택한 좌석 수 : " +
