@@ -1,0 +1,29 @@
+# 작업 진행 기록
+
+이 문서는 Frontend 저장소의 완료·진행 중 Issue와 검증 상태를 기록하는 단일 진행 상태 원본입니다. Backend 작업은 Backend 저장소의 문서를 원본으로 사용하고 필요한 링크만 교차 기록합니다.
+
+## 저장소 기준선
+
+| 저장소 | 기준 Branch | 조사 기준 commit |
+| --- | --- | --- |
+| [TicketOnBoarding_Fe](https://github.com/SKUWooU/TicketOnBoarding_Fe) | `main` | `1f9678be7a3a66ec610c6ef4ea335e9d6f5cbafd` |
+| [TicketOnBoarding_Be](https://github.com/SKUWooU/TicketOnBoarding_Be) | `main` | `5e09a830ba1f81d12417f7c9952cd5d22c8a8e66` |
+
+## 진행 중
+
+### Frontend Issue #2 — 개선 기준선과 검증 환경 구성
+
+- Issue: [#2](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/2)
+- Branch: `chore/2-frontend-improvement-baseline`
+- PR: [#3](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/3)
+- 상태: 구현·로컬 검증 완료, Reviewer 검토 대기
+- 계획 승인: 완료
+- 확인된 사실: production build는 성공하지만 단일 JS chunk 552.07kB 경고가 있고, 기존 lint는 98 errors·5 warnings로 실패한다. 테스트·CI·`.github` 템플릿은 없었다.
+- 예매 흐름: 24석을 화면에 하드코딩하고 선택 상태를 React 메모리에만 보관한다. 외부 결제 성공 callback 이후 legacy 예약 API를 호출하며 Backend의 점유·만료·검증 결제·멱등 계약은 사용하지 않는다.
+- 범위: Backend와 동일한 Issue/PR 템플릿, 최소 테스트·CI, 빌드·lint·dependency audit와 예매 흐름 기준선, 후속 BACKLOG
+- 제외: 실제 결제·지도·Backend 호출, 좌석 점유 연동, 결제 흐름 교체, 기존 lint 전체 수정, dependency 강제 upgrade, README 전면 개편
+- 검증: clean `npm.cmd ci`, Vitest 1 file·1 test, production build 통과. 기존 lint는 수정 전후 동일한 98 errors·5 warnings이며 CI에서 non-blocking 기준선으로 실행한다. `npm audit --omit=dev`는 11건을 보고해 후속 호환 upgrade 대상으로 분리했다.
+
+## 완료
+
+- 아직 없음
