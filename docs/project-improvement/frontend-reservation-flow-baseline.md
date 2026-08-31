@@ -10,7 +10,7 @@ Backend에서 좌석 점유·만료, 검증 결제와 멱등성 계약을 구현
 - Axios, MUI·MUI X, Sass, styled-components
 - Context API 기반 로그인 상태
 - 브라우저에서 Kakao Map과 아임포트 스크립트를 동적 로드
-- Vercel SPA rewrite 설정은 남아 있으나 현재 배포는 중단된 상태
+- 조사 당시 Vercel SPA rewrite와 종료된 Backend proxy 설정이 남아 있었으며, Git 연결 해제 후 Issue #4에서 제거했다.
 
 ## 3. 현재 예매 흐름
 
@@ -69,3 +69,4 @@ audit 결과에는 axios·react-router 계열과 transitive dependency가 포함
 - [Backend Issue #63](https://github.com/SKUWooU/TicketOnBoarding_Be/issues/63)
 - [Backend Issue #65](https://github.com/SKUWooU/TicketOnBoarding_Be/issues/65)
 - [개선 근거 연결표](EVIDENCE_MAP.md)
+- [로컬 우선 검증과 공개 배포 보류 결정](adr/0001-local-first-deployment-deferred.md)
