@@ -17,7 +17,7 @@
     "@mui/material": "^5.15.19",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@mui/x-date-pickers": "^7.6.1",
-    "axios": "^1.6.8",
+    "axios": "^1.20.0",
     "canvas-confetti": "^1.9.3",
     "dayjs": "^1.11.11",
     "pretendard": "^1.3.9",
@@ -27,10 +27,10 @@
     "react-horizontal-scrolling-menu": "^7.1.1",
     "react-icons": "^5.2.1",
     "react-paginate": "^8.2.0",
-    "react-router-dom": "^6.23.1",
+    "react-router-dom": "^6.30.6",
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.4.6",
@@ -45,7 +45,7 @@
     "jsdom": "24.1.3",
     "prettier": "^3.2.5",
     "sass": "^1.77.1",
-    "vite": "^5.2.0",
+    "vite": "^5.4.21",
     "vitest": "1.6.1"
   }
 }

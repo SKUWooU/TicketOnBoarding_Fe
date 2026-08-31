@@ -11,19 +11,34 @@
 
 ## 진행 중
 
+### Frontend Issue #6 — 운영 의존성 취약점 호환 업그레이드
+
+- Issue: [#6](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/6)
+- PR: [#7](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/7)
+- Branch: `chore/6-compatible-dependency-security-upgrade`
+- 상태: 호환 버전 적용·로컬 검증·PR #7 Frontend CI 완료, Reviewer 검토 중
+- 계획 승인: 완료
+- 변경: Axios 1.20.0, React Router 6.30.6, styled-components 6.5.3, Vite 5.4.21과 non-force transitive fix를 적용했다.
+- 중간 결과: 운영 audit 11건(moderate 4·high 6·critical 1)에서 React Router 6.x moderate 2건으로 감소했다. 전체 audit은 23건에서 6건으로 감소했으며 잔여 fix는 Router 7·Vite 8·Vitest 4 major 전환을 요구한다.
+- 범위: 현재 major 내 direct·transitive dependency, audit 전후, 네트워크 없는 호환성 test, clean install·build·lint·CI와 근거 문서
+- 제외: `audit fix --force`, React 19, Router 7, MUI 9, Vite 8, Vitest 4, lint 전체 수정, 예매 기능 변경
+- 검증: clean `npm.cmd ci`, Vitest 2 files·3 tests, Vite 5.4.21 production build와 PR #7 Frontend CI 통과. 운영 audit은 moderate 2건만 남고 기존 lint는 98 errors·5 warnings로 증가하지 않았다. JS bundle은 552.11kB에서 567.56kB로 증가해 후속 성능 기준선에 한계로 남긴다.
+
+## 완료
+
 ### Frontend Issue #4 — Vercel 자동 배포와 레거시 도메인 설정 정리
 
 - Issue: [#4](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/4)
 - Branch: `chore/4-remove-legacy-vercel-config`
 - PR: [#5](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/5)
-- 상태: 저장소 설정 제거·로컬 검증·Frontend CI·Vercel check 부재 확인 완료, Reviewer Blocking 수정·재검토 준비
+- squash commit: `7c96eae30f57030f87285fe07a866a1390be96ab`
+- 상태: 완료
 - 계획 승인: 완료
 - 외부 조치: 사용자가 Vercel Dashboard에서 Frontend 프로젝트의 Git repository 연결을 해제했다. Vercel 프로젝트·배포 기록·도메인 계정·환경변수 삭제는 수행하지 않았다.
 - 범위: `vercel.json`, `vercel.config` 제거, 로컬 test·build·CI, 새 PR의 Vercel check 부재 확인, 배포 보류와 재도입 조건 기록
 - 제외: 도메인 자동 갱신·DNS, Backend 인프라, README 전면 개편, 새 배포 환경
 - 검증: Vitest 1 file·1 test, production build와 PR #5 Frontend CI 통과. 애플리케이션 코드는 변경하지 않았고 PR #3과 달리 PR #5 check 목록에 Vercel Preview·deployment가 생성되지 않아 Git disconnect 반영을 확인했다.
-
-## 완료
+- Reviewer: 최종 HEAD `777e5df5b3299abdb48353feab54b3878db6b219`, Blocking·Non-blocking 없음, `MERGE_READY: YES`
 
 ### Frontend Issue #2 — 개선 기준선과 검증 환경 구성
 
