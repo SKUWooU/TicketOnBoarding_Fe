@@ -264,15 +264,18 @@
   }
 }
 
-.seatExpiry {
-  font-size: 9px;
-  font-weight: 700;
-}
-
 .holdNotice {
   margin: 8px 0 0;
   color: #5f5965;
   font-size: 13px;
+  text-align: center;
+}
+
+.holdFeedback {
+  min-height: 20px;
+  margin: 10px 0 0;
+  color: #5b2a86;
+  font-size: 14px;
   text-align: center;
 }
 
@@ -355,6 +358,12 @@
 .selectedDate {
   color: #bbbbbb;
   font-size: 20px;
+}
+
+.holdCountdown {
+  color: #6e30bf;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 .payment {

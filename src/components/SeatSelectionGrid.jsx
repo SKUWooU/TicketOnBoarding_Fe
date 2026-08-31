@@ -1,5 +1,4 @@
 import { Grid, Paper } from "@mui/material";
-import dayjs from "dayjs";
 import PropTypes from "prop-types";
 
 import { SEAT_AVAILABILITY, isSeatSelectable } from "../utils/seatAvailability";
@@ -11,7 +10,7 @@ const STATUS_PRESENTATION = {
     styleName: "available",
   },
   [SEAT_AVAILABILITY.HELD]: {
-    label: "임시 점유",
+    label: "다른 사용자가 선택 중",
     styleName: "held",
   },
   [SEAT_AVAILABILITY.RESERVED]: {
@@ -24,17 +23,10 @@ const STATUS_PRESENTATION = {
   },
 };
 
-function formatHoldExpiry(holdExpiresAt) {
-  if (!holdExpiresAt) return null;
-
-  const expiry = dayjs(holdExpiresAt);
-  return expiry.isValid() ? expiry.format("HH:mm") : null;
-}
-
 function getSeatPresentation(seat, selected) {
   if (selected) {
     return {
-      label: "선택 좌석",
+      label: "내가 선택한 좌석",
       styleName: "selected",
     };
   }
@@ -45,16 +37,12 @@ function getSeatPresentation(seat, selected) {
   );
 }
 
-function getSeatAccessibleLabel(seat, presentation) {
-  const expiry =
-    seat.availability === SEAT_AVAILABILITY.HELD
-      ? formatHoldExpiry(seat.holdExpiresAt)
-      : null;
-
-  return `${seat.id}, ${presentation.label}${expiry ? `, ${expiry}까지` : ""}`;
-}
-
-function SeatSelectionGrid({ seats, selectedSeats, onSeatClick }) {
+function SeatSelectionGrid({
+  seats,
+  selectedSeats,
+  interactionDisabled = false,
+  onSeatClick,
+}) {
   return (
     <>
       <Grid
@@ -62,6 +50,7 @@ function SeatSelectionGrid({ seats, selectedSeats, onSeatClick }) {
         spacing={1}
         justifyContent="center"
         className={style.gridContainer}
+        aria-busy={interactionDisabled}
       >
         {seats.map((row, rowIndex) => (
           <Grid
@@ -82,33 +71,24 @@ function SeatSelectionGrid({ seats, selectedSeats, onSeatClick }) {
 
               const selected = selectedSeats.includes(seat.id);
               const presentation = getSeatPresentation(seat, selected);
-              const accessibleLabel = getSeatAccessibleLabel(
-                seat,
-                presentation,
-              );
-              const holdExpiry =
-                seat.availability === SEAT_AVAILABILITY.HELD
-                  ? formatHoldExpiry(seat.holdExpiresAt)
-                  : null;
+              const accessibleLabel = `${seat.id}, ${presentation.label}`;
 
               return (
                 <Grid item key={seat.id}>
                   <Paper
                     component="button"
                     type="button"
-                    disabled={!isSeatSelectable(seat)}
+                    disabled={
+                      interactionDisabled ||
+                      (!selected && !isSeatSelectable(seat))
+                    }
                     aria-pressed={selected}
                     aria-label={accessibleLabel}
                     title={accessibleLabel}
                     className={`${style.seat} ${style[presentation.styleName]}`}
                     onClick={() => onSeatClick(seat)}
                   >
-                    <span>{seat.id}</span>
-                    {holdExpiry && (
-                      <span className={style.seatExpiry} aria-hidden="true">
-                        {holdExpiry}
-                      </span>
-                    )}
+                    {seat.id}
                   </Paper>
                 </Grid>
               );
@@ -120,9 +100,9 @@ function SeatSelectionGrid({ seats, selectedSeats, onSeatClick }) {
       <div className={style.statusContainer} aria-label="좌석 상태 안내">
         {[
           ["statusAvailable", "선택 가능"],
-          ["statusHeld", "임시 점유"],
+          ["statusHeld", "다른 사용자 선택 중"],
           ["statusReserved", "예약 완료"],
-          ["statusSelected", "선택 좌석"],
+          ["statusSelected", "내가 선택"],
         ].map(([statusStyle, label]) => (
           <div className={style.statusItem} key={statusStyle}>
             <span
@@ -134,8 +114,7 @@ function SeatSelectionGrid({ seats, selectedSeats, onSeatClick }) {
         ))}
       </div>
       <p className={style.holdNotice}>
-        임시 점유 좌석은 표시된 만료 시각 이후 서버 재조회 결과에 따라 선택할 수
-        있습니다.
+        다른 사용자의 정확한 점유 만료 시각은 표시하지 않습니다.
       </p>
     </>
   );
@@ -144,6 +123,7 @@ function SeatSelectionGrid({ seats, selectedSeats, onSeatClick }) {
 SeatSelectionGrid.propTypes = {
   seats: PropTypes.arrayOf(PropTypes.array).isRequired,
   selectedSeats: PropTypes.arrayOf(PropTypes.string).isRequired,
+  interactionDisabled: PropTypes.bool,
   onSeatClick: PropTypes.func.isRequired,
 };
 

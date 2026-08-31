@@ -3,8 +3,9 @@ import Footer from "../components/MainFooter";
 import style from "../styles/ConcertDetail.module.scss";
 import Btn from "../components/LoginBtn";
 import SeatSelectionGrid from "../components/SeatSelectionGrid";
+import useSeatHoldManager from "../hooks/useSeatHoldManager";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosBackend from "../AxiosConfig";
 import { useContext } from "react";
@@ -63,7 +64,6 @@ function ConcertReservation() {
   // 선택된 공연의 시간
   const [dateChosen, setDateChosen] = useState(null);
   //선택된 날짜
-  const [selectedSeats, setSelectedSeats] = useState([]);
   const seatRequestSequence = useRef(0);
 
   const navigate = useNavigate();
@@ -71,23 +71,56 @@ function ConcertReservation() {
   const { isLoggedIn } = useContext(AuthContext);
   const { concertID } = useParams();
 
+  const [seats, setSeats] = useState(INITIAL_SEAT_LAYOUT);
+
+  const loadSeats = useCallback(
+    async (performance) => {
+      const requestSequence = ++seatRequestSequence.current;
+
+      try {
+        const response = await axiosBackend.get(
+          `/main/detail/${concertID}/calendar/${performance.id}`,
+        );
+        if (requestSequence !== seatRequestSequence.current) return false;
+
+        setSeats(mapSeatResponseToLayout(INITIAL_SEAT_LAYOUT, response.data));
+        return true;
+      } catch (error) {
+        if (requestSequence !== seatRequestSequence.current) return false;
+
+        setSeats(INITIAL_SEAT_LAYOUT);
+        return false;
+      }
+    },
+    [concertID],
+  );
+
+  const {
+    countdown,
+    holdMessage,
+    holdPending,
+    keepForPayment,
+    ownedHolds,
+    releaseAll,
+    selectedSeats,
+    toggleSeat,
+  } = useSeatHoldManager({
+    concertId: concertID,
+    isLoggedIn,
+    navigate,
+    selectedPerformance,
+    refreshSeats: loadSeats,
+  });
+
   const price = 30000;
   // 가격 고정
   const totalPrice = price * selectedSeats.length;
 
-  const [seats, setSeats] = useState(INITIAL_SEAT_LAYOUT);
-
-  const handleSeatClick = (seat) => {
+  const handleSeatClick = async (seat) => {
     if (!dateChosen || !selectedPerformance) return;
-    // 날짜와 시간이 선택되지 않았으면 클릭 무시
+    if (!ownedHolds[seat.id] && !isSeatSelectable(seat)) return;
 
-    if (!isSeatSelectable(seat)) return;
-
-    setSelectedSeats((currentSeats) =>
-      currentSeats.includes(seat.id)
-        ? currentSeats.filter((seatNumber) => seatNumber !== seat.id)
-        : [...currentSeats, seat.id],
-    );
+    await toggleSeat(seat);
   };
 
   // 공연 상세 정보 Axios.Get
@@ -114,35 +147,20 @@ function ConcertReservation() {
       });
   }, [concertID]);
 
-  const handlePerformanceClick = (performance) => {
+  const handlePerformanceClick = async (performance) => {
+    if (holdPending) return;
+
     //performance는 달력에서 특정 날짜 선택 -> 특정 시간 선택 시의 이벤트 핸들러
     if (selectedPerformance === performance) {
+      await releaseAll();
       seatRequestSequence.current += 1;
       setSelectedPerformance(null); // 같은 공연 선택 -> 선택 취소
-      setSelectedSeats([]);
       setSeats(INITIAL_SEAT_LAYOUT);
     } else {
+      await releaseAll();
       setSelectedPerformance(performance);
-      setSelectedSeats([]);
       setSeats(INITIAL_SEAT_LAYOUT);
-      const requestSequence = ++seatRequestSequence.current;
-
-      // 해당 공연의 특정 시간대를 ID로 get 호출 -> 공연 시간대 출력
-      axiosBackend
-        .get(`/main/detail/${concertID}/calendar/${performance.id}`)
-        .then((response) => {
-          if (requestSequence !== seatRequestSequence.current) return;
-
-          const seatData = response.data;
-          setSeats(mapSeatResponseToLayout(INITIAL_SEAT_LAYOUT, seatData));
-        })
-        .catch((err) => {
-          if (requestSequence !== seatRequestSequence.current) return;
-
-          setSelectedSeats([]);
-          setSeats(INITIAL_SEAT_LAYOUT);
-          alert("Axios 통신에 실패하였습니다.\n" + err);
-        });
+      await loadSeats(performance);
     }
     // 특정 시간대 선택 시 -> 해당 공연의 특정 시간대를 ID로 get 호출
     // 특정 시간대의 빈 좌석 조회
@@ -195,7 +213,10 @@ function ConcertReservation() {
     ["공연 장르명", concertDetail.genre],
   ];
 
-  function goBack() {
+  async function goBack() {
+    if (holdPending) return;
+
+    await releaseAll();
     navigate(`/concertDetail/${concertID}`);
   }
 
@@ -209,11 +230,13 @@ function ConcertReservation() {
     return availableDates.some((item) => item.date === formattedDate);
   };
 
-  const handleDateChange = (newValue) => {
+  const handleDateChange = async (newValue) => {
+    if (holdPending) return;
+
+    await releaseAll();
     seatRequestSequence.current += 1;
     setDateChosen(newValue);
     setSelectedPerformance(null);
-    setSelectedSeats([]);
     setSeats(INITIAL_SEAT_LAYOUT);
     const formattedDate = dayjs(newValue).format("YYYY-MM-DD");
 
@@ -239,6 +262,7 @@ function ConcertReservation() {
       return;
     }
 
+    keepForPayment();
     const reservationData = handleReservation();
     navigate("/payment/kakao", {
       state: {
@@ -256,6 +280,7 @@ function ConcertReservation() {
       return;
     }
 
+    keepForPayment();
     const reservationData = handleReservation();
     navigate("/payment/inosis", {
       state: {
@@ -388,8 +413,12 @@ function ConcertReservation() {
             <SeatSelectionGrid
               seats={seats}
               selectedSeats={selectedSeats}
+              interactionDisabled={holdPending}
               onSeatClick={handleSeatClick}
             />
+            <p className={style.holdFeedback} aria-live="polite">
+              {holdPending ? "좌석 상태를 처리하고 있습니다." : holdMessage}
+            </p>
             <p className={style.seatsSelect}>
               {selectedSeats.length
                 ? "선택한 좌석 수 : " +
@@ -416,22 +445,28 @@ function ConcertReservation() {
                 : ""}
             </p>
 
-            <div className={style.payment}>
-              <p className={style.afterChoose}>결제 수단을 선택해주세요</p>
-              <div className={style.paymentBtnContainer}>
-                <img
-                  className={style.kakaoPay}
-                  src={kakaoPay}
-                  alt="카카오페이 이미지"
-                  onClick={paymentKakao}
-                />
-                <Btn
-                  className="reservation"
-                  buttonText="일반 결제"
-                  onClick={paymentDefault}
-                />
+            <p className={style.holdCountdown} role="timer">
+              결제까지 남은 시간 {countdown}
+            </p>
+
+            {!holdPending && countdown !== "00:00" && (
+              <div className={style.payment}>
+                <p className={style.afterChoose}>결제 수단을 선택해주세요</p>
+                <div className={style.paymentBtnContainer}>
+                  <img
+                    className={style.kakaoPay}
+                    src={kakaoPay}
+                    alt="카카오페이 이미지"
+                    onClick={paymentKakao}
+                  />
+                  <Btn
+                    className="reservation"
+                    buttonText="일반 결제"
+                    onClick={paymentDefault}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>

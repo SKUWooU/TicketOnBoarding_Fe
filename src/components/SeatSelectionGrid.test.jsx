@@ -34,9 +34,9 @@ describe("SeatSelectionGrid", () => {
     expect(onSeatClick).toHaveBeenCalledOnce();
     expect(onSeatClick).toHaveBeenCalledWith(seats[0][0]);
     expect(
-      screen.getByRole("button", { name: "A2, 임시 점유, 12:05까지" }),
+      screen.getByRole("button", { name: "A2, 다른 사용자가 선택 중" }),
     ).toBeDisabled();
-    expect(screen.getByText("12:05")).toBeVisible();
+    expect(screen.queryByText("12:05")).not.toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "A3, 예약 완료" }),
     ).toBeDisabled();
@@ -44,23 +44,42 @@ describe("SeatSelectionGrid", () => {
       screen.getByRole("button", { name: "A4, 상태 확인 불가" }),
     ).toBeDisabled();
     expect(
-      screen.getByRole("button", { name: "A5, 임시 점유" }),
+      screen.getByRole("button", { name: "A5, 다른 사용자가 선택 중" }),
     ).toBeDisabled();
   });
 
-  it("announces a selected available seat separately", () => {
+  it("keeps an owned held seat interactive for explicit release", () => {
     render(
       <SeatSelectionGrid
         seats={seats}
-        selectedSeats={["A1"]}
+        selectedSeats={["A2"]}
         onSeatClick={vi.fn()}
       />,
     );
 
     expect(
-      screen.getByRole("button", { name: "A1, 선택 좌석" }),
+      screen.getByRole("button", { name: "A2, 내가 선택한 좌석" }),
     ).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("임시 점유")).toBeVisible();
-    expect(screen.getByText(/서버 재조회 결과/)).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "A2, 내가 선택한 좌석" }),
+    ).not.toBeDisabled();
+    expect(screen.getByText("다른 사용자 선택 중")).toBeVisible();
+    expect(screen.getByText(/정확한 점유 만료 시각/)).toBeVisible();
+  });
+
+  it("disables every seat while a hold mutation is pending", () => {
+    const { container } = render(
+      <SeatSelectionGrid
+        seats={seats}
+        selectedSeats={["A1"]}
+        interactionDisabled
+        onSeatClick={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "A1, 내가 선택한 좌석" }),
+    ).toBeDisabled();
+    expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument();
   });
 });
