@@ -40,8 +40,8 @@ vi.mock("../components/MainFooter", () => ({
 }));
 
 vi.mock("../components/LoginBtn", () => ({
-  default: ({ buttonText, onClick }) => (
-    <button type="button" onClick={onClick}>
+  default: ({ buttonText, onClick, disabled }) => (
+    <button type="button" onClick={onClick} disabled={disabled}>
       {buttonText}
     </button>
   ),
@@ -116,7 +116,19 @@ describe("ConcertReservation seat selection", () => {
     vi.clearAllMocks();
     axiosBackend.delete.mockResolvedValue({ status: 204 });
     axiosBackend.post.mockImplementation((...requestArguments) => {
+      const url = requestArguments[0];
       const request = requestArguments[1];
+      if (url.endsWith("/checkouts")) {
+        return Promise.resolve({
+          data: {
+            merchantUid: "checkout-1",
+            amount: 45000,
+            expiresAt: "2030-01-01T12:05:00",
+            status: "READY",
+          },
+        });
+      }
+
       return Promise.resolve({
         data: {
           seats: request.seatNumberList.map((seatNumber, index) => ({
@@ -381,15 +393,35 @@ describe("ConcertReservation seat selection", () => {
     ).toBeVisible();
 
     fireEvent.click(screen.getByRole("button", { name: "일반 결제" }));
-    expect(navigate).toHaveBeenCalledWith(
-      "/payment/inosis",
-      expect.objectContaining({
-        state: expect.objectContaining({
-          concertID: "concert-1",
-          reservationData: expect.objectContaining({
-            concertTimeId: 1,
-            seatNumberList: ["A1"],
+    await waitFor(() =>
+      expect(navigate).toHaveBeenCalledWith(
+        "/payment",
+        expect.objectContaining({
+          state: expect.objectContaining({
+            concertId: "concert-1",
+            checkout: expect.objectContaining({
+              amount: 45000,
+              merchantUid: "checkout-1",
+              status: "READY",
+            }),
+            reservationData: expect.objectContaining({
+              concertTimeId: 1,
+              seatNumberList: ["A1"],
+            }),
           }),
+        }),
+      ),
+    );
+    expect(axiosBackend.post).toHaveBeenCalledWith(
+      "/main/detail/concert-1/checkouts",
+      expect.objectContaining({
+        concertTimeId: 1,
+        seatNumberList: ["A1"],
+      }),
+      expect.objectContaining({
+        withCredentials: true,
+        headers: expect.objectContaining({
+          "Idempotency-Key": expect.stringMatching(/^checkout-/),
         }),
       }),
     );
@@ -397,5 +429,86 @@ describe("ConcertReservation seat selection", () => {
     axiosBackend.delete.mockClear();
     unmount();
     expect(axiosBackend.delete).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [409, /선택한 좌석 상태가 변경되었습니다/],
+    [410, /좌석 임시 점유가 만료되었습니다/],
+    [422, /같은 요청 키에 다른 예약 정보가 전달되었습니다/],
+    [503, /Checkout 서비스를 사용할 수 없습니다/],
+  ])(
+    "keeps checkout error %s out of the payment page",
+    async (status, message) => {
+      axiosBackend.post.mockImplementation((url, request) => {
+        if (url.endsWith("/checkouts")) {
+          return Promise.reject({ response: { status } });
+        }
+        return Promise.resolve({
+          data: {
+            seats: request.seatNumberList.map((seatNumber) => ({
+              seatNumber,
+              expiresAt: "2030-01-01T12:05:00",
+            })),
+          },
+        });
+      });
+      render(<ConcertReservation />);
+
+      expect(await screen.findByText("Fixture 공연")).toBeVisible();
+      fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+      fireEvent.click((await screen.findByText("17:00")).closest("div"));
+      fireEvent.click(
+        await screen.findByRole("button", { name: "A1, 선택 가능" }),
+      );
+      expect(
+        await screen.findByRole("button", { name: "A1, 내가 선택한 좌석" }),
+      ).toBeVisible();
+      fireEvent.click(screen.getByRole("button", { name: "일반 결제" }));
+
+      expect(await screen.findByText(message)).toBeVisible();
+      expect(navigate).not.toHaveBeenCalledWith("/payment", expect.anything());
+    },
+  );
+
+  it("reuses the checkout idempotency key when a 503 preparation is retried", async () => {
+    axiosBackend.post.mockImplementation((url, request) => {
+      if (url.endsWith("/checkouts")) {
+        return Promise.reject({ response: { status: 503 } });
+      }
+      return Promise.resolve({
+        data: {
+          seats: request.seatNumberList.map((seatNumber) => ({
+            seatNumber,
+            expiresAt: "2030-01-01T12:05:00",
+          })),
+        },
+      });
+    });
+    render(<ConcertReservation />);
+
+    expect(await screen.findByText("Fixture 공연")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+    fireEvent.click((await screen.findByText("17:00")).closest("div"));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "A1, 선택 가능" }),
+    );
+    expect(
+      await screen.findByRole("button", { name: "A1, 내가 선택한 좌석" }),
+    ).toBeVisible();
+    const paymentButton = screen.getByRole("button", { name: "일반 결제" });
+    fireEvent.click(paymentButton);
+    expect(
+      await screen.findByText(/Checkout 서비스를 사용할 수 없습니다/),
+    ).toBeVisible();
+    fireEvent.click(paymentButton);
+    await waitFor(() => {
+      const checkoutCalls = axiosBackend.post.mock.calls.filter(([url]) =>
+        url.endsWith("/checkouts"),
+      );
+      expect(checkoutCalls).toHaveLength(2);
+      expect(checkoutCalls[0][2].headers["Idempotency-Key"]).toBe(
+        checkoutCalls[1][2].headers["Idempotency-Key"],
+      );
+    });
   });
 });
