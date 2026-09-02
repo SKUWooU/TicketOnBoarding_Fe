@@ -4,6 +4,9 @@ import style from "../styles/ConcertDetail.module.scss";
 import Btn from "../components/LoginBtn";
 import SeatSelectionGrid from "../components/SeatSelectionGrid";
 import useSeatHoldManager from "../hooks/useSeatHoldManager";
+import { prepareCheckout } from "../api/checkoutApi";
+import { createIdempotencyKey } from "../utils/idempotencyKey";
+import { saveCheckoutSession } from "../utils/checkoutSession";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -65,6 +68,10 @@ function ConcertReservation() {
   const [dateChosen, setDateChosen] = useState(null);
   //선택된 날짜
   const seatRequestSequence = useRef(0);
+  const checkoutAttempt = useRef(null);
+  const checkoutInFlight = useRef(false);
+  const [checkoutPending, setCheckoutPending] = useState(false);
+  const [checkoutMessage, setCheckoutMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -199,7 +206,7 @@ function ConcertReservation() {
     return () => {
       document.head.removeChild(script);
     };
-  }, [concertDetail.la, concertDetail.lo]);
+  }, [concertDetail.la, concertDetail.lo, mapServiceKey]);
 
   if (!concertDetail.concertName) return <div>Loading...</div>;
 
@@ -256,40 +263,110 @@ function ConcertReservation() {
     };
   };
 
-  function paymentKakao() {
+  async function startCheckout(paymentMethod) {
     if (!isLoggedIn) {
       navigate("/login");
       return;
     }
 
-    keepForPayment();
+    if (
+      checkoutInFlight.current ||
+      !selectedPerformance ||
+      !selectedSeats.length
+    ) {
+      return;
+    }
+
     const reservationData = handleReservation();
-    navigate("/payment/kakao", {
-      state: {
-        amount: totalPrice,
-        name: concertDetail.concertName,
+    const fingerprint = JSON.stringify({ concertID, reservationData });
+    if (checkoutAttempt.current?.fingerprint !== fingerprint) {
+      checkoutAttempt.current = {
+        fingerprint,
+        key: createIdempotencyKey("checkout"),
+      };
+    }
+
+    checkoutInFlight.current = true;
+    setCheckoutPending(true);
+    setCheckoutMessage("");
+
+    try {
+      const checkout = await prepareCheckout(
         concertID,
         reservationData,
-      },
-    });
+        checkoutAttempt.current.key,
+      );
+
+      if (checkout.status !== "READY") {
+        const statusMessage = {
+          PAYMENT_VERIFYING:
+            "결제 확인이 진행 중입니다. 잠시 후 다시 확인해 주세요.",
+          PAYMENT_VERIFICATION_UNKNOWN:
+            "결제 결과를 확인할 수 없습니다. 다시 결제하지 말고 확인을 요청해 주세요.",
+          RESERVATION_CONFIRMED: "이미 예약이 확정된 Checkout입니다.",
+          EXPIRED:
+            "좌석 임시 점유가 만료되었습니다. 좌석을 다시 선택해 주세요.",
+        };
+        setCheckoutMessage(
+          statusMessage[checkout.status] ??
+            "Checkout 상태를 확인할 수 없습니다.",
+        );
+        return;
+      }
+
+      const checkoutSession = {
+        concertId: concertID,
+        concertName: concertDetail.concertName,
+        paymentMethod,
+        reservationData,
+        checkout,
+        checkoutKey: checkoutAttempt.current.key,
+        reservationKey: createIdempotencyKey("reservation"),
+      };
+
+      saveCheckoutSession(checkoutSession);
+      keepForPayment();
+      navigate("/payment", { state: checkoutSession });
+    } catch (error) {
+      const status = error.response?.status;
+
+      if (status === 401) {
+        navigate("/login");
+      } else if (status === 409) {
+        setCheckoutMessage(
+          "선택한 좌석 상태가 변경되었습니다. 최신 좌석을 확인해 주세요.",
+        );
+        await loadSeats(selectedPerformance);
+      } else if (status === 410) {
+        setCheckoutMessage(
+          "좌석 임시 점유가 만료되었습니다. 좌석을 다시 선택해 주세요.",
+        );
+        await loadSeats(selectedPerformance);
+      } else if (status === 422) {
+        setCheckoutMessage(
+          "같은 요청 키에 다른 예약 정보가 전달되었습니다. 좌석을 다시 선택해 주세요.",
+        );
+      } else if (status === 503) {
+        setCheckoutMessage(
+          "Checkout 서비스를 사용할 수 없습니다. 잠시 후 같은 요청으로 다시 시도해 주세요.",
+        );
+      } else {
+        setCheckoutMessage(
+          "Checkout을 준비하지 못했습니다. 다시 시도해 주세요.",
+        );
+      }
+    } finally {
+      checkoutInFlight.current = false;
+      setCheckoutPending(false);
+    }
+  }
+
+  function paymentKakao() {
+    return startCheckout("KAKAO_PAY");
   }
 
   function paymentDefault() {
-    if (!isLoggedIn) {
-      navigate("/login");
-      return;
-    }
-
-    keepForPayment();
-    const reservationData = handleReservation();
-    navigate("/payment/inosis", {
-      state: {
-        amount: totalPrice,
-        name: concertDetail.concertName,
-        concertID,
-        reservationData,
-      },
-    });
+    return startCheckout("CARD");
   }
 
   return (
@@ -419,6 +496,11 @@ function ConcertReservation() {
             <p className={style.holdFeedback} aria-live="polite">
               {holdPending ? "좌석 상태를 처리하고 있습니다." : holdMessage}
             </p>
+            <p className={style.holdFeedback} aria-live="polite">
+              {checkoutPending
+                ? "Checkout을 준비하고 있습니다."
+                : checkoutMessage}
+            </p>
             <p className={style.seatsSelect}>
               {selectedSeats.length
                 ? "선택한 좌석 수 : " +
@@ -434,7 +516,7 @@ function ConcertReservation() {
       <div className={style.summary}>
         {selectedSeats.length !== 0 && (
           <>
-            <p className={style.afterChoose}>총 결제 금액</p>
+            <p className={style.afterChoose}>예상 결제 금액</p>
             <p className={style.totalPrice}>
               {selectedSeats.length}석 일반석 : {totalPrice}원
             </p>
@@ -458,11 +540,13 @@ function ConcertReservation() {
                     src={kakaoPay}
                     alt="카카오페이 이미지"
                     onClick={paymentKakao}
+                    aria-disabled={checkoutPending}
                   />
                   <Btn
                     className="reservation"
                     buttonText="일반 결제"
                     onClick={paymentDefault}
+                    disabled={checkoutPending}
                   />
                 </div>
               </div>
