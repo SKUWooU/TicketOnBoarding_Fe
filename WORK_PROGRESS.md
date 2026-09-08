@@ -4,7 +4,7 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-현재 진행 중인 작업 없음.
+- [#21](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/21): 구역 기반 가상 좌석 탐색 및 반응형 선택 UI 연동
 
 ## 완료
 

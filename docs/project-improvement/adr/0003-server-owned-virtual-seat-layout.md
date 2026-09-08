@@ -1,6 +1,6 @@
 # ADR-0003: 가상 좌석 layout을 서버 계약으로 소유하고 구역 단위로 표시한다
 
-- 상태: Accepted
+- 상태: Accepted / Implemented
 - 일자: 2026-09-08
 
 ## 배경
@@ -25,6 +25,8 @@ Backend 좌석 응답에는 상태와 문자열 번호만 있어 Frontend가 실
 - Frontend는 선택한 구역만 렌더링하여 DOM 규모를 제한한다.
 - 좌석 번호만으로 layout을 추론하는 임시 구현은 빠르지만 계약이 숨겨지므로 선택하지 않는다.
 - 구역 추가와 layout version 변경은 Backend contract test와 Frontend fixture test를 함께 변경해야 한다.
+
+Backend Issue #85와 Frontend Issue #21에서 구역 요약·선택 구역 상세 계약 및 UI 연동을 구현했다. 구현·검증 조건은 [구역 기반 가상 좌석 탐색 UI](../sectioned-seat-layout-ui.md)에 기록한다.
 
 ## 보류한 대안
 

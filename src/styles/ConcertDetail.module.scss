@@ -148,6 +148,13 @@
   flex-direction: row;
   gap: 50px;
   justify-content: left;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.seats {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .calendarContainer {
@@ -187,6 +194,7 @@
 .seat {
   width: 40px;
   height: 40px;
+  flex: 0 0 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -325,14 +333,92 @@
   border: 1px solid #ddd;
   margin-bottom: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  min-width: 500px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.seatGridViewport {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 4px 4px 12px;
+  scrollbar-gutter: stable;
 }
 
 .gridContainer {
   margin-bottom: 20px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+  width: max-content !important;
+  min-width: 100%;
+}
+
+.seatRow {
+  display: flex;
   justify-content: center;
+  gap: 8px;
+  min-width: max-content;
+}
+
+.seatCell {
+  flex: 0 0 auto;
+}
+
+.rowLabel {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  min-width: 48px;
+  min-height: 40px;
+  background: #fff;
+  color: #5b2a86;
+  font-weight: 700;
+}
+
+.sectionSelector {
+  display: flex;
+  gap: 8px;
+  max-width: 100%;
+  padding: 4px 2px 12px;
+  overflow-x: auto;
+}
+
+.sectionButton {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+  min-height: 56px;
+  padding: 8px 12px;
+  border: 1px solid #d5d0dc;
+  border-radius: 8px;
+  background: #fff;
+  color: #404040;
+  cursor: pointer;
+
+  span {
+    font-size: 12px;
+  }
+}
+
+.sectionButtonSelected {
+  border-color: #6e30bf;
+  background: #f3eafa;
+  color: #5b2a86;
+}
+
+.layoutFeedback {
+  min-height: 20px;
+  margin: 0 0 8px;
+  color: #5f5965;
+  font-size: 13px;
+  text-align: center;
 }
 
 .summary p {
@@ -383,4 +469,65 @@
 .kakaoPay {
   text-align: right;
   width: 150px;
+}
+
+@media (max-width: 1200px) {
+  .mainContainer {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+
+  .selectionArea {
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .seats {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .mainContainer {
+    padding-right: 16px;
+    padding-left: 16px;
+    gap: 32px;
+  }
+
+  .selectionArea {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .calendarContainer,
+  .performanceCardsContainer,
+  .seats {
+    width: 100%;
+  }
+
+  .performanceCardsContainer {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+  }
+
+  .performanceCard {
+    flex: 0 0 150px;
+    width: 150px;
+  }
+
+  .screen {
+    width: min(300px, calc(100% - 24px));
+    box-sizing: border-box;
+  }
+
+  .statusContainer {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .statusItem {
+    margin-right: 0;
+  }
 }

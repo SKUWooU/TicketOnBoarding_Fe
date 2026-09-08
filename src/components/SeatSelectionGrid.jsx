@@ -1,4 +1,4 @@
-import { Grid, Paper } from "@mui/material";
+import { Paper } from "@mui/material";
 import PropTypes from "prop-types";
 
 import { SEAT_AVAILABILITY, isSeatSelectable } from "../utils/seatAvailability";
@@ -45,57 +45,61 @@ function SeatSelectionGrid({
 }) {
   return (
     <>
-      <Grid
-        container
-        spacing={1}
-        justifyContent="center"
-        className={style.gridContainer}
-        aria-busy={interactionDisabled}
-      >
-        {seats.map((row, rowIndex) => (
-          <Grid
-            container
-            item
-            spacing={1}
-            justifyContent="center"
-            key={`row-${rowIndex}`}
-          >
-            {row.map((seat, seatIndex) => {
-              if (!seat) {
-                return (
-                  <Grid item key={`spacer-${rowIndex}-${seatIndex}`}>
-                    <div className={style.spacer}></div>
-                  </Grid>
-                );
-              }
+      <div className={style.seatGridViewport} tabIndex={0}>
+        <div
+          className={style.gridContainer}
+          aria-busy={interactionDisabled}
+        >
+          {seats.map((rowData, rowIndex) => {
+            const row = Array.isArray(rowData) ? rowData : rowData.seats;
+            const rowLabel = Array.isArray(rowData) ? null : rowData.rowLabel;
+            return (
+              <div
+                key={`row-${rowIndex}`}
+                className={style.seatRow}
+              >
+                {rowLabel && <span className={style.rowLabel}>{rowLabel}</span>}
+                {row.map((seat, seatIndex) => {
+                  if (!seat) {
+                    return (
+                      <div
+                        className={style.seatCell}
+                        key={`spacer-${rowIndex}-${seatIndex}`}
+                      >
+                        <div className={style.spacer}></div>
+                      </div>
+                    );
+                  }
 
-              const selected = selectedSeats.includes(seat.id);
-              const presentation = getSeatPresentation(seat, selected);
-              const accessibleLabel = `${seat.id}, ${presentation.label}`;
+                  const selected = selectedSeats.includes(seat.id);
+                  const presentation = getSeatPresentation(seat, selected);
+                  const accessibleLabel = `${seat.id}, ${presentation.label}`;
 
-              return (
-                <Grid item key={seat.id}>
-                  <Paper
-                    component="button"
-                    type="button"
-                    disabled={
-                      interactionDisabled ||
-                      (!selected && !isSeatSelectable(seat))
-                    }
-                    aria-pressed={selected}
-                    aria-label={accessibleLabel}
-                    title={accessibleLabel}
-                    className={`${style.seat} ${style[presentation.styleName]}`}
-                    onClick={() => onSeatClick(seat)}
-                  >
-                    {seat.id}
-                  </Paper>
-                </Grid>
-              );
-            })}
-          </Grid>
-        ))}
-      </Grid>
+                  return (
+                    <div className={style.seatCell} key={seat.id}>
+                      <Paper
+                        component="button"
+                        type="button"
+                        disabled={
+                          interactionDisabled ||
+                          (!selected && !isSeatSelectable(seat))
+                        }
+                        aria-pressed={selected}
+                        aria-label={accessibleLabel}
+                        title={accessibleLabel}
+                        className={`${style.seat} ${style[presentation.styleName]}`}
+                        onClick={() => onSeatClick(seat)}
+                      >
+                        {seat.id}
+                      </Paper>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       <div className={style.statusContainer} aria-label="좌석 상태 안내">
         {[
@@ -121,7 +125,7 @@ function SeatSelectionGrid({
 }
 
 SeatSelectionGrid.propTypes = {
-  seats: PropTypes.arrayOf(PropTypes.array).isRequired,
+  seats: PropTypes.array.isRequired,
   selectedSeats: PropTypes.arrayOf(PropTypes.string).isRequired,
   interactionDisabled: PropTypes.bool,
   onSeatClick: PropTypes.func.isRequired,

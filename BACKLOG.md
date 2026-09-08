@@ -13,12 +13,12 @@ BACKLOG는 확정 구현 목록이 아니라 조사와 재현이 필요한 후�
 | 4        | 외부 결제 성공 뒤 legacy 예약 API를 호출한다                       | 검증 결제·멱등 key 계약, 중복 callback·새로고침 fixture     | 실제 PG 실행                            | 완료 ([#12](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/12), [#13](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/13)) |
 | 5        | 예매 사용자 흐름의 저장소 간 회귀 검증이 없다                      | 실제 로컬 Backend를 사용하는 FE·BE 통합 계약 테스트         | 전체 UI E2E·운영 배포·운영 SLA          | 완료 ([#15](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/15), [#16](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/16)) |
 | 6        | FE·BE 24석 중복 하드코딩과 2,000석 UI 계약 부재                    | 코드 대조, 24·200·500·2,000석 jsdom 렌더링 측정             | 운영 UI·Backend 변경·virtualization     | 완료 ([#18](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/18), [#19](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/19)) |
+| 7        | 서버 소유 구역·행 계약을 실제 좌석 선택 화면이 사용하지 않음       | Backend 구역 API, 2,000석 중 선택 구역 200석 fixture         | 실제 좌석도·전체 상세 반응형·실시간 push | 진행 중 ([#21](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/21)) |
 
 ## 다음 기술 Issue 후보
 
-`✨ [FEAT/BE] 가상 공연장 layout·구역별 좌석 API 계약`
+`🐛 [FIX/BE] loadtest fixture의 공연 상세 조회 계약 복구`
 
-- Backend가 layout version·구역·행·열·표시 순서를 명시적으로 제공
-- 구역별 전체·잔여 좌석 요약과 선택 구역 상세 좌석 응답 분리
-- 일반 가상 좌석과 2,000석 loadtest fixture의 목적·profile 격리
-- 변경된 계약을 기준으로 Frontend 구역 UI를 별도 Issue에서 연결
+- loadtest 공연의 `Place` 부재로 공연 상세 API가 500을 반환하는 원인과 영향 확인
+- FE 브라우저 E2E가 상세·달력 envelope mock 없이 전체 로컬 Backend를 사용하도록 fixture 보완
+- KOPIS·PG 등 외부 호출 없이 `local,loadtest` profile 안에서만 검증
