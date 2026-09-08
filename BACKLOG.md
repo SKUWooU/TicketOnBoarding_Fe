@@ -12,12 +12,13 @@ BACKLOG는 확정 구현 목록이 아니라 조사와 재현이 필요한 후�
 | 3        | 좌석 선택이 FE 메모리에만 있고 서버 소유권·해제·만료 처리가 없다   | 점유·해제 API mock, 400·401·409·TTL·페이지 이탈 시나리오    | Redis·대기열                            | 완료 ([#10](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/10))                                                                |
 | 4        | 외부 결제 성공 뒤 legacy 예약 API를 호출한다                       | 검증 결제·멱등 key 계약, 중복 callback·새로고침 fixture     | 실제 PG 실행                            | 완료 ([#12](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/12), [#13](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/13)) |
 | 5        | 예매 사용자 흐름의 저장소 간 회귀 검증이 없다                      | 실제 로컬 Backend를 사용하는 FE·BE 통합 계약 테스트         | 전체 UI E2E·운영 배포·운영 SLA          | 완료 ([#15](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/15), [#16](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/16)) |
+| 6        | FE·BE 24석 중복 하드코딩과 2,000석 UI 계약 부재                    | 코드 대조, 24·200·500·2,000석 jsdom 렌더링 측정             | 운영 UI·Backend 변경·virtualization     | 조사·측정 중 ([#18](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/18))                                                        |
 
 ## 다음 기술 Issue 후보
 
-`🔍 [RESEARCH] 가상 공연장 좌석 모델과 서버 주도 layout 기준선`
+`✨ [FEAT/BE] 가상 공연장 layout·구역별 좌석 API 계약`
 
-- KOPIS가 제공하지 않는 실제 좌석 배치를 가상 공연장·구역·좌석 모델로 대체할 기준
-- 현재 24석 고정 UI와 Backend 2,000석 부하 fixture의 책임 분리
-- 좌석 수가 커질 때 페이지·구역 분리·virtualization이 필요한 임계값 검증
-- 좌석 전체 UI 교체 전에 API 계약·fixture·렌더링 비용을 먼저 조사
+- Backend가 layout version·구역·행·열·표시 순서를 명시적으로 제공
+- 구역별 전체·잔여 좌석 요약과 선택 구역 상세 좌석 응답 분리
+- 일반 가상 좌석과 2,000석 loadtest fixture의 목적·profile 격리
+- 변경된 계약을 기준으로 Frontend 구역 UI를 별도 Issue에서 연결
