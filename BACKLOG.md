@@ -11,13 +11,13 @@ BACKLOG는 확정 구현 목록이 아니라 조사와 재현이 필요한 후�
 | 2        | 좌석 조회가 `reserved`만 사용하고 점유·만료 상태를 표현하지 않는다 | Backend 응답 fixture, AVAILABLE·HELD·RESERVED 렌더링 테스트 | WebSocket·실시간 push                   | 완료 ([#8](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/8))                                                                  |
 | 3        | 좌석 선택이 FE 메모리에만 있고 서버 소유권·해제·만료 처리가 없다   | 점유·해제 API mock, 400·401·409·TTL·페이지 이탈 시나리오    | Redis·대기열                            | 완료 ([#10](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/10))                                                                |
 | 4        | 외부 결제 성공 뒤 legacy 예약 API를 호출한다                       | 검증 결제·멱등 key 계약, 중복 callback·새로고침 fixture     | 실제 PG 실행                            | 완료 ([#12](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/12), [#13](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/13)) |
-| 5        | 예매 사용자 흐름의 저장소 간 회귀 검증이 없다                      | 실제 로컬 Backend를 사용하는 FE·BE 통합 계약 테스트         | 전체 UI E2E·운영 배포·운영 SLA          | 구현·로컬 검증 완료, PR 준비 ([#15](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/15))                                        |
+| 5        | 예매 사용자 흐름의 저장소 간 회귀 검증이 없다                      | 실제 로컬 Backend를 사용하는 FE·BE 통합 계약 테스트         | 전체 UI E2E·운영 배포·운영 SLA          | 완료 ([#15](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/15), [#16](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/16)) |
 
 ## 다음 기술 Issue 후보
 
-`✨ [FEAT] 검증된 결제 완료와 예약 확정 흐름 연동`
+`🔍 [RESEARCH] 가상 공연장 좌석 모델과 서버 주도 layout 기준선`
 
-- 결제 요청 식별자와 서버 검증 결과를 예약 확정 API에 전달하는 계약
-- 중복 callback·새로고침에도 한 번만 확정되는 멱등 흐름
-- 성공·실패·취소 상태별 화면과 점유 만료의 경계
-- 실제 PG 호출 없이 fixture로 검증한 뒤 통합 범위를 결정
+- KOPIS가 제공하지 않는 실제 좌석 배치를 가상 공연장·구역·좌석 모델로 대체할 기준
+- 현재 24석 고정 UI와 Backend 2,000석 부하 fixture의 책임 분리
+- 좌석 수가 커질 때 페이지·구역 분리·virtualization이 필요한 임계값 검증
+- 좌석 전체 UI 교체 전에 API 계약·fixture·렌더링 비용을 먼저 조사
