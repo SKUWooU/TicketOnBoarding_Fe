@@ -11,7 +11,7 @@ BACKLOG는 확정 구현 목록이 아니라 조사와 재현이 필요한 후�
 | 2        | 좌석 조회가 `reserved`만 사용하고 점유·만료 상태를 표현하지 않는다 | Backend 응답 fixture, AVAILABLE·HELD·RESERVED 렌더링 테스트 | WebSocket·실시간 push                   | 완료 ([#8](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/8))                                                                  |
 | 3        | 좌석 선택이 FE 메모리에만 있고 서버 소유권·해제·만료 처리가 없다   | 점유·해제 API mock, 400·401·409·TTL·페이지 이탈 시나리오    | Redis·대기열                            | 완료 ([#10](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/10))                                                                |
 | 4        | 외부 결제 성공 뒤 legacy 예약 API를 호출한다                       | 검증 결제·멱등 key 계약, 중복 callback·새로고침 fixture     | 실제 PG 실행                            | 완료 ([#12](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/12), [#13](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/13)) |
-| 5        | 예매 사용자 흐름의 저장소 간 회귀 검증이 없다                      | mock E2E 후 로컬 BE/FE 통합 E2E                             | 운영 배포·운영 SLA                      | 후보                                                                                                                                  |
+| 5        | 예매 사용자 흐름의 저장소 간 회귀 검증이 없다                      | 실제 로컬 Backend를 사용하는 FE·BE 통합 계약 테스트         | 전체 UI E2E·운영 배포·운영 SLA          | 구현·로컬 검증 완료, PR 준비 ([#15](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/15))                                        |
 
 ## 다음 기술 Issue 후보
 

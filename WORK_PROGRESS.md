@@ -4,7 +4,15 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-현재 진행 중인 작업 없음.
+### Frontend Issue #15 — Checkout FE·BE 통합 계약 테스트
+
+- Issue: [#15](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/15)
+- Branch: `test/15-checkout-backend-e2e`
+- PR: [#16](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/16)
+- 상태: 구현·실제 로컬 Backend 연속 2회 검증 완료, Reviewer 검토 대기
+- 범위: 실제 로컬 Backend의 hold·Checkout·검증 예약과 Payment 화면 계약
+- 제외: 실제 PG·외부 API, 24석 UI 변경, 2,000석 전체 렌더링, Backend 코드 변경
+- 검증: 기본 53 tests·build 통과, 통합 계약 test 독립 2회 통과, 변경 lint 0
 
 ## 완료
 
