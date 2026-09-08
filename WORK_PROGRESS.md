@@ -4,7 +4,16 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-현재 진행 중인 작업 없음.
+### Frontend Issue #18 — 가상 공연장 좌석 layout 기준선
+
+- Issue: [#18](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/18)
+- Branch: `research/18-seat-layout-baseline`
+- PR: [#19](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/19)
+- 상태: FE·BE 계약 조사·규모별 렌더링 3회 측정·회귀 검증 완료, Reviewer 검토 대기
+- 범위: 24·2,000석 하드코딩 대조, 24·200·500·2,000석 로컬 측정, 후속 layout 계약 제안
+- 제외: 운영 UI·Backend 코드, 외부 API, WebSocket·대기열·실제 PG
+- 결과: 24→2,000석 initial 20.36→492.98ms, 상태 rerender 포함 23.03→880.06ms(jsdom 독립 3회 중앙)
+- 검증: 12 files·56 tests·build 통과, 측정 파일 lint 0, 전체 lint 기존 95 errors·2 warnings 유지
 
 ## 완료
 
