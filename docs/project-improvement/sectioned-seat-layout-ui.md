@@ -99,7 +99,7 @@ Backend가 layout metadata 부재를 뜻하는 HTTP `409`를 반환한 경우에
 
 ## 8. 관련 근거
 
-- Frontend Issue #21
+- Frontend Issue #21 / PR #22
 - Backend Issue #85 / PR #86
 - [가상 좌석 layout 기준선](./virtual-seat-layout-baseline.md)
 - [ADR-0003](./adr/0003-server-owned-virtual-seat-layout.md)
