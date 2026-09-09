@@ -4,7 +4,7 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- 없음
+- [#24](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/24): 가상 2,000석 공연의 로컬 FE–BE 예매 화면 계약 검증
 
 ## 완료
 
