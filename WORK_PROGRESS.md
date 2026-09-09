@@ -4,12 +4,13 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- [#21](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/21): 구역 기반 가상 좌석 탐색 및 반응형 선택 UI 연동
+- 없음
 
 ## 완료
 
 | Issue                                                           | 결과                                                        | 검증                                             | PR / squash commit                                                                                            |
 | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [#21](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/21) | 구역 요약·선택 구역 200석·stale 차단·반응형 좌석 탐색       | 67 tests·build·CI, 로컬 API·3 viewport 측정      | [PR #22](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/22) / `f5a133e126b7b9d1998b013f86de12aeb8aa049c` |
 | [#18](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/18) | 24·2,000석 계약 차이·렌더링 기준선·layout ADR               | 56 tests·build·CI, jsdom benchmark 3회           | [PR #19](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/19) / `49a348040c6fa2ec204f42ef457eeaf87ff68685` |
 | [#15](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/15) | 실제 로컬 Backend·MariaDB Checkout 통합 계약 검증           | 53 tests·build·CI, 통합 test 독립 2회 통과       | [PR #16](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/16) / `6d4ae2fed77f1686f12dc887281ce30b35543329` |
 | [#12](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/12) | Checkout·검증 예약, 멱등 재시도, 결제 불명 상태 재결제 차단 | 53 tests·build·CI, 변경 lint 0                   | [PR #13](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/13) / `a760e060feb8dac54c220c555370300473f1ffe2` |
