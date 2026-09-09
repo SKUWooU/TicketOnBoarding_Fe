@@ -1,6 +1,6 @@
 # 가상 2,000석 공연의 로컬 FE–BE 예매 화면 계약
 
-연결: [Frontend Issue #24](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/24), Backend [Issue #88](https://github.com/SKUWooU/TicketOnBoarding_Be/issues/88)·[PR #89](https://github.com/SKUWooU/TicketOnBoarding_Be/pull/89)
+연결: Frontend [Issue #24](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/24)·[PR #25](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/25), Backend [Issue #88](https://github.com/SKUWooU/TicketOnBoarding_Be/issues/88)·[PR #89](https://github.com/SKUWooU/TicketOnBoarding_Be/pull/89)
 
 ## 검증 목적
 
