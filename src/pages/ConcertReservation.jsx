@@ -3,7 +3,13 @@ import Footer from "../components/MainFooter";
 import style from "../styles/ConcertDetail.module.scss";
 import Btn from "../components/LoginBtn";
 import SeatSelectionGrid from "../components/SeatSelectionGrid";
+import SeatSectionSelector from "../components/SeatSectionSelector";
 import useSeatHoldManager from "../hooks/useSeatHoldManager";
+import {
+  getLegacySeats,
+  getSeatSection,
+  getSeatSections,
+} from "../api/seatLayoutApi";
 import { prepareCheckout } from "../api/checkoutApi";
 import { createIdempotencyKey } from "../utils/idempotencyKey";
 import { saveCheckoutSession } from "../utils/checkoutSession";
@@ -19,6 +25,11 @@ import {
   isSeatSelectable,
   mapSeatResponseToLayout,
 } from "../utils/seatAvailability";
+import {
+  legacyRows,
+  mapSectionDetailToRows,
+  normalizeSectionSummary,
+} from "../utils/seatLayout";
 
 // MUIX DateCalendar를 위한 import 구문
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -68,6 +79,7 @@ function ConcertReservation() {
   const [dateChosen, setDateChosen] = useState(null);
   //선택된 날짜
   const seatRequestSequence = useRef(0);
+  const selectedSectionRef = useRef(null);
   const checkoutAttempt = useRef(null);
   const checkoutInFlight = useRef(false);
   const [checkoutPending, setCheckoutPending] = useState(false);
@@ -79,23 +91,72 @@ function ConcertReservation() {
   const { concertID } = useParams();
 
   const [seats, setSeats] = useState(INITIAL_SEAT_LAYOUT);
+  const [seatSections, setSeatSections] = useState([]);
+  const [selectedSectionCode, setSelectedSectionCode] = useState(null);
+  const [seatLayoutMessage, setSeatLayoutMessage] = useState("");
 
   const loadSeats = useCallback(
-    async (performance) => {
+    async (performance, preferredSectionCode = selectedSectionRef.current) => {
       const requestSequence = ++seatRequestSequence.current;
+      setSeatLayoutMessage("좌석 구역을 불러오고 있습니다.");
 
       try {
-        const response = await axiosBackend.get(
-          `/main/detail/${concertID}/calendar/${performance.id}`,
+        const summary = normalizeSectionSummary(
+          await getSeatSections(concertID, performance.id),
+        );
+        const sectionCode = summary.sections.some(
+          (section) => section.sectionCode === preferredSectionCode,
+        )
+          ? preferredSectionCode
+          : summary.sections[0].sectionCode;
+        const detail = await getSeatSection(
+          concertID,
+          performance.id,
+          sectionCode,
         );
         if (requestSequence !== seatRequestSequence.current) return false;
 
-        setSeats(mapSeatResponseToLayout(INITIAL_SEAT_LAYOUT, response.data));
+        selectedSectionRef.current = sectionCode;
+        setSelectedSectionCode(sectionCode);
+        setSeatSections(summary.sections);
+        setSeats(mapSectionDetailToRows(detail, sectionCode));
+        setSeatLayoutMessage("");
         return true;
       } catch (error) {
         if (requestSequence !== seatRequestSequence.current) return false;
 
+        if (error?.response?.status === 409) {
+          try {
+            const legacySeats = await getLegacySeats(
+              concertID,
+              performance.id,
+            );
+            if (requestSequence !== seatRequestSequence.current) return false;
+
+            selectedSectionRef.current = null;
+            setSelectedSectionCode(null);
+            setSeatSections([]);
+            setSeats(
+              legacyRows(
+                mapSeatResponseToLayout(INITIAL_SEAT_LAYOUT, legacySeats),
+              ),
+            );
+            setSeatLayoutMessage(
+              "기존 24석 좌석 배치로 표시하고 있습니다.",
+            );
+            return true;
+          } catch {
+            // 공통 실패 상태로 처리한다.
+          }
+
+          if (requestSequence !== seatRequestSequence.current) return false;
+        }
+
+        selectedSectionRef.current = null;
+        setSelectedSectionCode(null);
+        setSeatSections([]);
         setSeats(INITIAL_SEAT_LAYOUT);
+        setSeatLayoutMessage("좌석 배치를 불러오지 못했습니다.");
         return false;
       }
     },
@@ -163,17 +224,26 @@ function ConcertReservation() {
       seatRequestSequence.current += 1;
       setSelectedPerformance(null); // 같은 공연 선택 -> 선택 취소
       setSeats(INITIAL_SEAT_LAYOUT);
+      selectedSectionRef.current = null;
+      setSelectedSectionCode(null);
+      setSeatSections([]);
+      setSeatLayoutMessage("");
     } else {
       await releaseAll();
       setSelectedPerformance(performance);
       setSeats(INITIAL_SEAT_LAYOUT);
-      await loadSeats(performance);
+      selectedSectionRef.current = null;
+      setSelectedSectionCode(null);
+      setSeatSections([]);
+      await loadSeats(performance, null);
     }
     // 특정 시간대 선택 시 -> 해당 공연의 특정 시간대를 ID로 get 호출
     // 특정 시간대의 빈 좌석 조회
   };
 
   useEffect(() => {
+    if (!mapServiceKey) return undefined;
+
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${mapServiceKey}&autoload=false`;
     script.async = true;
@@ -245,6 +315,10 @@ function ConcertReservation() {
     setDateChosen(newValue);
     setSelectedPerformance(null);
     setSeats(INITIAL_SEAT_LAYOUT);
+    selectedSectionRef.current = null;
+    setSelectedSectionCode(null);
+    setSeatSections([]);
+    setSeatLayoutMessage("");
     const formattedDate = dayjs(newValue).format("YYYY-MM-DD");
 
     // 선택된 날짜에 해당하는 공연 시간 가져오기
@@ -252,6 +326,17 @@ function ConcertReservation() {
       (dateItem) => dateItem.date === formattedDate,
     );
     setSelectedDatePerformances(performances);
+  };
+
+  const handleSectionSelect = async (sectionCode) => {
+    if (
+      holdPending ||
+      !selectedPerformance ||
+      sectionCode === selectedSectionRef.current
+    ) {
+      return;
+    }
+    await loadSeats(selectedPerformance, sectionCode);
   };
 
   const handleReservation = () => {
@@ -486,6 +571,15 @@ function ConcertReservation() {
                   formatTime(selectedPerformance.startTime) +
                   "시 공연"
                 : "먼저 날짜와 시간을 선택해주세요!"}
+            </p>
+            <SeatSectionSelector
+              sections={seatSections}
+              selectedSectionCode={selectedSectionCode}
+              disabled={holdPending}
+              onSelect={handleSectionSelect}
+            />
+            <p className={style.layoutFeedback} aria-live="polite">
+              {seatLayoutMessage}
             </p>
             <SeatSelectionGrid
               seats={seats}

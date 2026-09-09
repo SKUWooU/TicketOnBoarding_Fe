@@ -82,13 +82,78 @@ const performances = [
 
 function createDeferred() {
   let resolve;
-  const promise = new Promise((promiseResolve) => {
+  let reject;
+  const promise = new Promise((promiseResolve, promiseReject) => {
     resolve = promiseResolve;
+    reject = promiseReject;
   });
-  return { promise, resolve };
+  return { promise, reject, resolve };
+}
+
+function loadTestSectionDetail(sectionCode, firstRow) {
+  return {
+    layoutVersion: "loadtest-sectioned-v1",
+    sectionCode,
+    sectionName: `${Number(sectionCode.slice(1))}구역`,
+    sectionOrder: Number(sectionCode.slice(1)),
+    seats: Array.from({ length: 200 }, (_, index) => {
+      const rowOrder = firstRow + Math.floor(index / 40);
+      const seatIndex = (index % 40) + 1;
+      return {
+        seatNumber: `R${String(rowOrder).padStart(3, "0")}-S${String(seatIndex).padStart(3, "0")}`,
+        rowLabel: `R${String(rowOrder).padStart(3, "0")}`,
+        rowOrder,
+        seatIndex,
+        availability: "AVAILABLE",
+        holdExpiresAt: null,
+      };
+    }),
+  };
 }
 
 function mockConcertRequests(firstSeatResponse, secondSeatResponse) {
+  const sectionSummary = (seatResponse) =>
+    seatResponse.then(({ data }) => {
+      const availableSeats = data.filter(
+        (seat) => seat.availability === "AVAILABLE" || seat.reserved === false,
+      ).length;
+      const heldSeats = data.filter(
+        (seat) => seat.availability === "HELD",
+      ).length;
+      const reservedSeats = data.length - availableSeats - heldSeats;
+      return {
+        data: {
+          layoutVersion: "virtual-24-v1",
+          sections: [
+            {
+              sectionCode: "GENERAL",
+              sectionName: "일반석",
+              sectionOrder: 1,
+              totalSeats: data.length,
+              availableSeats,
+              heldSeats,
+              reservedSeats,
+            },
+          ],
+        },
+      };
+    });
+  const sectionDetail = (seatResponse) =>
+    seatResponse.then(({ data }) => ({
+      data: {
+        layoutVersion: "virtual-24-v1",
+        sectionCode: "GENERAL",
+        sectionName: "일반석",
+        sectionOrder: 1,
+        seats: data.map((seat, index) => ({
+          ...seat,
+          rowLabel: "A",
+          rowOrder: 1,
+          seatIndex: index + 1,
+        })),
+      },
+    }));
+
   axiosBackend.get.mockImplementation((url) => {
     if (url === "/main/detail/concert-1") {
       return Promise.resolve({
@@ -104,8 +169,18 @@ function mockConcertRequests(firstSeatResponse, secondSeatResponse) {
       return Promise.resolve({ data: performances });
     }
 
-    if (url.endsWith("/calendar/1")) return firstSeatResponse;
-    if (url.endsWith("/calendar/2")) return secondSeatResponse;
+    if (url.endsWith("/calendar/1/seat-sections")) {
+      return sectionSummary(firstSeatResponse);
+    }
+    if (url.endsWith("/calendar/2/seat-sections")) {
+      return sectionSummary(secondSeatResponse);
+    }
+    if (url.endsWith("/calendar/1/seat-sections/GENERAL")) {
+      return sectionDetail(firstSeatResponse);
+    }
+    if (url.endsWith("/calendar/2/seat-sections/GENERAL")) {
+      return sectionDetail(secondSeatResponse);
+    }
 
     return Promise.reject(new Error(`unexpected fixture URL: ${url}`));
   });
@@ -239,6 +314,328 @@ describe("ConcertReservation seat selection", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("loads only the selected two-hundred-seat section from a 2,000-seat fixture", async () => {
+    const sections = Array.from({ length: 10 }, (_, index) => ({
+      sectionCode: `S${String(index + 1).padStart(2, "0")}`,
+      sectionName: `${index + 1}구역`,
+      sectionOrder: index + 1,
+      totalSeats: 200,
+      availableSeats: 200,
+      heldSeats: 0,
+      reservedSeats: 0,
+    }));
+    axiosBackend.get.mockImplementation((url) => {
+      if (url === "/main/detail/concert-1") {
+        return Promise.resolve({
+          data: {
+            concertName: "Fixture 공연",
+            startDate: "2024-06-15",
+            endDate: "2024-06-15",
+          },
+        });
+      }
+      if (url === "/main/detail/concert-1/calendar") {
+        return Promise.resolve({ data: performances });
+      }
+      if (url.endsWith("/calendar/1/seat-sections")) {
+        return Promise.resolve({
+          data: { layoutVersion: "loadtest-sectioned-v1", sections },
+        });
+      }
+      if (url.endsWith("/seat-sections/S01")) {
+        return Promise.resolve({ data: loadTestSectionDetail("S01", 1) });
+      }
+      if (url.endsWith("/seat-sections/S02")) {
+        return Promise.resolve({ data: loadTestSectionDetail("S02", 6) });
+      }
+      return Promise.reject(new Error(`unexpected fixture URL: ${url}`));
+    });
+
+    render(<ConcertReservation />);
+    expect(await screen.findByText("Fixture 공연")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+    fireEvent.click((await screen.findByText("17:00")).closest("div"));
+
+    expect(await screen.findByRole("button", { name: /R001-S001/ })).toBeVisible();
+    expect(screen.getAllByRole("button", { name: /R\d{3}-S\d{3}/ })).toHaveLength(200);
+    expect(screen.queryByRole("button", { name: /R006-S001/ })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /2구역/ }));
+    expect(await screen.findByRole("button", { name: /R006-S001/ })).toBeVisible();
+    expect(screen.queryByRole("button", { name: /R001-S001/ })).not.toBeInTheDocument();
+    expect(axiosBackend.get).not.toHaveBeenCalledWith(
+      "/main/detail/concert-1/calendar/1",
+    );
+  });
+
+  it("ignores a stale section response after a newer section is selected", async () => {
+    const staleSection = createDeferred();
+    const sections = ["S01", "S02", "S03"].map((sectionCode, index) => ({
+      sectionCode,
+      sectionName: `${index + 1}구역`,
+      sectionOrder: index + 1,
+      totalSeats: 200,
+      availableSeats: 200,
+      heldSeats: 0,
+      reservedSeats: 0,
+    }));
+    axiosBackend.get.mockImplementation((url) => {
+      if (url === "/main/detail/concert-1") {
+        return Promise.resolve({
+          data: {
+            concertName: "Fixture 공연",
+            startDate: "2024-06-15",
+            endDate: "2024-06-15",
+          },
+        });
+      }
+      if (url === "/main/detail/concert-1/calendar") {
+        return Promise.resolve({ data: performances });
+      }
+      if (url.endsWith("/calendar/1/seat-sections")) {
+        return Promise.resolve({
+          data: { layoutVersion: "loadtest-sectioned-v1", sections },
+        });
+      }
+      if (url.endsWith("/seat-sections/S01")) {
+        return Promise.resolve({ data: loadTestSectionDetail("S01", 1) });
+      }
+      if (url.endsWith("/seat-sections/S02")) return staleSection.promise;
+      if (url.endsWith("/seat-sections/S03")) {
+        return Promise.resolve({ data: loadTestSectionDetail("S03", 11) });
+      }
+      return Promise.reject(new Error(`unexpected fixture URL: ${url}`));
+    });
+
+    render(<ConcertReservation />);
+    expect(await screen.findByText("Fixture 공연")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+    fireEvent.click((await screen.findByText("17:00")).closest("div"));
+    expect(await screen.findByRole("button", { name: /R001-S001/ })).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: /2구역/ }));
+    fireEvent.click(screen.getByRole("button", { name: /3구역/ }));
+    expect(await screen.findByRole("button", { name: /R011-S001/ })).toBeVisible();
+
+    staleSection.resolve({ data: loadTestSectionDetail("S02", 6) });
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /R011-S001/ })).toBeVisible();
+    });
+    expect(screen.queryByRole("button", { name: /R006-S001/ })).not.toBeInTheDocument();
+  });
+
+  it("keeps owned holds when leaving and returning to a section", async () => {
+    const sections = ["S01", "S02"].map((sectionCode, index) => ({
+      sectionCode,
+      sectionName: `${index + 1}구역`,
+      sectionOrder: index + 1,
+      totalSeats: 200,
+      availableSeats: 200,
+      heldSeats: 0,
+      reservedSeats: 0,
+    }));
+    axiosBackend.get.mockImplementation((url) => {
+      if (url === "/main/detail/concert-1") {
+        return Promise.resolve({
+          data: {
+            concertName: "Fixture 공연",
+            startDate: "2024-06-15",
+            endDate: "2024-06-15",
+          },
+        });
+      }
+      if (url === "/main/detail/concert-1/calendar") {
+        return Promise.resolve({ data: performances });
+      }
+      if (url.endsWith("/calendar/1/seat-sections")) {
+        return Promise.resolve({
+          data: { layoutVersion: "loadtest-sectioned-v1", sections },
+        });
+      }
+      if (url.endsWith("/seat-sections/S01")) {
+        return Promise.resolve({ data: loadTestSectionDetail("S01", 1) });
+      }
+      if (url.endsWith("/seat-sections/S02")) {
+        return Promise.resolve({ data: loadTestSectionDetail("S02", 6) });
+      }
+      return Promise.reject(new Error(`unexpected fixture URL: ${url}`));
+    });
+
+    render(<ConcertReservation />);
+    expect(await screen.findByText("Fixture 공연")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+    fireEvent.click((await screen.findByText("17:00")).closest("div"));
+    fireEvent.click(
+      await screen.findByRole("button", { name: /R001-S001, 선택 가능/ }),
+    );
+    expect(
+      await screen.findByRole("button", {
+        name: /R001-S001, 내가 선택한 좌석/,
+      }),
+    ).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: /2구역/ }));
+    expect(await screen.findByRole("button", { name: /R006-S001/ })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /1구역/ }));
+
+    expect(
+      await screen.findByRole("button", {
+        name: /R001-S001, 내가 선택한 좌석/,
+      }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText(/선택한 좌석 수 : 1/)).toBeVisible();
+  });
+
+  it("falls back to the legacy 24-seat endpoint only for layout 409", async () => {
+    axiosBackend.get.mockImplementation((url) => {
+      if (url === "/main/detail/concert-1") {
+        return Promise.resolve({
+          data: {
+            concertName: "Fixture 공연",
+            startDate: "2024-06-15",
+            endDate: "2024-06-15",
+          },
+        });
+      }
+      if (url === "/main/detail/concert-1/calendar") {
+        return Promise.resolve({ data: performances });
+      }
+      if (url.endsWith("/calendar/1/seat-sections")) {
+        return Promise.reject({ response: { status: 409 } });
+      }
+      if (url.endsWith("/calendar/1")) {
+        return Promise.resolve({
+          data: [{ seatNumber: "A1", availability: "AVAILABLE" }],
+        });
+      }
+      return Promise.reject(new Error(`unexpected fixture URL: ${url}`));
+    });
+
+    render(<ConcertReservation />);
+    expect(await screen.findByText("Fixture 공연")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+    fireEvent.click((await screen.findByText("17:00")).closest("div"));
+
+    expect(await screen.findByText(/기존 24석 좌석 배치/)).toBeVisible();
+    expect(screen.getByRole("button", { name: "A1, 선택 가능" })).toBeVisible();
+    expect(axiosBackend.get).toHaveBeenCalledWith(
+      "/main/detail/concert-1/calendar/1",
+    );
+  });
+
+  it("fails closed without a legacy request when section lookup returns 404", async () => {
+    axiosBackend.get.mockImplementation((url) => {
+      if (url === "/main/detail/concert-1") {
+        return Promise.resolve({
+          data: {
+            concertName: "Fixture 공연",
+            startDate: "2024-06-15",
+            endDate: "2024-06-15",
+          },
+        });
+      }
+      if (url === "/main/detail/concert-1/calendar") {
+        return Promise.resolve({ data: performances });
+      }
+      if (url.endsWith("/calendar/1/seat-sections")) {
+        return Promise.reject({ response: { status: 404 } });
+      }
+      return Promise.reject(new Error(`unexpected fixture URL: ${url}`));
+    });
+
+    render(<ConcertReservation />);
+    expect(await screen.findByText("Fixture 공연")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+    fireEvent.click((await screen.findByText("17:00")).closest("div"));
+
+    expect(await screen.findByText(/좌석 배치를 불러오지 못했습니다/)).toBeVisible();
+    expect(axiosBackend.get).not.toHaveBeenCalledWith(
+      "/main/detail/concert-1/calendar/1",
+    );
+  });
+
+  it("ignores a failed legacy fallback from an older performance request", async () => {
+    const staleLegacy = createDeferred();
+    const currentSummary = {
+      layoutVersion: "virtual-24-v1",
+      sections: [
+        {
+          sectionCode: "GENERAL",
+          sectionName: "일반석",
+          sectionOrder: 1,
+          totalSeats: 1,
+          availableSeats: 0,
+          heldSeats: 0,
+          reservedSeats: 1,
+        },
+      ],
+    };
+    axiosBackend.get.mockImplementation((url) => {
+      if (url === "/main/detail/concert-1") {
+        return Promise.resolve({
+          data: {
+            concertName: "Fixture 공연",
+            startDate: "2024-06-15",
+            endDate: "2024-06-15",
+          },
+        });
+      }
+      if (url === "/main/detail/concert-1/calendar") {
+        return Promise.resolve({ data: performances });
+      }
+      if (url.endsWith("/calendar/1/seat-sections")) {
+        return Promise.reject({ response: { status: 409 } });
+      }
+      if (url.endsWith("/calendar/1")) return staleLegacy.promise;
+      if (url.endsWith("/calendar/2/seat-sections")) {
+        return Promise.resolve({ data: currentSummary });
+      }
+      if (url.endsWith("/calendar/2/seat-sections/GENERAL")) {
+        return Promise.resolve({
+          data: {
+            layoutVersion: "virtual-24-v1",
+            sectionCode: "GENERAL",
+            sectionName: "일반석",
+            sectionOrder: 1,
+            seats: [
+              {
+                seatNumber: "A1",
+                rowLabel: "A",
+                rowOrder: 1,
+                seatIndex: 1,
+                availability: "RESERVED",
+              },
+            ],
+          },
+        });
+      }
+      return Promise.reject(new Error(`unexpected fixture URL: ${url}`));
+    });
+
+    render(<ConcertReservation />);
+    expect(await screen.findByText("Fixture 공연")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+    fireEvent.click((await screen.findByText("17:00")).closest("div"));
+    await waitFor(() =>
+      expect(axiosBackend.get).toHaveBeenCalledWith(
+        "/main/detail/concert-1/calendar/1",
+      ),
+    );
+
+    fireEvent.click((await screen.findByText("19:00")).closest("div"));
+    expect(
+      await screen.findByRole("button", { name: "A1, 예약 완료" }),
+    ).toBeDisabled();
+
+    staleLegacy.reject(new Error("stale legacy failure"));
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: "A1, 예약 완료" }),
+      ).toBeDisabled();
+    });
+    expect(screen.queryByText(/좌석 배치를 불러오지 못했습니다/)).not.toBeInTheDocument();
+  });
+
   it("posts the complete owned seat set and keeps the earliest deadline", async () => {
     render(<ConcertReservation />);
 
@@ -283,7 +680,7 @@ describe("ConcertReservation seat selection", () => {
       screen.queryByRole("button", { name: "A1, 내가 선택한 좌석" }),
     ).not.toBeInTheDocument();
     expect(axiosBackend.get).toHaveBeenCalledWith(
-      "/main/detail/concert-1/calendar/1",
+      "/main/detail/concert-1/calendar/1/seat-sections",
     );
   });
 

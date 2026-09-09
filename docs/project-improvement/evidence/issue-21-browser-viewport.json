@@ -1,0 +1,80 @@
+{
+  "measuredAt": "2026-09-09",
+  "environment": "local Edge headless, Vite 127.0.0.1:5173, Backend local,loadtest 127.0.0.1:18080",
+  "fixture": {
+    "runId": "fe-layout-21",
+    "totalSeats": 2000,
+    "sections": 10,
+    "renderedSeatsPerSection": 200,
+    "note": "공연 상세·달력 envelope는 명시적 브라우저 fixture로 고정하고 seat-sections API는 로컬 Backend 실응답을 사용함"
+  },
+  "externalRequests": "blocked",
+  "seatGridImplementationComparison": {
+    "conditions": "same fe-layout-21 fixture, same 200 rendered seat buttons, same 40px button and 8px step gap",
+    "before": {
+      "implementation": "nested MUI Grid container/item rows",
+      "desktop1440SeatGridScrollWidth": 9840,
+      "tablet768SeatGridScrollWidth": 9840,
+      "mobile390SeatGridScrollWidth": 9840
+    },
+    "after": {
+      "implementation": "plain flex column/rows",
+      "desktop1440SeatGridScrollWidth": 1976,
+      "tablet768SeatGridScrollWidth": 1976,
+      "mobile390SeatGridScrollWidth": 1976
+    }
+  },
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900,
+      "documentClientWidth": 1440,
+      "documentScrollWidth": 1440,
+      "sectionSelectorClientWidth": 354,
+      "sectionSelectorScrollWidth": 1576,
+      "seatGridClientWidth": 339,
+      "seatGridScrollWidth": 1976,
+      "seatGridMaxScrollLeft": 1622,
+      "renderedSeatButtons": 200,
+      "seatButtonWidth": 40,
+      "seatStep": 48
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "documentClientWidth": 768,
+      "documentScrollWidth": 1090,
+      "sectionSelectorClientWidth": 666,
+      "sectionSelectorScrollWidth": 1576,
+      "seatGridClientWidth": 651,
+      "seatGridScrollWidth": 1976,
+      "seatGridMaxScrollLeft": 1310,
+      "renderedSeatButtons": 200,
+      "seatButtonWidth": 40,
+      "seatStep": 48
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "documentClientWidth": 390,
+      "documentScrollWidth": 1066,
+      "sectionSelectorClientWidth": 336,
+      "sectionSelectorScrollWidth": 1576,
+      "seatGridClientWidth": 321,
+      "seatGridScrollWidth": 1976,
+      "seatGridMaxScrollLeft": 1640,
+      "renderedSeatButtons": 200,
+      "seatButtonWidth": 40,
+      "seatStep": 48
+    }
+  ],
+  "sectionSwitch": {
+    "selectedSection": "S02",
+    "ariaPressed": true,
+    "renderedSeatButtons": 200,
+    "previousSectionSeatButtons": 0
+  }
+}
