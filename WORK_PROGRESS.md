@@ -4,12 +4,13 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- [#31](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/31) Local Backend 예약·Checkout 취소 Browser E2E
+- 없음
 
 ## 완료
 
 | Issue                                                           | 결과                                                        | 검증                                             | PR / squash commit                                                                                            |
 | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [#31](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/31) | local Chromium hold·Checkout 취소·fixture 불변식 E2E        | Chromium 1건·mock Chromium 3건·72 tests·CI      | [PR #32](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/32) / `4d2ac7a3e323732c7f976642a2edcbb42b3493ec` |
 | [#29](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/29) | `READY` Checkout 취소·점유 해제·검증 중 경합 차단          | 72 tests·local 2,000석 통합 2건·build·CI        | [PR #30](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/30) / `0d35e1e8233e30d966e11b5ea79b2c62a6d1628d` |
 | [#27](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/27) | Chromium E2E·mobile 상세 유동 폭·외부 호출 차단            | Chromium 3 viewport·CI·build·변경 lint          | [PR #28](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/28) / `53a1f447c4f2f991006a467e358a896e25bc3227` |
 | [#24](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/24) | 실제 Backend 상세·회차·10구역·200석·hold 화면 계약          | 통합 1개·기존 Checkout·67 tests·build·CI         | [PR #25](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/25) / `c2f5e6be4ad131d2c51d0baa13ac3c0a52ce5e3e` |
