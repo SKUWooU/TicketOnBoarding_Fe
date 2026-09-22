@@ -31,5 +31,11 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Install Chromium for reservation E2E
+        run: npx playwright install --with-deps chromium
+
+      - name: Run reservation browser E2E
+        run: npm run test:e2e:reservation
+
       - name: Build
         run: npm run build

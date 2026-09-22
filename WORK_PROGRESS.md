@@ -4,7 +4,10 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- 없음
+### Frontend Issue #27 — 예약 화면 Chromium E2E·viewport 회귀 기준선
+
+- 범위: local mock API 기반 Chromium viewport·구역 탐색·hold/409 사용자 피드백 계약
+- 제외: 실제 KOPIS·PG·Kakao Map, 운영 성능, 전체 상세 페이지 재설계, WebSocket
 
 ## 완료
 

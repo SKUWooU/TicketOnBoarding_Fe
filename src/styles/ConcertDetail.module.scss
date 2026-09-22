@@ -499,6 +499,47 @@
     gap: 16px;
   }
 
+  .concertName,
+  .detailContainer {
+    white-space: normal;
+  }
+
+  .detailContainer {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .poster {
+    width: min(300px, 100%);
+    height: auto;
+  }
+
+  .table,
+  .mapContainer,
+  .kakaoMap {
+    width: 100%;
+    max-width: none;
+  }
+
+  .table {
+    table-layout: fixed;
+  }
+
+  .mapContainer {
+    gap: 16px;
+  }
+
+  .kakaoMap {
+    height: 240px;
+  }
+
+  .mainStyle,
+  .subStyle {
+    white-space: normal;
+    font-size: 22px;
+  }
+
   .calendarContainer,
   .performanceCardsContainer,
   .seats {
