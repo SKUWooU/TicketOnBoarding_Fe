@@ -4,7 +4,7 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- 없음
+- [#31](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/31) Local Backend 예약·Checkout 취소 Browser E2E
 
 ## 완료
 
