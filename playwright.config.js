@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
+  testIgnore: ["local-backend/**"],
   timeout: 30_000,
   expect: { timeout: 10_000 },
   reporter: "list",
@@ -30,7 +31,7 @@ export default defineConfig({
       VITE_REACT_APP_KAKAOMAP_SERVICE_KEY: "",
     },
     url: "http://127.0.0.1:4173",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !globalThis.process?.env.CI,
     timeout: 30_000,
   },
 });
