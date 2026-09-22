@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:integration:checkout": "vitest run --config vitest.integration.config.js --run integration/checkout-backend.integration.jsx",
     "test:integration:reservation-page": "vitest run --config vitest.integration.config.js --run integration/reservation-page-backend.integration.jsx",
+    "test:e2e:reservation": "playwright test --config playwright.config.js",
     "test:watch": "vitest",
     "preview": "vite preview"
   },
@@ -36,6 +37,7 @@
     "styled-components": "^6.5.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@testing-library/jest-dom": "6.4.6",
     "@testing-library/react": "15.0.7",
     "@types/react": "^18.2.66",
