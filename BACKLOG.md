@@ -16,7 +16,7 @@ BACKLOG는 확정 구현 목록이 아니라 조사와 재현이 필요한 후�
 | 7        | 서버 소유 구역·행 계약을 실제 좌석 선택 화면이 사용하지 않음       | Backend 구역 API, 2,000석 중 선택 구역 200석 fixture         | 실제 좌석도·전체 상세 반응형·실시간 push | 완료 ([#21](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/21), [PR #22](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/22)) |
 | 8        | 실제 Backend 공연 상세부터 좌석 점유까지 화면 단위 회귀가 없음      | local fixture·실제 HTTP·10구역·선택 구역 200석·hold 상태     | Playwright·실제 지도·PG·운영 성능         | 완료 ([#24](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/24), [PR #25](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/25)) |
 | 9        | jsdom 통합만으로 실제 Chromium viewport·스크롤·클릭 회귀를 확인할 수 없음 | local mock API, 1440·768·390 viewport, 10구역·선택 구역 200석·hold 409 | 실제 기기·PG·KOPIS·전체 UI 재설계·운영 성능 | 완료 ([#27](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/27)) |
-| 10       | 결제 화면 복귀가 `READY` Checkout을 취소하지 않아 활성 점유가 만료까지 남음 | 취소 API·`CANCELED` 상태·session 정리·성공/불명확 응답 fixture | 실제 PG·Checkout 자동 만료 scheduler·운영 결제 UX | 진행 중 ([#29](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/29)) |
+| 10       | 결제 화면 복귀가 `READY` Checkout을 취소하지 않아 활성 점유가 만료까지 남음 | 취소 API·`CANCELED` 상태·session 정리·성공/불명확 응답 fixture | 실제 PG·Checkout 자동 만료 scheduler·운영 결제 UX | 완료 ([#29](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/29)) |
 
 ## 후속 후보
 
