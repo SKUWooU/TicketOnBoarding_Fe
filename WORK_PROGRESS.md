@@ -4,15 +4,13 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-### Frontend Issue #27 — 예약 화면 Chromium E2E·viewport 회귀 기준선
-
-- 범위: local mock API 기반 Chromium viewport·구역 탐색·hold/409 사용자 피드백 계약
-- 제외: 실제 KOPIS·PG·Kakao Map, 운영 성능, 전체 상세 페이지 재설계, WebSocket
+- 없음
 
 ## 완료
 
 | Issue                                                           | 결과                                                        | 검증                                             | PR / squash commit                                                                                            |
 | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [#27](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/27) | Chromium E2E·mobile 상세 유동 폭·외부 호출 차단            | Chromium 3 viewport·CI·build·변경 lint          | [PR #28](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/28) / `53a1f447c4f2f991006a467e358a896e25bc3227` |
 | [#24](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/24) | 실제 Backend 상세·회차·10구역·200석·hold 화면 계약          | 통합 1개·기존 Checkout·67 tests·build·CI         | [PR #25](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/25) / `c2f5e6be4ad131d2c51d0baa13ac3c0a52ce5e3e` |
 | [#21](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/21) | 구역 요약·선택 구역 200석·stale 차단·반응형 좌석 탐색       | 67 tests·build·CI, 로컬 API·3 viewport 측정      | [PR #22](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/22) / `f5a133e126b7b9d1998b013f86de12aeb8aa049c` |
 | [#18](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/18) | 24·2,000석 계약 차이·렌더링 기준선·layout ADR               | 56 tests·build·CI, jsdom benchmark 3회           | [PR #19](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/19) / `49a348040c6fa2ec204f42ef457eeaf87ff68685` |
