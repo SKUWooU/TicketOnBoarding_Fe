@@ -1,9 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import axiosBackend from "../AxiosConfig";
-import { confirmVerifiedReservation, prepareCheckout } from "./checkoutApi";
+import {
+  cancelCheckout,
+  confirmVerifiedReservation,
+  prepareCheckout,
+} from "./checkoutApi";
 
 vi.mock("../AxiosConfig", () => ({
-  default: { post: vi.fn() },
+  default: { delete: vi.fn(), post: vi.fn() },
 }));
 
 describe("checkoutApi", () => {
@@ -54,6 +58,17 @@ describe("checkoutApi", () => {
         withCredentials: true,
         headers: { "Idempotency-Key": "reservation-key" },
       },
+    );
+  });
+
+  it("cancels the caller-owned checkout before returning to seat selection", async () => {
+    axiosBackend.delete.mockResolvedValue({ data: { status: "CANCELED" } });
+
+    await cancelCheckout("concert-1", "merchant-1");
+
+    expect(axiosBackend.delete).toHaveBeenCalledWith(
+      "/main/detail/concert-1/checkouts/merchant-1",
+      { withCredentials: true },
     );
   });
 });

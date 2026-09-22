@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import axiosBackend from "../src/AxiosConfig";
 import { holdSeats } from "../src/api/seatHoldApi";
 import {
+  cancelCheckout,
   confirmVerifiedReservation,
   prepareCheckout,
 } from "../src/api/checkoutApi";
@@ -169,6 +170,75 @@ describe("Checkout Frontend-Backend contract", () => {
       reservations: 1,
       bookings: 1,
       payments: 1,
+      invariantSatisfied: true,
+    });
+  });
+
+  it("cancels a READY checkout through Payment and releases its virtual hold", async () => {
+    const cancelRunId = `${RUN_ID}-cancel`;
+    const cancelFixture = (
+      await integrationClient.post(`/loadtest/runs?runId=${cancelRunId}`)
+    ).data;
+    const reservationData = {
+      concertDate: CONCERT_DATE,
+      concertTimeId: cancelFixture.concertTimeId,
+      concertTime: CONCERT_TIME,
+      seatNumberList: [SEAT_NUMBER],
+    };
+
+    await holdSeats(cancelFixture.concertId, cancelFixture.concertTimeId, [
+      SEAT_NUMBER,
+    ]);
+    const checkout = await prepareCheckout(
+      cancelFixture.concertId,
+      reservationData,
+      `fe-${cancelRunId}-checkout`,
+    );
+    expect(checkout).toMatchObject({ status: "READY" });
+
+    testState.navigate.mockClear();
+    testState.location = {
+      state: {
+        concertId: cancelFixture.concertId,
+        concertName: "Local cancellation fixture",
+        paymentMethod: "FIXTURE",
+        reservationData,
+        checkout,
+        checkoutKey: `fe-${cancelRunId}-checkout`,
+        reservationKey: `lt-${cancelRunId}.fe-reservation`,
+      },
+    };
+
+    render(<Payment />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Checkout 취소 후 좌석 선택" }),
+    );
+
+    await waitFor(() =>
+      expect(testState.navigate).toHaveBeenCalledWith(
+        `/concertReservation/${cancelFixture.concertId}`,
+      ),
+    );
+
+    const canceled = await cancelCheckout(
+      cancelFixture.concertId,
+      checkout.merchantUid,
+    );
+    expect(canceled).toMatchObject({ status: "CANCELED" });
+
+    const snapshot = (
+      await integrationClient.get(`/loadtest/seat-holds/snapshot?runId=${cancelRunId}`)
+    ).data;
+    expect(snapshot).toMatchObject({
+      expectedTotalSeats: 2000,
+      actualSeatCount: 2000,
+      remainingSeats: 2000,
+      reservedSeats: 0,
+      activeHeldSeats: 0,
+      holdRows: 0,
+      reservations: 0,
+      bookings: 0,
+      payments: 0,
       invariantSatisfied: true,
     });
   });
