@@ -19,6 +19,15 @@ export async function prepareCheckout(
   return response.data;
 }
 
+export async function cancelCheckout(concertId, merchantUid) {
+  const response = await axiosBackend.delete(
+    `/main/detail/${concertId}/checkouts/${merchantUid}`,
+    { withCredentials: true },
+  );
+
+  return response.data;
+}
+
 export async function confirmVerifiedReservation(
   concertId,
   merchantUid,

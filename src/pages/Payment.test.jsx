@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Payment from "./Payment";
 import {
+  cancelCheckout,
   confirmVerifiedReservation,
   prepareCheckout,
 } from "../api/checkoutApi";
@@ -10,6 +11,7 @@ import {
   requestPayment,
 } from "../payment/paymentProvider";
 import {
+  clearCheckoutSession,
   loadCheckoutSession,
   saveCheckoutSession,
 } from "../utils/checkoutSession";
@@ -26,6 +28,7 @@ vi.mock("react-router-dom", async (importOriginal) => ({
 }));
 
 vi.mock("../api/checkoutApi", () => ({
+  cancelCheckout: vi.fn(),
   confirmVerifiedReservation: vi.fn(),
   prepareCheckout: vi.fn(),
 }));
@@ -70,6 +73,7 @@ function deferred() {
 describe("Payment", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearCheckoutSession();
     router.location = { state: checkoutSession };
   });
 
@@ -192,6 +196,85 @@ describe("Payment", () => {
       screen.getByRole("button", { name: "결제 후 예약 확정" }),
     ).toBeDisabled();
     expect(loadCheckoutSession().paymentAttemptStarted).toBe(true);
+  });
+
+  it("cancels a READY checkout before returning to seat selection", async () => {
+    cancelCheckout.mockResolvedValue({ status: "CANCELED" });
+    render(<Payment />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Checkout 취소 후 좌석 선택" }),
+    );
+
+    await waitFor(() =>
+      expect(cancelCheckout).toHaveBeenCalledWith("concert-1", "merchant-1"),
+    );
+    expect(router.navigate).toHaveBeenCalledWith(
+      "/concertReservation/concert-1",
+    );
+    expect(loadCheckoutSession()).toBeNull();
+  });
+
+  it("blocks payment confirmation while Checkout cancellation is pending", async () => {
+    const cancellation = deferred();
+    cancelCheckout.mockReturnValue(cancellation.promise);
+    render(<Payment />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Checkout 취소 후 좌석 선택" }),
+    );
+
+    await waitFor(() => expect(cancelCheckout).toHaveBeenCalledOnce());
+    const confirmButton = screen.getByRole("button", {
+      name: "결제 후 예약 확정",
+    });
+    expect(confirmButton).toBeDisabled();
+    fireEvent.click(confirmButton);
+    expect(requestPayment).not.toHaveBeenCalled();
+    expect(confirmVerifiedReservation).not.toHaveBeenCalled();
+
+    cancellation.resolve({ status: "CANCELED" });
+    await waitFor(() =>
+      expect(router.navigate).toHaveBeenCalledWith(
+        "/concertReservation/concert-1",
+      ),
+    );
+  });
+
+  it("keeps the checkout session on an unknown cancellation result", async () => {
+    cancelCheckout.mockRejectedValue(new Error("network timeout"));
+    saveCheckoutSession(checkoutSession);
+    render(<Payment />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Checkout 취소 후 좌석 선택" }),
+    );
+
+    expect(
+      await screen.findByText(/좌석 점유를 유지한 채 결제 화면에 남습니다/),
+    ).toBeVisible();
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(loadCheckoutSession()).toEqual(checkoutSession);
+  });
+
+  it("does not return to seats while payment verification is unresolved", async () => {
+    router.location = {
+      state: {
+        ...checkoutSession,
+        paymentAttemptStarted: true,
+      },
+    };
+    render(<Payment />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Checkout 취소 후 좌석 선택" }),
+    );
+
+    expect(
+      await screen.findByText(/결제 결과를 확인 중인 Checkout은 좌석 선택으로 돌아갈 수 없습니다/),
+    ).toBeVisible();
+    expect(cancelCheckout).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
   it("does not mistake a provider 503 for a Backend verification failure", async () => {

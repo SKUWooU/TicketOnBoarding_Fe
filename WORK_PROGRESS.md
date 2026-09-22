@@ -4,7 +4,7 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- 없음
+- [#29](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/29) `READY` Checkout 취소 후 좌석 선택 복귀
 
 ## 완료
 

@@ -4,6 +4,7 @@ import LoginHeader from "../components/LoginHeader";
 import LoginBtn from "../components/LoginBtn";
 import style from "../styles/IdResult.module.scss";
 import {
+  cancelCheckout,
   confirmVerifiedReservation,
   prepareCheckout,
 } from "../api/checkoutApi";
@@ -26,6 +27,7 @@ const CHECKOUT_MESSAGE = {
   PAYMENT_ATTEMPT_UNKNOWN:
     "결제 요청 결과를 확인할 수 없습니다. 다시 결제하지 말고 관리자에게 확인을 요청해 주세요.",
   RESERVATION_CONFIRMED: "예약이 이미 확정되었습니다.",
+  CANCELED: "결제 준비를 취소했습니다. 좌석을 다시 선택해 주세요.",
   EXPIRED: "좌석 임시 점유가 만료되었습니다. 좌석을 다시 선택해 주세요.",
 };
 
@@ -51,6 +53,7 @@ function Payment() {
     checkoutSession?.paymentResult ?? null,
   );
   const [pending, setPending] = useState(false);
+  const [cancellationPending, setCancellationPending] = useState(false);
   const requestInFlight = useRef(false);
 
   const persistSession = (updates) => {
@@ -103,7 +106,8 @@ function Payment() {
     if (
       requestInFlight.current ||
       !checkoutSession ||
-      checkoutStatus !== "READY"
+      checkoutStatus !== "READY" ||
+      cancellationPending
     ) {
       return;
     }
@@ -165,13 +169,66 @@ function Payment() {
     }
   };
 
-  const returnToSeats = () => {
+  const returnToSeats = async () => {
     if (!checkoutSession) {
       navigate("/");
       return;
     }
 
-    navigate(`/concertReservation/${checkoutSession.concertId}`);
+    if (cancellationPending || pending) return;
+
+    if (checkoutStatus === "EXPIRED" || checkoutStatus === "CANCELED") {
+      clearCheckoutSession();
+      navigate(`/concertReservation/${checkoutSession.concertId}`);
+      return;
+    }
+
+    if (checkoutStatus !== "READY") {
+      setMessage(
+        "결제 결과를 확인 중인 Checkout은 좌석 선택으로 돌아갈 수 없습니다. 상태가 확정될 때까지 다시 결제하지 마세요.",
+      );
+      return;
+    }
+
+    setCancellationPending(true);
+    setMessage("결제 준비를 취소하고 좌석 점유를 해제하고 있습니다.");
+
+    try {
+      const canceledCheckout = await cancelCheckout(
+        checkoutSession.concertId,
+        checkoutSession.checkout.merchantUid,
+      );
+
+      if (canceledCheckout?.status !== "CANCELED") {
+        setMessage("Checkout 취소 상태를 확인하지 못했습니다. 다시 시도해 주세요.");
+        return;
+      }
+
+      clearCheckoutSession();
+      navigate(`/concertReservation/${checkoutSession.concertId}`);
+    } catch (error) {
+      const status = error.response?.status;
+      if (status === 401) {
+        setMessage("로그인이 만료되었습니다. 다시 로그인해 Checkout 상태를 확인해 주세요.");
+        navigate("/login");
+      } else if (status === 410) {
+        setCheckoutStatus("EXPIRED");
+        persistSession({
+          checkout: { ...checkoutSession.checkout, status: "EXPIRED" },
+        });
+        setMessage(CHECKOUT_MESSAGE.EXPIRED);
+      } else if (status === 409) {
+        setMessage(
+          "결제 확인이 진행 중이거나 Checkout 상태가 변경되었습니다. 다시 결제하지 말고 상태를 확인해 주세요.",
+        );
+      } else {
+        setMessage(
+          "Checkout 취소 결과를 확인하지 못했습니다. 좌석 점유를 유지한 채 결제 화면에 남습니다.",
+        );
+      }
+    } finally {
+      setCancellationPending(false);
+    }
   };
 
   if (!checkoutSession) {
@@ -190,7 +247,8 @@ function Payment() {
     );
   }
 
-  const canRequestPayment = checkoutStatus === "READY" && !pending;
+  const canRequestPayment =
+    checkoutStatus === "READY" && !pending && !cancellationPending;
 
   return (
     <div>
@@ -217,9 +275,13 @@ function Payment() {
         />
         <LoginBtn
           className="blueBtn"
-          buttonText="좌석 선택으로 돌아가기"
+          buttonText={
+            cancellationPending
+              ? "Checkout 취소 중"
+              : "Checkout 취소 후 좌석 선택"
+          }
           onClick={returnToSeats}
-          disabled={pending}
+          disabled={pending || cancellationPending}
         />
       </div>
     </div>
