@@ -7,8 +7,8 @@
 ## 범위와 fixture
 
 - Playwright Chromium에서 1440×900, 768×1024, 390×844 viewport를 실행한다.
-- 브라우저 네트워크 단계에서 `/api/` 요청만 명시적인 fixture로 처리한다. 인증, 공연·회차, 10개 구역, 선택 구역 200석, hold 성공·409 응답을 제공한다.
-- KOPIS, 실제 PG, Kakao Map, 실제 Backend는 호출하지 않는다. 따라서 이 결과는 외부 연동 E2E나 운영 성능 측정이 아니다.
+- Vite E2E 서버의 base URL은 `/api`, Kakao Map key는 빈 값으로 고정한다. 브라우저의 HTTPS 요청은 모두 중단하고 `/api/` 요청만 명시적인 fixture로 처리한다. 인증, 공연·회차, 10개 구역, 선택 구역 200석, hold 성공·409 응답을 제공한다.
+- KOPIS, 실제 PG, Kakao Map, Dialogflow, 실제 Backend는 호출하지 않는다. 따라서 이 결과는 외부 연동 E2E나 운영 성능 측정이 아니다.
 
 ## 검증 계약
 

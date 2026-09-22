@@ -40,6 +40,7 @@ function sectionDetail(sectionCode) {
 }
 
 async function installReservationFixture(page) {
+  await page.route("https://**/*", (route) => route.abort());
   await page.route("http://127.0.0.1:4173/api/**", async (route) => {
     const request = route.request();
     const url = new URL(request.url());

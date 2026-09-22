@@ -24,7 +24,11 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm.cmd run dev -- --host 127.0.0.1 --port 4173",
+    command: "npm run dev -- --host 127.0.0.1 --port 4173",
+    env: {
+      VITE_REACT_APP_AXIOS_BASE_URL: "/api",
+      VITE_REACT_APP_KAKAOMAP_SERVICE_KEY: "",
+    },
     url: "http://127.0.0.1:4173",
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
