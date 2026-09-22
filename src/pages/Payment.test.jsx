@@ -215,6 +215,32 @@ describe("Payment", () => {
     expect(loadCheckoutSession()).toBeNull();
   });
 
+  it("blocks payment confirmation while Checkout cancellation is pending", async () => {
+    const cancellation = deferred();
+    cancelCheckout.mockReturnValue(cancellation.promise);
+    render(<Payment />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Checkout 취소 후 좌석 선택" }),
+    );
+
+    await waitFor(() => expect(cancelCheckout).toHaveBeenCalledOnce());
+    const confirmButton = screen.getByRole("button", {
+      name: "결제 후 예약 확정",
+    });
+    expect(confirmButton).toBeDisabled();
+    fireEvent.click(confirmButton);
+    expect(requestPayment).not.toHaveBeenCalled();
+    expect(confirmVerifiedReservation).not.toHaveBeenCalled();
+
+    cancellation.resolve({ status: "CANCELED" });
+    await waitFor(() =>
+      expect(router.navigate).toHaveBeenCalledWith(
+        "/concertReservation/concert-1",
+      ),
+    );
+  });
+
   it("keeps the checkout session on an unknown cancellation result", async () => {
     cancelCheckout.mockRejectedValue(new Error("network timeout"));
     saveCheckoutSession(checkoutSession);

@@ -220,6 +220,7 @@ describe("Checkout Frontend-Backend contract", () => {
       ),
     );
 
+    // Backend 취소 응답은 멱등적이어야 하며, 재시도가 해제된 hold를 복원하면 안 된다.
     const canceled = await cancelCheckout(
       cancelFixture.concertId,
       checkout.merchantUid,

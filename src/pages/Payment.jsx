@@ -106,7 +106,8 @@ function Payment() {
     if (
       requestInFlight.current ||
       !checkoutSession ||
-      checkoutStatus !== "READY"
+      checkoutStatus !== "READY" ||
+      cancellationPending
     ) {
       return;
     }
@@ -246,7 +247,8 @@ function Payment() {
     );
   }
 
-  const canRequestPayment = checkoutStatus === "READY" && !pending;
+  const canRequestPayment =
+    checkoutStatus === "READY" && !pending && !cancellationPending;
 
   return (
     <div>
