@@ -60,13 +60,6 @@ test.beforeAll(async ({ request }) => {
 
 test.beforeEach(async ({ context, page }) => {
   await page.route("https://**/*", (route) => route.abort());
-  await page.route("http://127.0.0.1:4174/api/auth/valid", (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ valid: true, code: 1, nickName: "loadtest" }),
-    }),
-  );
   await context.addCookies([
     {
       name: "accessToken",
@@ -76,7 +69,16 @@ test.beforeEach(async ({ context, page }) => {
       sameSite: "Lax",
     },
   ]);
+  const authResponsePromise = page.waitForResponse(
+    (response) => new URL(response.url()).pathname === "/api/auth/valid",
+  );
   await page.goto(`/concertReservation/${fixture.concertId}`);
+  const authResponse = await authResponsePromise;
+  expect(authResponse.ok()).toBeTruthy();
+  await expect(authResponse.json()).resolves.toMatchObject({
+    valid: true,
+    userName: accessToken.username,
+  });
   await expect(
     page.getByRole("heading", { name: new RegExp(`가상 고경합 부하 공연 ${RUN_ID}`) }),
   ).toBeVisible();
