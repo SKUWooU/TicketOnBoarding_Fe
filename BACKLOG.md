@@ -19,6 +19,7 @@ BACKLOG는 확정 구현 목록이 아니라 조사와 재현이 필요한 후�
 | 10       | 결제 화면 복귀가 `READY` Checkout을 취소하지 않아 활성 점유가 만료까지 남음 | 취소 API·`CANCELED` 상태·session 정리·성공/불명확 응답 fixture | 실제 PG·Checkout 자동 만료 scheduler·운영 결제 UX | 완료 ([#29](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/29)) |
 | 11       | mock Browser E2E와 local FE·BE 통합 테스트가 분리되어 실제 UI의 취소 흐름을 함께 검증하지 못함 | loopback Backend·가상 2,000석 fixture·인증 cookie·Chromium hold/Checkout 취소·snapshot | 실제 PG·KOPIS·Kakao·운영 환경 E2E | 완료 ([#31](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/31)) |
 | 12       | local Browser E2E가 fixture JWT를 사용하지만 `/auth/valid`만 mock 처리함 | Backend loadtest `SiteUser` fixture·loopback Vite proxy·실제 AuthContext 응답·Chromium 취소 흐름 | 로그인 UI·OAuth·실제 PG·KOPIS·Kakao·일반 CI 편입 | 완료 ([#33](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/33), [PR #34](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/34)) |
+| 13       | 모든 page module이 초기 entry에 eager 포함되어 첫 화면과 무관한 관리자·계정·결제·예매 코드가 함께 전달됨 | 577.00 kB(gzip 187.78 kB) baseline, `React.lazy` route, build artifact·local Browser E2E | manual chunk 고정·실제 네트워크/ Core Web Vitals·운영 성능 주장 | 진행 중 ([#35](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/35)) |
 
 ## 후속 후보
 
