@@ -4,7 +4,9 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- 없음
+- Frontend Issue #35 — 라우트 단위 초기 번들 분리
+  - 범위: page eager import를 `React.lazy`로 전환하고 production build artifact·예매 E2E로 회귀 검증
+  - 제외: manual chunk 고정, 실제 네트워크·Core Web Vitals, 2,000석 렌더링 재측정
 
 ## 완료
 
