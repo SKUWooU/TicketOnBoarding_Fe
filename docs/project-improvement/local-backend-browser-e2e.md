@@ -15,8 +15,8 @@ Chromium (127.0.0.1:4174)
 
 - Backend 주소는 loopback HTTP만 허용한다.
 - test run마다 가상 공연 1개·회차 1개·10구역·2,000석 fixture와 테스트 JWT를 만든다.
-- Browser cookie로 fixture JWT를 주입한다. `loadtest` JWT는 일반 로그인 사용자 row를 만들지 않으므로 AuthContext의 `/auth/valid` 응답만 local fixture로 대체하며, 실제 로그인·OAuth 흐름은 테스트하지 않는다.
-- 좌석 hold·Checkout·취소 요청은 대체하지 않으며, Backend가 fixture JWT를 실제로 검증한다.
+- Browser cookie로 fixture JWT를 주입한다. Backend loadtest fixture가 같은 username의 `SiteUser`를 만들므로 AuthContext의 `/auth/valid`도 Vite proxy를 거쳐 실제 Backend에서 검증한다. 로그인 화면·OAuth 흐름은 테스트하지 않는다.
+- 인증 확인·좌석 hold·Checkout·취소 요청은 대체하지 않으며, Backend가 fixture JWT를 실제로 검증한다.
 - `https` 요청은 browser에서 차단한다. 실제 PG·KOPIS·Kakao는 호출하지 않는다.
 - 일반 CI에는 포함하지 않는다. Docker와 Spring Boot가 필요한 opt-in local 검증이다.
 
