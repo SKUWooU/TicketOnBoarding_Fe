@@ -4,14 +4,13 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- Frontend Issue #35 — 라우트 단위 초기 번들 분리
-  - 범위: page eager import를 `React.lazy`로 전환하고 production build artifact·예매 E2E로 회귀 검증
-  - 제외: manual chunk 고정, 실제 네트워크·Core Web Vitals, 2,000석 렌더링 재측정
+- 없음
 
 ## 완료
 
 | Issue                                                           | 결과                                                        | 검증                                             | PR / squash commit                                                                                            |
 | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [#35](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/35) | route lazy loading·초기 entry 전달 범위 분리               | 72 tests·mock Browser 3건·local Browser 1건·CI  | [PR #36](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/36) / `cc3dccccc0bdc85b3c3f12c1f93255f627740a17` |
 | [#33](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/33) | fixture JWT의 실제 `/auth/valid`·Chromium 취소 흐름 검증    | local Chromium 1건·72 tests·build·CI            | [PR #34](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/34) / `e977f8231445faa77cf55565ce1b1242366f20cc` |
 | [#31](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/31) | local Chromium hold·Checkout 취소·fixture 불변식 E2E        | Chromium 1건·mock Chromium 3건·72 tests·CI      | [PR #32](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/32) / `4d2ac7a3e323732c7f976642a2edcbb42b3493ec` |
 | [#29](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/29) | `READY` Checkout 취소·점유 해제·검증 중 경합 차단          | 72 tests·local 2,000석 통합 2건·build·CI        | [PR #30](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/30) / `0d35e1e8233e30d966e11b5ea79b2c62a6d1628d` |

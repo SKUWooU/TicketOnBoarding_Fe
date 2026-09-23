@@ -1,6 +1,6 @@
 # 라우트 단위 초기 번들 분리
 
-연결: [Issue #35](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/35)
+연결: [Issue #35](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/35), [PR #36](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/36)
 
 ## 문제
 
