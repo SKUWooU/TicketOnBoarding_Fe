@@ -18,7 +18,7 @@ BACKLOG는 확정 구현 목록이 아니라 조사와 재현이 필요한 후�
 | 9        | jsdom 통합만으로 실제 Chromium viewport·스크롤·클릭 회귀를 확인할 수 없음 | local mock API, 1440·768·390 viewport, 10구역·선택 구역 200석·hold 409 | 실제 기기·PG·KOPIS·전체 UI 재설계·운영 성능 | 완료 ([#27](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/27)) |
 | 10       | 결제 화면 복귀가 `READY` Checkout을 취소하지 않아 활성 점유가 만료까지 남음 | 취소 API·`CANCELED` 상태·session 정리·성공/불명확 응답 fixture | 실제 PG·Checkout 자동 만료 scheduler·운영 결제 UX | 완료 ([#29](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/29)) |
 | 11       | mock Browser E2E와 local FE·BE 통합 테스트가 분리되어 실제 UI의 취소 흐름을 함께 검증하지 못함 | loopback Backend·가상 2,000석 fixture·인증 cookie·Chromium hold/Checkout 취소·snapshot | 실제 PG·KOPIS·Kakao·운영 환경 E2E | 완료 ([#31](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/31)) |
-| 12       | local Browser E2E가 fixture JWT를 사용하지만 `/auth/valid`만 mock 처리함 | Backend loadtest `SiteUser` fixture·loopback Vite proxy·실제 AuthContext 응답·Chromium 취소 흐름 | 로그인 UI·OAuth·실제 PG·KOPIS·Kakao·일반 CI 편입 | 완료 ([#33](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/33)) |
+| 12       | local Browser E2E가 fixture JWT를 사용하지만 `/auth/valid`만 mock 처리함 | Backend loadtest `SiteUser` fixture·loopback Vite proxy·실제 AuthContext 응답·Chromium 취소 흐름 | 로그인 UI·OAuth·실제 PG·KOPIS·Kakao·일반 CI 편입 | 완료 ([#33](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/33), [PR #34](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/34)) |
 
 ## 후속 후보
 
