@@ -4,12 +4,13 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- [#43](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/43) Hook 의존성 lint 정비 — [PR #44](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/44) 리뷰·CI 진행 중
+- 없음
 
 ## 완료
 
 | Issue                                                           | 결과                                                        | 검증                                             | PR / squash commit                                                                                            |
 | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [#43](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/43) | Hook 의존성 선언·lint quality gate 통과                    | lint·72 tests·build·CI                          | [PR #44](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/44) / `818cf066b26f156c4d51e3f71fbd8baa584bc1b9` |
 | [#41](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/41) | JSX·정규식 lint errors 제거                                | 72 tests·build·CI                               | [PR #42](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/42) / `0f00784693398f69ea8e515f72d9be8ef7893cf6` |
 | [#39](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/39) | 미사용 선언 제거·lint 기준선 감소                          | 72 tests·build·CI                               | [PR #40](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/40) / `bd6419394ab30a41acfd235a60ff7cebb7593a03` |
 | [#37](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/37) | 공용 컴포넌트 13개 props 계약·lint 기준선 감소              | 72 tests·build·CI                               | [PR #38](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/38) / `438a8c00d2c22962926c4302e37b195b625115d4` |
