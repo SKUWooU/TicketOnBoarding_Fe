@@ -129,7 +129,7 @@ function AdminPage() {
         <p onClick={allUsers}>고객 조회</p>
         <p onClick={allTickets}>예매 조회</p>
         <p onClick={claims}>환불 처리</p>
-        <p onClick={gotoPick}>Md's Pick</p>
+        <p onClick={gotoPick}>Md&apos;s Pick</p>
       </div>
       <div>
         <h1 className={style.division}>
@@ -137,7 +137,7 @@ function AdminPage() {
         </h1>
         <h2 className={style.h2Explain}>
           <FaStar className={style.starEmoji} color={"grey"} /> 아이콘을 클릭해
-          Md's Pick 선정 및 해제가 가능합니다.{" "}
+          Md&apos;s Pick 선정 및 해제가 가능합니다.{" "}
         </h2>
       </div>
       <div className={style.mainInner}>
@@ -168,7 +168,7 @@ function AdminPage() {
               <th>평점</th>
               <th>장소</th>
               <th>가격</th>
-              <th>Md'sPick</th>
+              <th>Md&apos;sPick</th>
               <th>공연 삭제</th>
             </tr>
           </thead>

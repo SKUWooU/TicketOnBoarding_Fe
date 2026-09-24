@@ -86,7 +86,7 @@ function Main() {
           ))}
         </Slider>
       </div>
-      <h1 className={style.division}>MD's Pick</h1>
+      <h1 className={style.division}>MD&apos;s Pick</h1>
       <div className={style.mainInner}>
         <div className={style.showCards}>
           {onTicketPickList.map((concert, index) => (
