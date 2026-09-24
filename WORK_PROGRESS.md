@@ -4,12 +4,13 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- [#39](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/39) 미사용 선언 lint 정비 — [PR #40](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/40) 리뷰·CI 진행 중
+- 없음
 
 ## 완료
 
 | Issue                                                           | 결과                                                        | 검증                                             | PR / squash commit                                                                                            |
 | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [#39](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/39) | 미사용 선언 제거·lint 기준선 감소                          | 72 tests·build·CI                               | [PR #40](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/40) / `bd6419394ab30a41acfd235a60ff7cebb7593a03` |
 | [#37](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/37) | 공용 컴포넌트 13개 props 계약·lint 기준선 감소              | 72 tests·build·CI                               | [PR #38](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/38) / `438a8c00d2c22962926c4302e37b195b625115d4` |
 | [#35](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/35) | route lazy loading·초기 entry 전달 범위 분리               | 72 tests·mock Browser 3건·local Browser 1건·CI  | [PR #36](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/36) / `cc3dccccc0bdc85b3c3f12c1f93255f627740a17` |
 | [#33](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/33) | fixture JWT의 실제 `/auth/valid`·Chromium 취소 흐름 검증    | local Chromium 1건·72 tests·build·CI            | [PR #34](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/34) / `e977f8231445faa77cf55565ce1b1242366f20cc` |
