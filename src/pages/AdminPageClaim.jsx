@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LoginHeader from "../components/LoginHeader";
 import style from "../styles/AdminPage.module.scss";
 import { useNavigate } from "react-router-dom";

@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 
 import LoginHeader from "../components/LoginHeader";
 import LoginInput from "../components/LoginInput";
@@ -15,13 +15,12 @@ import { useNavigate } from "react-router-dom";
 import axiosBackend from "../AxiosConfig";
 
 function Login() {
-  const { isLoggedIn, setIsLoggedIn, setLoginInfo } = useContext(AuthContext);
+  const { setIsLoggedIn, setLoginInfo } = useContext(AuthContext);
 
   const [id, setId] = useState("");
 
   const [pw, setPw] = useState("");
   const [type, setType] = useState("password");
-  const [icon, setIcon] = useState(AiFillEye);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleToggle = () => {

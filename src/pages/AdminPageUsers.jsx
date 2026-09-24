@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LoginHeader from "../components/LoginHeader";
 import style from "../styles/AdminPage.module.scss";
 import { useNavigate } from "react-router-dom";
@@ -72,7 +72,7 @@ function AdminPageUsers() {
     if (confirmGrant) {
       axiosBackend
         .post("/admin/users", { username: username }, { withCredentials: true })
-        .then((response) => {
+        .then(() => {
           alert("관리자 권한이 부여되었습니다.");
           alert(0);
         })

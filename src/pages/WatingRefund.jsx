@@ -1,18 +1,14 @@
 import LoginHeader from "../components/LoginHeader";
 import ReservedCard from "../components/ReservedCard";
 import style from "../styles/ReservedList.module.scss";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import AuthContext from "../components/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axiosBackend from "../AxiosConfig";
 import Pagination from "../components/Pagination";
 import MainFooter from "../components/MainFooter";
 
 function WatingRefund() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { loginInfo } = useContext(AuthContext);
-
   const [reservedList, setReservedList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // Initialize currentPage state
   const itemsPerPage = 8; // Number of items per page

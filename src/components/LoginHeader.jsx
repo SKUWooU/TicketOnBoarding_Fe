@@ -9,7 +9,7 @@ function LoginHeader({ page, className = "" }) {
 
   // useNavigate 호출 -> navigate 함수를 반환
 
-  const pageShift = (e) => {
+  const pageShift = () => {
     navigate("/");
   };
 
