@@ -21,6 +21,8 @@ BACKLOG는 확정 구현 목록이 아니라 조사와 재현이 필요한 후�
 | 12       | local Browser E2E가 fixture JWT를 사용하지만 `/auth/valid`만 mock 처리함 | Backend loadtest `SiteUser` fixture·loopback Vite proxy·실제 AuthContext 응답·Chromium 취소 흐름 | 로그인 UI·OAuth·실제 PG·KOPIS·Kakao·일반 CI 편입 | 완료 ([#33](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/33), [PR #34](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/34)) |
 | 13       | 모든 page module이 초기 entry에 eager 포함되어 첫 화면과 무관한 관리자·계정·결제·예매 코드가 함께 전달됨 | 577.00 kB(gzip 187.78 kB) baseline, `React.lazy` route, build artifact·local Browser E2E | manual chunk 고정·실제 네트워크/ Core Web Vitals·운영 성능 주장 | 완료 ([#35](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/35), [PR #36](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/36)) |
 | 14       | keyboard hold 뒤 상태 refresh로 선택 좌석 focus가 사라져 결제 흐름을 이어가기 어려움 | loopback local Browser E2E·가상 2,000석 fixture·focus/Enter/snapshot 계약 | tab 순서 전면 재설계·screen reader 전수 감사·실제 기기 접근성 인증 | 완료 ([#45](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/45)); broader accessibility audit은 별도 근거 후 검토 |
+| 15       | local Backend Browser E2E 사전조건이 불명확해 의존성 미기동을 늦게 발견 | loopback health `UP` 사전검사와 정확한 Docker·Gradle 실행 명령 | 자동 기동·일반 CI 편입·운영 health 검증 | 진행 중 ([#47](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/47)) |
+
 
 ## 후속 후보
 

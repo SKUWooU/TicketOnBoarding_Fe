@@ -12,7 +12,7 @@
     "test:integration:checkout": "vitest run --config vitest.integration.config.js --run integration/checkout-backend.integration.jsx",
     "test:integration:reservation-page": "vitest run --config vitest.integration.config.js --run integration/reservation-page-backend.integration.jsx",
     "test:e2e:reservation": "playwright test --config playwright.config.js",
-    "test:e2e:local-backend": "playwright test --config playwright.local-backend.config.js",
+    "test:e2e:local-backend": "node scripts/verify-local-backend.mjs && playwright test --config playwright.local-backend.config.js",
     "test:watch": "vitest",
     "preview": "vite preview"
   },

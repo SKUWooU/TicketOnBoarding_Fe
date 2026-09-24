@@ -1,5 +1,9 @@
 # 개선 근거 연결표
 
+| 문제 | 확인 근거 | 후속 개선 | 검증 | Issue/PR |
+| --- | --- | --- | --- | --- |
+| local Backend Browser E2E가 Backend 미실행을 Playwright fixture 연결 오류로만 늦게 노출하고, 실행 문서의 Gradle wrapper 경로가 현재 구조와 달랐다 | `test:e2e:local-backend`는 Playwright부터 시작하며 Backend wrapper는 `TicketOnBoarding_Be/onticket/gradlew.bat`에 위치 | Chromium 전 loopback management health `UP` 읽기 전용 검사와 정확한 Docker·Gradle 복구 명령을 제공 | `UP`·연결 실패·`DOWN` 사전조건 단위 테스트, local Chromium hold·Checkout 취소 E2E, lint, build | [FE #47](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/47) / [상세 근거](local-backend-e2e-preflight.md) |
+
 | 문제                                                              | 확인 근거                                                                   | 후속 개선                                                                               | 검증                                                                                             | Issue/PR        |
 | ----------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | --------------- |
 | keyboard `Enter` hold 뒤 서버 상태 refresh가 좌석 button을 다시 렌더링하며 focus를 잃음 | loopback Backend·MariaDB·가상 2,000석 local Chromium E2E에서 선택 좌석의 접근 가능한 이름은 갱신되지만 focused 상태는 inactive | 마지막 keyboard focus 좌석 ID를 보관하고 refresh 후 같은 활성 button만 refocus, Enter 기반 hold·결제·취소 E2E 추가 | component focus contract 4건, local Chromium mouse·keyboard 2건, 종료 snapshot 2,000석/hold·예약·결제 0/invariant true, lint·build | [FE #45](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/45) / [상세 근거](keyboard-seat-hold-checkout-e2e.md) |
