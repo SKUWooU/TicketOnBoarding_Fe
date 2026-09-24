@@ -4,12 +4,13 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- [#37](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/37) 공용 컴포넌트 props 계약 정비 — 구현·로컬 검증 완료, PR 생성 전
+- 없음
 
 ## 완료
 
 | Issue                                                           | 결과                                                        | 검증                                             | PR / squash commit                                                                                            |
 | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [#37](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/37) | 공용 컴포넌트 13개 props 계약·lint 기준선 감소              | 72 tests·build·CI                               | [PR #38](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/38) / `438a8c00d2c22962926c4302e37b195b625115d4` |
 | [#35](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/35) | route lazy loading·초기 entry 전달 범위 분리               | 72 tests·mock Browser 3건·local Browser 1건·CI  | [PR #36](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/36) / `cc3dccccc0bdc85b3c3f12c1f93255f627740a17` |
 | [#33](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/33) | fixture JWT의 실제 `/auth/valid`·Chromium 취소 흐름 검증    | local Chromium 1건·72 tests·build·CI            | [PR #34](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/34) / `e977f8231445faa77cf55565ce1b1242366f20cc` |
 | [#31](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/31) | local Chromium hold·Checkout 취소·fixture 불변식 E2E        | Chromium 1건·mock Chromium 3건·72 tests·CI      | [PR #32](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/32) / `4d2ac7a3e323732c7f976642a2edcbb42b3493ec` |
