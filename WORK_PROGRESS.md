@@ -4,7 +4,7 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- 없음
+- [#43](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/43) Hook 의존성 lint 정비 — [PR #44](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/44) 리뷰·CI 진행 중
 
 ## 완료
 

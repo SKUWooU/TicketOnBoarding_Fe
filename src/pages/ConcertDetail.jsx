@@ -64,7 +64,7 @@ function ConcertDetail() {
     return () => {
       document.head.removeChild(script);
     };
-  }, [concertDetail.la, concertDetail.lo]);
+  }, [concertDetail.la, concertDetail.lo, mapServiceKey]);
 
   if (!concertDetail.concertName) return <div>Loading...</div>; // 로딩 페이지 추가하기
 
