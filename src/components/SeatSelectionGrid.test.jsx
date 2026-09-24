@@ -82,4 +82,28 @@ describe("SeatSelectionGrid", () => {
     ).toBeDisabled();
     expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument();
   });
+
+  it("restores keyboard focus to an enabled seat after availability refresh", () => {
+    const { rerender } = render(
+      <SeatSelectionGrid
+        seats={seats}
+        selectedSeats={[]}
+        onSeatClick={vi.fn()}
+      />,
+    );
+    const seatButton = screen.getByRole("button", {
+      name: "A1, 선택 가능",
+    });
+
+    seatButton.focus();
+    rerender(
+      <SeatSelectionGrid
+        seats={seats.map((row) => row.map((seat) => ({ ...seat })))}
+        selectedSeats={["A1"]}
+        onSeatClick={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "A1, 내가 선택한 좌석" })).toHaveFocus();
+  });
 });
