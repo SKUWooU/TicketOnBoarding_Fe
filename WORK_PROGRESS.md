@@ -4,12 +4,13 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- [#47](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/47) — local Backend Browser E2E 실행 사전조건 계약
+- 없음
 
 ## 완료
 
 | Issue                                                           | 결과                                                        | 검증                                             | PR / squash commit                                                                                            |
 | --------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [#47](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/47) | local Backend health 사전검사·복구 명령 계약 | unit 4건·local Chromium 2건·76 tests·lint·build·CI | [PR #48](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/48) / `b0bed4dd4dde026dbecccafecdf9dbffc8ffc98b` |
 | [#45](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/45) | keyboard hold refresh 뒤 선택 좌석 focus 복원·Checkout 취소 E2E | local Chromium 2건·component 4건·lint·build | [PR #46](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/46) / `b4f139a8accc380aa000a0a418f8ad8c7ba19843` |
 | [#43](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/43) | Hook 의존성 선언·lint quality gate 통과                    | lint·72 tests·build·CI                          | [PR #44](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/44) / `818cf066b26f156c4d51e3f71fbd8baa584bc1b9` |
 | [#41](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/41) | JSX·정규식 lint errors 제거                                | 72 tests·build·CI                               | [PR #42](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/42) / `0f00784693398f69ea8e515f72d9be8ef7893cf6` |
