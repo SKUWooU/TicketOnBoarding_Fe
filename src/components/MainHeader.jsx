@@ -33,7 +33,7 @@ function MainHeader() {
       .catch(() => {
         setIsLoggedIn(false);
       });
-  }, []);
+  }, [setIsLoggedIn, setLoginInfo]);
 
   const search = (event) => {
     if (event.key === "Enter") {
