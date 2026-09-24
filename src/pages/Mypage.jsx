@@ -2,7 +2,7 @@ import LoginHeader from "../components/LoginHeader";
 import LogoFont from "../assets/logoFont.svg";
 
 import style from "../styles/IdResult.module.scss";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { FaGear } from "react-icons/fa6";
 import { IoTicketOutline } from "react-icons/io5";
@@ -11,8 +11,6 @@ import AuthContext from "../components/AuthContext";
 
 function MyPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-
   const { loginInfo } = useContext(AuthContext);
 
   function gotoList() {
