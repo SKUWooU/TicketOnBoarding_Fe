@@ -4,7 +4,7 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- 없음
+- [#47](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/47) — local Backend Browser E2E 실행 사전조건 계약
 
 ## 완료
 

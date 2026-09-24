@@ -22,8 +22,11 @@ Chromium (127.0.0.1:4174)
 
 ## 실행
 
-1. Backend 저장소에서 `docker compose up -d` 후 `./gradlew bootRun --args="--spring.profiles.active=local,loadtest"`를 실행한다.
-2. Frontend 저장소에서 `npm run test:e2e:local-backend`를 실행한다.
+1. Backend 저장소 루트에서 `docker compose up -d`를 실행한다.
+2. `onticket` 디렉터리에서 `./gradlew.bat bootRun --args="--spring.profiles.active=local,loadtest --spring.batch.job.enabled=false"`를 실행한다.
+3. Frontend 저장소에서 `npm run test:e2e:local-backend`를 실행한다. 이 명령은 Chromium 시작 전에 `127.0.0.1:18081/actuator/health`의 `UP` 상태를 읽기 전용으로 검사한다.
+
+Backend·MariaDB를 npm script가 자동 기동하지는 않는다. 실행 중인 로컬 자원을 임의로 변경하지 않고, 준비되지 않았을 때 필요한 명령만 안내한다.
 
 ## 불변식
 
