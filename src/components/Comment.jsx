@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import PropTypes from "prop-types";
 import style from "../styles/ConcertComment.module.scss";
 import { LuUser2 } from "react-icons/lu";
 import { FaStar } from "react-icons/fa";
@@ -98,5 +99,15 @@ function Comment({
     </div>
   );
 }
+
+Comment.propTypes = {
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  nickName: PropTypes.string,
+  date: PropTypes.string,
+  content: PropTypes.string,
+  starCount: PropTypes.number,
+  author: PropTypes.string,
+  concertID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
 
 export default Comment;

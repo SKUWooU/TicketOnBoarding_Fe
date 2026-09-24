@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import PropTypes from "prop-types";
 import style from "../styles/ConcertComment.module.scss";
 import { LuUser2 } from "react-icons/lu";
 import { FaStar } from "react-icons/fa";
@@ -137,5 +138,18 @@ function CommentRewrite({ concertId, comment, setEditCommentId }) {
     </div>
   );
 }
+
+CommentRewrite.propTypes = {
+  concertId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  comment: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    nickName: PropTypes.string,
+    date: PropTypes.string,
+    content: PropTypes.string,
+    starCount: PropTypes.number,
+    author: PropTypes.string,
+  }).isRequired,
+  setEditCommentId: PropTypes.func.isRequired,
+};
 
 export default CommentRewrite;

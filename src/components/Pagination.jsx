@@ -1,4 +1,5 @@
 import ReactPaginate from "react-paginate";
+import PropTypes from "prop-types";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Pagination = ({ pageCount, onPageChange, currentPage }) => {
@@ -15,6 +16,12 @@ const Pagination = ({ pageCount, onPageChange, currentPage }) => {
       marginPagesDisplayed={pageCount} // 마진 페이지 번호를 충분히 많이 표시
     />
   );
+};
+
+Pagination.propTypes = {
+  pageCount: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  currentPage: PropTypes.number,
 };
 
 export default Pagination;

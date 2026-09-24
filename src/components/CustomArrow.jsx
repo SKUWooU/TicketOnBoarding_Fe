@@ -1,4 +1,5 @@
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import PropTypes from "prop-types";
 
 export function NextArrow(props) {
   const { className, style, onClick } = props;
@@ -57,3 +58,12 @@ export function PrevArrow(props) {
     />
   );
 }
+
+const arrowPropTypes = {
+  className: PropTypes.string,
+  style: PropTypes.object,
+  onClick: PropTypes.func,
+};
+
+NextArrow.propTypes = arrowPropTypes;
+PrevArrow.propTypes = arrowPropTypes;

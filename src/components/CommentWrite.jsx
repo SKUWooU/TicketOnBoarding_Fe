@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import PropTypes from "prop-types";
 import style from "../styles/ConcertComment.module.scss";
 import { LuUser2 } from "react-icons/lu";
 import { FaStar } from "react-icons/fa";
@@ -122,5 +123,9 @@ function CommentWrite({ concertId }) {
     </div>
   );
 }
+
+CommentWrite.propTypes = {
+  concertId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
 
 export default CommentWrite;

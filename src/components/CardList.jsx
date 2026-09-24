@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import style from "../styles/cardList.module.scss";
 import { FaStar } from "react-icons/fa";
 
@@ -51,5 +52,18 @@ function CardList({
     </div>
   );
 }
+
+CardList.propTypes = {
+  concertID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  posterUrl: PropTypes.string,
+  concertName: PropTypes.string,
+  startDate: PropTypes.string,
+  endDate: PropTypes.string,
+  sido: PropTypes.string,
+  gugun: PropTypes.string,
+  placename: PropTypes.string,
+  averageRating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
 
 export default CardList;

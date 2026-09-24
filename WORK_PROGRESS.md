@@ -4,7 +4,7 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- 없음
+- [#37](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/37) 공용 컴포넌트 props 계약 정비 — 구현·로컬 검증 완료, PR 생성 전
 
 ## 완료
 
