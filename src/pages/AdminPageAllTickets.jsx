@@ -86,7 +86,7 @@ function AdminPageAllTickets() {
         <p onClick={allUsers}>고객 조회</p>
         <p onClick={allTickets}>예매 조회</p>
         <p onClick={claims}>환불 처리</p>
-        <p onClick={gotoPick}>Md's Pick</p>
+        <p onClick={gotoPick}>Md&apos;s Pick</p>
       </div>
       <div>
         <h1 className={style.division}>

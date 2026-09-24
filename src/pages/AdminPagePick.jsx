@@ -53,14 +53,14 @@ function AdminPagePick() {
         <p onClick={allUsers}>고객 조회</p>
         <p onClick={allTickets}>예매 조회</p>
         <p onClick={claims}>환불 처리</p>
-        <p onClick={gotoPick}>Md's Pick</p>
+        <p onClick={gotoPick}>Md&apos;s Pick</p>
       </div>
       <div>
         <h1 className={style.division}>
           총 {onTicketPick.length} 개의 공연이 조회되었습니다.
         </h1>
         <h2 className={style.h2Explain}>
-          Md's Pick의 갱신은 공연 조회 탭에서 가능합니다.
+          Md&apos;s Pick의 갱신은 공연 조회 탭에서 가능합니다.
         </h2>
       </div>
 
