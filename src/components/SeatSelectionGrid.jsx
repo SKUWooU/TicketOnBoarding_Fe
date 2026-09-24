@@ -1,5 +1,6 @@
 import { Paper } from "@mui/material";
 import PropTypes from "prop-types";
+import { useEffect, useRef } from "react";
 
 import { SEAT_AVAILABILITY, isSeatSelectable } from "../utils/seatAvailability";
 import style from "../styles/ConcertDetail.module.scss";
@@ -43,6 +44,20 @@ function SeatSelectionGrid({
   interactionDisabled = false,
   onSeatClick,
 }) {
+  const buttonRefs = useRef(new Map());
+  const focusedSeatIdRef = useRef(null);
+
+  useEffect(() => {
+    const focusedSeatId = focusedSeatIdRef.current;
+    const seatButton = focusedSeatId
+      ? buttonRefs.current.get(focusedSeatId)
+      : null;
+
+    if (seatButton && !seatButton.disabled) {
+      seatButton.focus();
+    }
+  }, [seats, selectedSeats]);
+
   return (
     <>
       <div className={style.seatGridViewport} tabIndex={0}>
@@ -89,6 +104,16 @@ function SeatSelectionGrid({
                         title={accessibleLabel}
                         className={`${style.seat} ${style[presentation.styleName]}`}
                         onClick={() => onSeatClick(seat)}
+                        onFocus={() => {
+                          focusedSeatIdRef.current = seat.id;
+                        }}
+                        ref={(element) => {
+                          if (element) {
+                            buttonRefs.current.set(seat.id, element);
+                          } else {
+                            buttonRefs.current.delete(seat.id);
+                          }
+                        }}
                       >
                         {seat.id}
                       </Paper>

@@ -123,3 +123,52 @@ test("holds a local virtual seat, cancels its Checkout, and restores the fixture
     invariantSatisfied: true,
   });
 });
+
+test("selects a local virtual seat and cancels its Checkout with keyboard activation", async ({ page, request }) => {
+  await selectFixtureDate(page, calendarDate.date);
+  await page.getByText("잔여석 : 2000").click();
+
+  const seat = page.getByRole("button", { name: `${SEAT_NUMBER}, 선택 가능` });
+  await seat.focus();
+  await expect(seat).toBeFocused();
+  await page.keyboard.press("Enter");
+
+  const selectedSeat = page.getByRole("button", {
+    name: `${SEAT_NUMBER}, 내가 선택한 좌석`,
+  });
+  await expect(selectedSeat).toBeVisible();
+  await expect(selectedSeat).toBeFocused();
+
+  const paymentButton = page.getByRole("button", { name: "일반 결제" });
+  await paymentButton.focus();
+  await expect(paymentButton).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/payment$/);
+
+  const cancelButton = page.getByRole("button", {
+    name: "Checkout 취소 후 좌석 선택",
+  });
+  await cancelButton.focus();
+  await expect(cancelButton).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(
+    new RegExp(`/concertReservation/${fixture.concertId}$`),
+  );
+
+  const snapshotResponse = await request.get(
+    `${BACKEND_BASE_URL}/loadtest/seat-holds/snapshot?runId=${RUN_ID}`,
+  );
+  expect(snapshotResponse.ok()).toBeTruthy();
+  await expect(snapshotResponse.json()).resolves.toMatchObject({
+    expectedTotalSeats: 2000,
+    actualSeatCount: 2000,
+    remainingSeats: 2000,
+    reservedSeats: 0,
+    activeHeldSeats: 0,
+    holdRows: 0,
+    reservations: 0,
+    bookings: 0,
+    payments: 0,
+    invariantSatisfied: true,
+  });
+});
