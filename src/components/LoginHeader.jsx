@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 import logoPic from "../assets/logoPic.svg";
 import style from "../styles/LoginHeader.module.scss";
@@ -31,5 +32,10 @@ function LoginHeader({ page, className = "" }) {
     </div>
   );
 }
+
+LoginHeader.propTypes = {
+  page: PropTypes.string,
+  className: PropTypes.string,
+};
 
 export default LoginHeader;

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import style from "../styles/cardList.module.scss";
 import axiosBackend from "../AxiosConfig";
@@ -94,5 +95,17 @@ function ReservedCard({
     </div>
   );
 }
+
+ReservedCard.propTypes = {
+  concertId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  posterUrl: PropTypes.string,
+  concertName: PropTypes.string,
+  concertDate: PropTypes.string,
+  concertTime: PropTypes.string,
+  createdAt: PropTypes.string,
+  seatNumber: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  reservationId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  status: PropTypes.string,
+};
 
 export default ReservedCard;

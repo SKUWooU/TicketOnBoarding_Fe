@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import style from "../styles/ClassifyBtn.module.scss";
 
 function ClassifyBtn({ buttonText }) {
@@ -52,5 +53,9 @@ function ClassifyBtn({ buttonText }) {
     </div>
   );
 }
+
+ClassifyBtn.propTypes = {
+  buttonText: PropTypes.string.isRequired,
+};
 
 export default ClassifyBtn;

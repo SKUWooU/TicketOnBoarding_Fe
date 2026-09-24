@@ -1,4 +1,5 @@
 import style from "../styles/signUpText.module.scss";
+import PropTypes from "prop-types";
 
 function SignUpText({ text }) {
   return (
@@ -11,5 +12,9 @@ function SignUpText({ text }) {
     // 클래스 이름이 2개 이상 적용 시 `${값} ${값}` 과 같은 형태로 사용.
   );
 }
+
+SignUpText.propTypes = {
+  text: PropTypes.string,
+};
 
 export default SignUpText;
