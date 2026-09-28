@@ -76,7 +76,11 @@ function SeatSelectionGrid({
 
   return (
     <>
-      <div className={style.seatGridShell}>
+      <div
+        className={
+          hasRowLabels ? style.seatGridShell : style.legacySeatGridShell
+        }
+      >
         {hasRowLabels && (
           <div className={style.rowLabels} aria-hidden="true">
             {seatRows.map(({ key, rowLabel }) => (

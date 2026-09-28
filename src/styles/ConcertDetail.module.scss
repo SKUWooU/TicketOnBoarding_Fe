@@ -348,6 +348,21 @@
   min-width: 0;
 }
 
+.legacySeatGridShell {
+  display: block;
+  min-width: 0;
+
+  .gridContainer {
+    width: 100% !important;
+  }
+
+  .seatRow {
+    justify-content: center;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
 .seatGridViewport {
   min-width: 0;
   overflow-x: auto;
