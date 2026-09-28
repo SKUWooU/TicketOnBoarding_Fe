@@ -41,6 +41,8 @@ dayjs.locale("ko");
 
 import kakaoPay from "../assets/kakaoPay.svg";
 
+const currencyFormatter = new Intl.NumberFormat("ko-KR");
+
 const INITIAL_SEAT_LAYOUT = [
   ["A1", "A2", null, "A3", "A4", "A5", "A6", null, "A7", "A8"],
   ["B1", "B2", null, "B3", "B4", "B5", "B6", null, "B7", "B8"],
@@ -183,6 +185,7 @@ function ConcertReservation() {
   const price = 30000;
   // 가격 고정
   const totalPrice = price * selectedSeats.length;
+  const formattedTotalPrice = currencyFormatter.format(totalPrice);
 
   const handleSeatClick = async (seat) => {
     if (!dateChosen || !selectedPerformance) return;
@@ -612,7 +615,7 @@ function ConcertReservation() {
           <>
             <p className={style.afterChoose}>예상 결제 금액</p>
             <p className={style.totalPrice}>
-              {selectedSeats.length}석 일반석 : {totalPrice}원
+              {selectedSeats.length}석 일반석 : {formattedTotalPrice}원
             </p>
             <p className={style.selectedDate}>
               선택한 날짜 : {dayjs(dateChosen).format("YYYY년 MM월 DD일")} 및{" "}

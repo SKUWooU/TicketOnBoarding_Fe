@@ -38,6 +38,15 @@ function getSeatPresentation(seat, selected) {
   );
 }
 
+function displaySeatLabel(seat, rowLabel) {
+  const seatId = seat.id;
+  const rowPrefix = rowLabel ? `${rowLabel}-` : "";
+
+  return rowPrefix && seatId.startsWith(rowPrefix)
+    ? seatId.slice(rowPrefix.length)
+    : seatId;
+}
+
 function SeatSelectionGrid({
   seats,
   selectedSeats,
@@ -58,28 +67,39 @@ function SeatSelectionGrid({
     }
   }, [seats, selectedSeats]);
 
+  const seatRows = seats.map((rowData, rowIndex) => ({
+    key: `row-${rowIndex}`,
+    row: Array.isArray(rowData) ? rowData : rowData.seats,
+    rowLabel: Array.isArray(rowData) ? null : rowData.rowLabel,
+  }));
+  const hasRowLabels = seatRows.some(({ rowLabel }) => rowLabel);
+
   return (
     <>
-      <div className={style.seatGridViewport} tabIndex={0}>
-        <div
-          className={style.gridContainer}
-          aria-busy={interactionDisabled}
-        >
-          {seats.map((rowData, rowIndex) => {
-            const row = Array.isArray(rowData) ? rowData : rowData.seats;
-            const rowLabel = Array.isArray(rowData) ? null : rowData.rowLabel;
+      <div className={style.seatGridShell}>
+        {hasRowLabels && (
+          <div className={style.rowLabels} aria-hidden="true">
+            {seatRows.map(({ key, rowLabel }) => (
+              <span className={style.rowLabel} key={key}>
+                {rowLabel}
+              </span>
+            ))}
+          </div>
+        )}
+        <div className={style.seatGridViewport} tabIndex={0}>
+          <div
+            className={style.gridContainer}
+            aria-busy={interactionDisabled}
+          >
+            {seatRows.map(({ key, row, rowLabel }) => {
             return (
-              <div
-                key={`row-${rowIndex}`}
-                className={style.seatRow}
-              >
-                {rowLabel && <span className={style.rowLabel}>{rowLabel}</span>}
+              <div key={key} className={style.seatRow}>
                 {row.map((seat, seatIndex) => {
                   if (!seat) {
                     return (
                       <div
                         className={style.seatCell}
-                        key={`spacer-${rowIndex}-${seatIndex}`}
+                        key={`spacer-${key}-${seatIndex}`}
                       >
                         <div className={style.spacer}></div>
                       </div>
@@ -115,14 +135,15 @@ function SeatSelectionGrid({
                           }
                         }}
                       >
-                        {seat.id}
+                        {displaySeatLabel(seat, rowLabel)}
                       </Paper>
                     </div>
                   );
                 })}
               </div>
             );
-          })}
+            })}
+          </div>
         </div>
       </div>
 
