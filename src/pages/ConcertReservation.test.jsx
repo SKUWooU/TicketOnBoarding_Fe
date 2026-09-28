@@ -242,6 +242,7 @@ describe("ConcertReservation seat selection", () => {
     expect(
       await screen.findByRole("button", { name: "A1, 내가 선택한 좌석" }),
     ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText(/30,000/)).toBeVisible();
     expect(screen.getByText(/선택한 좌석 수 : 1/)).toBeVisible();
     expect(screen.getByText(/결제까지 남은 시간/)).toBeVisible();
 

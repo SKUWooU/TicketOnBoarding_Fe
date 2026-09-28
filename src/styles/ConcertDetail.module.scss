@@ -192,9 +192,9 @@
 }
 
 .seat {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,6 +204,9 @@
   border: 1px solid #d5d0dc;
   padding: 0;
   font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
 
   &.available {
     background-color: #fff;
@@ -311,8 +314,8 @@
   margin-right: 16px; /* 좌석 사이 간격을 조정 */
 }
 .spacer {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
 }
 
 .seat-price {
@@ -338,8 +341,15 @@
   box-sizing: border-box;
 }
 
+.seatGridShell {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  min-width: 0;
+}
+
 .seatGridViewport {
-  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
   padding: 4px 4px 12px;
   scrollbar-gutter: stable;
@@ -356,8 +366,8 @@
 
 .seatRow {
   display: flex;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 6px;
   min-width: max-content;
 }
 
@@ -365,19 +375,24 @@
   flex: 0 0 auto;
 }
 
+.rowLabels {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 8px 12px 4px;
+}
+
 .rowLabel {
-  position: sticky;
-  left: 0;
-  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 48px;
   min-width: 48px;
-  min-height: 40px;
+  min-height: 36px;
   background: #fff;
   color: #5b2a86;
   font-weight: 700;
+  font-size: 12px;
 }
 
 .sectionSelector {
