@@ -1,0 +1,37 @@
+{
+  "scenario": "local-admission-purchase",
+  "date": "2026-10-15",
+  "issue": 55,
+  "backendCommit": "43f3822797ef8a215d8799ea579e7015d2c9d09a",
+  "frontendBaseCommit": "2e08b6ce321637482022c4c9861a0ef9aa33e35a",
+  "environment": {
+    "hostMemoryGiB": 15.81,
+    "backendMaxHeapMiB": 384,
+    "hikariMaxPoolSize": 4,
+    "mariaDbVersion": "10.11.8",
+    "mariaDbContainerLimitMiB": 512,
+    "redisVersion": "7.4.7-alpine",
+    "redisContainerLimitMiB": 128,
+    "redisMaxMemoryMiB": 64,
+    "backendProfiles": ["local", "loadtest"],
+    "browser": "Chromium headless",
+    "viewport": [1440, 900]
+  },
+  "fixture": { "performances": 1, "times": 1, "rows": 2, "seatsPerRow": 10, "users": 2, "maxActive": 1, "maxWaiting": 4, "batchSize": 1, "waitingTtlSeconds": 300, "admissionTtlSeconds": 120 },
+  "results": {
+    "preflight": "PASS",
+    "browserScenariosPassed": 1,
+    "waitingHoldHttpStatus": 403,
+    "waitingHoldErrorCode": "ADMISSION_REQUIRED",
+    "waitingCheckoutHttpStatus": 403,
+    "waitingCheckoutErrorCode": "ADMISSION_REQUIRED",
+    "inventoryUnchangedAfterDeniedPurchases": true,
+    "secondStillWaitingImmediatelyBeforeFirstLeaves": true,
+    "checkoutTransitions": ["READY", "CANCELED"],
+    "nextUserAdmittedAfterFirstLeaves": true,
+    "sameSeatHeldThenReleasedByNextUser": true,
+    "finalInventory": { "expectedTotalSeats": 20, "actualSeatCount": 20, "remainingSeats": 20, "activeHeldSeats": 0, "holdRows": 0, "partialHoldStates": 0, "reservedSeats": 0, "reservations": 0, "bookings": 0, "payments": 0, "invariantSatisfied": true }
+  },
+  "limitations": ["Not a load/TPS measurement", "Single Backend process and single Redis", "No real PG/KOPIS calls; payment approval not exercised", "Preflight checks public policy generation/opening and Redis readiness, not maxActive; one-slot behavior is checked in the browser scenario", "No Redis outage/failover/crash recovery experiment", "Not an admission-on/off performance comparison"],
+  "privacy": "No JWT/admission token, raw HTTP body/trace or private manifest included"
+}
