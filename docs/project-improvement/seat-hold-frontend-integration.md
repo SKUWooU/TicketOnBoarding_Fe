@@ -84,4 +84,32 @@ Backend에서 같은 사용자의 재요청은 기존 점유 만료 시각을 �
 - 서버·브라우저 간 명시적 시간대(offset) 계약
 - 고경합 상태 변화가 실제 요구될 때 polling, SSE 또는 WebSocket을 비교 측정
 
-대기열·메시지 브로커·실시간 push는 현재 fixture 문제를 해결하는 데 필요하지 않으므로 도입하지 않는다.
+당시 fixture 문제에는 대기열·메시지 브로커·실시간 push가 필요하지 않았다. 이후 명시적 오픈 대기·구매 입장 요구가 추가되어 BE #228~#234 및 아래 FE #53에서 별도 확장한다. 기존 병목 측정만으로 도입했다는 의미는 아니다.
+
+## 9. 회차별 구매 대기실 연동 (FE #53)
+
+### 흐름과 실패 경계
+
+회차를 선택하면 `GET /main/detail/{concertId}/times/{timeId}/admission-policy`를 먼저 조회한다. `enabled:false`인 경우 기존 선택 흐름을 유지한다. 정책을 못 읽거나 잘못된 응답을 받으면 비활성으로 추정하지 않고 신규 구매를 차단한다. 활성 회차는 본인 상태 GET으로 기존 등록/입장을 복구한다. 최초 404 `ADMISSION_NOT_JOINED`는 등록 버튼을 보여주며 자동 JOIN하지 않는다.
+
+사용자가 명시적으로 등록하면 WAITING 순번 또는 ADMITTED 입장권을 표시한다. WAITING/ADMITTED 상태는 5초 이상 + 0~999ms jitter로 순차 polling한다. 이전 GET이 끝나기 전 다음 GET을 중첩하지 않으며, polling은 TTL을 늘리지 않는다. `expiresAt-serverNow`의 서버 기준 잔여 기간과 브라우저 monotonic clock으로 countdown을 계산한다. 로컬 wall-clock이 다르더라도 서버 시각과 직접 비교하지 않는다. UI 시간/권한은 안내이며 최종 입장·재고 검사는 서버가 수행한다.
+
+입장 전·만료·401·429·503·잘못된 generation 응답에서는 새 좌석 점유를 막는다. 429는 자동 재등록을 반복하지 않고 수동 재시도를 안내한다. 503은 상태 재확인 버튼을 제공한다. 본인이 이미 점유한 좌석의 DELETE는 입장권 없이 계속 가능하다. `X-Admission-Token`은 활성 입장의 신규 Hold/Checkout 준비에만 붙인다. API 전역 header·cookie·local/session storage에는 저장하지 않으며 결제 세션에도 복사하지 않는다. 결제 검증/Checkout 취소에는 추가하지 않는다.
+
+Checkout 준비를 이미 시도한 같은 payload에는 같은 멱등 key로 재시도할 수 있다. 중간에 입장권이 만료/확인 불가해도 기존 Checkout 결과를 재사용할 수 있게 요청을 허용하며, 아직 생성되지 않았다면 BE 신규 생성 gate가 거절한다. 다른 payload의 신규 준비는 입장권이 필요하다. 준비 요청 중 회차/날짜/좌석 전환을 막아 늦은 결과가 다른 선택을 결제 화면에 전달하지 않게 한다.
+
+### 회차 이동과 정리
+
+회차/로그인 상태 변경·unmount 시 polling·진행 중 조회를 중단하고 이전 응답/token을 새 회차에서 사용하지 않는다. 늦은 JOIN 응답은 무시하지만 이를 보상 DELETE하지 않는다. 빠른 A→B→A 전환에서 새 화면이 재사용한 동일 등록을 늦은 보상 요청이 지울 수 있기 때문이다. 따라서 이동/새로고침만으로 자동 이탈하지 않으며, 명시적 나가기(generation+queueEntryId) 또는 서버 TTL로 회수한다. 나가기는 좌석 Hold 해제/Checkout 취소를 대신하지 않는다.
+
+이 단계는 기존 예약 화면 안의 작은 패널이며 대기실 전용 전면 디자인·push·새 상태관리 라이브러리를 추가하지 않는다. 입장권과 Hold countdown은 서로 다른 권한/기한으로 표시한다.
+
+### 검증·남은 범위
+
+API 테스트는 본인 cookie 계약·명시적 이탈 인자·신규 구매 전용 token header와 결제/해제 요청 비전달을 확인한다. hook 테스트는 정책 fail-closed·수동 JOIN·polling 비중첩·서버 잔여 시간·만료·stale JOIN 무시·이탈/unmount·401/429·generation 불일치/서버 gate 오류를 검증한다. 예약 페이지 테스트는 입장 전 차단→입장 후 token 전달, 오류 후 내 좌석 해제, 같은 Checkout key 재시도를 확인한다. 기존 mock browser fixture에는 명시적 비활성 정책을 추가했다.
+
+mock Chromium은 desktop 1440×900·tablet 768×1024·mobile 390×844에서 신규 입장 전 차단/입장 후 Hold header와 기존 좌석 탐색/409 흐름 총 6건을 통과했다. 정책 비활성 응답을 명시한 기존 browser fixture와 활성 대기 응답 fixture는 실제 Redis worker를 대신하는 계약용 mock이다. 기존 대형 구역 전환 unit 테스트는 200개 좌석의 반복 role 탐색 대신 같은 aria-label을 직접 조회하고 Hold 완료 후 구역 버튼 활성 상태를 확인하도록 조정했다. 테스트 제한 시간/검증 범위를 줄이지 않았다.
+
+이 검증은 mock API 기반 UI/계약 검증이며 실제 Redis/MariaDB 구매 통합이나 부하 감소의 증거가 아니다. Backend의 worker/CLI는 BE PR #235, 다음 단계는 제한된 실제 구매 연동·공유/복구와 입장 제어 적용 전후 점진 측정이다. FE에는 BE #232 이후의 정책 API가 필요하며 구버전 BE의 404를 대기 비활성으로 간주하지 않는다. 실제 KOPIS·PG·운영 데이터·고부하를 호출하지 않는다.
+
+로컬 검증: 전체 unit 19파일/92개, 보강한 hook 8개 별도 재검증, mock Chromium 6개, lint·production build·diff --check 통과. 명령은 `npm.cmd test -- --maxWorkers=1 --minWorkers=1`, `npm.cmd run test:e2e:reservation -- --workers=1`, `npm.cmd run lint`, `npm.cmd run build`. 시스템 실행 정책은 변경하지 않고 Windows에서 npm.cmd를 사용했다. 이전 대기한 Vitest runner/child 두 개만 명령행/부모 PID 확인 후 종료했고 사용자 서버/앱은 건드리지 않았다. CI·독립 리뷰 결과는 Issue #53의 연결 PR에 둔다.

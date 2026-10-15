@@ -1,4 +1,5 @@
 import axiosBackend from "../AxiosConfig";
+import { admissionHeaders } from "./admissionApi";
 
 function seatHoldRequest(concertTimeId, seatNumberList) {
   return {
@@ -7,11 +8,11 @@ function seatHoldRequest(concertTimeId, seatNumberList) {
   };
 }
 
-export async function holdSeats(concertId, concertTimeId, seatNumberList) {
+export async function holdSeats(concertId, concertTimeId, seatNumberList, admissionToken) {
   const response = await axiosBackend.post(
     `/main/detail/${concertId}/seat-holds`,
     seatHoldRequest(concertTimeId, seatNumberList),
-    { withCredentials: true },
+    { withCredentials: true, ...(admissionToken ? { headers: admissionHeaders(admissionToken) } : {}) },
   );
 
   return response.data;

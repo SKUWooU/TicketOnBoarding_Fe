@@ -1,4 +1,5 @@
 import axiosBackend from "../AxiosConfig";
+import { admissionHeaders } from "./admissionApi";
 
 const requestOptions = (idempotencyKey) => ({
   withCredentials: true,
@@ -9,11 +10,12 @@ export async function prepareCheckout(
   concertId,
   reservationData,
   idempotencyKey,
+  admissionToken,
 ) {
   const response = await axiosBackend.post(
     `/main/detail/${concertId}/checkouts`,
     reservationData,
-    requestOptions(idempotencyKey),
+    { ...requestOptions(idempotencyKey), headers: { ...requestOptions(idempotencyKey).headers, ...admissionHeaders(admissionToken) } },
   );
 
   return response.data;

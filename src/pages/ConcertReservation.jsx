@@ -5,6 +5,8 @@ import Btn from "../components/LoginBtn";
 import SeatSelectionGrid from "../components/SeatSelectionGrid";
 import SeatSectionSelector from "../components/SeatSectionSelector";
 import useSeatHoldManager from "../hooks/useSeatHoldManager";
+import useAdmission from "../hooks/useAdmission";
+import AdmissionPanel from "../components/AdmissionPanel";
 import {
   getLegacySeats,
   getSeatSection,
@@ -91,6 +93,8 @@ function ConcertReservation() {
 
   const { isLoggedIn } = useContext(AuthContext);
   const { concertID } = useParams();
+
+  const admission = useAdmission({ concertId: concertID, timeId: selectedPerformance?.id, isLoggedIn });
 
   const [seats, setSeats] = useState(INITIAL_SEAT_LAYOUT);
   const [seatSections, setSeatSections] = useState([]);
@@ -180,6 +184,7 @@ function ConcertReservation() {
     navigate,
     selectedPerformance,
     refreshSeats: loadSeats,
+    admission,
   });
 
   const price = 30000;
@@ -219,7 +224,7 @@ function ConcertReservation() {
   }, [concertID]);
 
   const handlePerformanceClick = async (performance) => {
-    if (holdPending) return;
+    if (holdPending || checkoutInFlight.current) return;
 
     //performance는 달력에서 특정 날짜 선택 -> 특정 시간 선택 시의 이벤트 핸들러
     if (selectedPerformance === performance) {
@@ -294,7 +299,7 @@ function ConcertReservation() {
   ];
 
   async function goBack() {
-    if (holdPending) return;
+    if (holdPending || checkoutInFlight.current) return;
 
     await releaseAll();
     navigate(`/concertDetail/${concertID}`);
@@ -311,7 +316,7 @@ function ConcertReservation() {
   };
 
   const handleDateChange = async (newValue) => {
-    if (holdPending) return;
+    if (holdPending || checkoutInFlight.current) return;
 
     await releaseAll();
     seatRequestSequence.current += 1;
@@ -334,6 +339,7 @@ function ConcertReservation() {
   const handleSectionSelect = async (sectionCode) => {
     if (
       holdPending ||
+      checkoutInFlight.current ||
       !selectedPerformance ||
       sectionCode === selectedSectionRef.current
     ) {
@@ -367,6 +373,10 @@ function ConcertReservation() {
 
     const reservationData = handleReservation();
     const fingerprint = JSON.stringify({ concertID, reservationData });
+    if (!admission.canPurchase && checkoutAttempt.current?.fingerprint !== fingerprint) {
+      setCheckoutMessage("대기실 입장 상태를 확인해 주세요.");
+      return;
+    }
     if (checkoutAttempt.current?.fingerprint !== fingerprint) {
       checkoutAttempt.current = {
         fingerprint,
@@ -383,6 +393,7 @@ function ConcertReservation() {
         concertID,
         reservationData,
         checkoutAttempt.current.key,
+        admission.token,
       );
 
       if (checkout.status !== "READY") {
@@ -416,6 +427,7 @@ function ConcertReservation() {
       keepForPayment();
       navigate("/payment", { state: checkoutSession });
     } catch (error) {
+      admission.onPurchaseError(error);
       const status = error.response?.status;
 
       if (status === 401) {
@@ -425,6 +437,8 @@ function ConcertReservation() {
           "선택한 좌석 상태가 변경되었습니다. 최신 좌석을 확인해 주세요.",
         );
         await loadSeats(selectedPerformance);
+      } else if (status === 403 && error.response?.data?.code === "ADMISSION_REQUIRED") {
+        setCheckoutMessage("입장권이 유효하지 않습니다. 대기실 상태를 다시 확인해 주세요.");
       } else if (status === 410) {
         setCheckoutMessage(
           "좌석 임시 점유가 만료되었습니다. 좌석을 다시 선택해 주세요.",
@@ -578,16 +592,18 @@ function ConcertReservation() {
             <SeatSectionSelector
               sections={seatSections}
               selectedSectionCode={selectedSectionCode}
-              disabled={holdPending}
+              disabled={holdPending || checkoutPending}
               onSelect={handleSectionSelect}
             />
             <p className={style.layoutFeedback} aria-live="polite">
               {seatLayoutMessage}
             </p>
+            <AdmissionPanel admission={admission} busy={holdPending || checkoutPending} onLogin={() => navigate("/login")} />
             <SeatSelectionGrid
               seats={seats}
               selectedSeats={selectedSeats}
-              interactionDisabled={holdPending}
+              interactionDisabled={holdPending || checkoutPending}
+              newSelectionDisabled={!admission.canPurchase}
               onSeatClick={handleSeatClick}
             />
             <p className={style.holdFeedback} aria-live="polite">
