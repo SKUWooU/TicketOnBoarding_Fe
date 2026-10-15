@@ -4,7 +4,7 @@ Frontend 저장소의 현재 작업과 완료 이력만 요약합니다. 상세 
 
 ## 진행 중
 
-- FE #53: 회차별 대기 패널·구매 전용 token 연동 구현 완료. unit 92개·mock Chromium 6개·lint/build 통과. 리뷰·CI·병합은 연결 PR에서 확인. 실제 구매/부하 비교는 후속 단계.
+- FE #55: 실제 Redis/MariaDB·두 사용자 입장/구매/취소·재사용 E2E 통과, 최종 재고 20·Hold/예약/결제 0. unit 98개·lint/build 통과. 리뷰/CI는 연결 PR 확인. 부하 비교는 후속 단계.
 
 ## 완료
 

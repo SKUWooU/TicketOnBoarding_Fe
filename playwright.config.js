@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
-  testIgnore: ["local-backend/**"],
+  testIgnore: ["local-backend/**", "local-admission/**"],
   timeout: 30_000,
   expect: { timeout: 10_000 },
   reporter: "list",

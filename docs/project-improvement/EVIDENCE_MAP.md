@@ -2,6 +2,7 @@
 
 | 문제 | 확인 근거 | 후속 개선 | 검증 | Issue/PR |
 | --- | --- | --- | --- | --- |
+| 대기 패널·서버 구매 gate의 실제 연동 미검증 | FE #53은 mock API 계약, BE worker/API는 별도 검증 | 별도 opt-in 20석·두 실제 사용자 Chromium, read-only preflight 후 대기 403·Hold/Checkout 취소·다음 사용자 재사용·DB snapshot | 실제 로컬 Redis/MariaDB 시나리오 1건 PASS, 재고 20·활성 Hold/예약/결제 0·불변식 true. 성능/실 PG/멀티 앱 검증 아님 | [FE #55](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/55) / [조건·흐름·한계](local-backend-browser-e2e.md#실제-대기-입장구매-연결-fe-55) / [요약 원자료](evidence/local-admission-purchase.json) |
 | 서버 입장 제어가 FE 회차/좌석 흐름에 미연결 | BE #232/#234는 본인 대기 API·입장 gate/worker 제공, 기존 FE는 입장 token 미전달 | 회차별 수동 등록/조회/이탈 패널·jitter polling·신규 구매 전용 header·기존 해제/재시도 유지 | API/hook/page mock 계약 및 기존 회귀·lint/build·browser CI. 실제 Redis/MariaDB 부하 미검증 | [FE #53](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/53) / [흐름·검증·한계](seat-hold-frontend-integration.md#9-회차별-구매-대기실-연동-fe-53) |
 | local Backend Browser E2E가 Backend 미실행을 Playwright fixture 연결 오류로만 늦게 노출하고, 실행 문서의 Gradle wrapper 경로가 현재 구조와 달랐다 | `test:e2e:local-backend`는 Playwright부터 시작하며 Backend wrapper는 `TicketOnBoarding_Be/onticket/gradlew.bat`에 위치 | Chromium 전 loopback management health `UP` 읽기 전용 검사와 정확한 Docker·Gradle 복구 명령을 제공 | `UP`·연결 실패·`DOWN`·redirect 거부 사전조건 단위 테스트, local Chromium hold·Checkout 취소 E2E, lint, build | [FE #47](https://github.com/SKUWooU/TicketOnBoarding_Fe/issues/47) / [PR #48](https://github.com/SKUWooU/TicketOnBoarding_Fe/pull/48) / [상세 근거](local-backend-e2e-preflight.md) |
 
