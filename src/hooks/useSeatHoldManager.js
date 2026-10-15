@@ -15,6 +15,7 @@ function useSeatHoldManager({
   navigate,
   selectedPerformance,
   refreshSeats,
+  admission,
 }) {
   const [ownedHolds, setOwnedHolds] = useState({});
   const [holdPending, setHoldPending] = useState(false);
@@ -42,6 +43,8 @@ function useSeatHoldManager({
         return;
       }
 
+      if (admission && !admission.canPurchase) return;
+
       const targetSeatNumbers = [...selectedSeats, seat.id].sort();
       const requestSequence = ++mutationSequence.current;
       setHoldPending(true);
@@ -52,6 +55,7 @@ function useSeatHoldManager({
           concertId,
           selectedPerformance.id,
           targetSeatNumbers,
+          admission?.token,
         );
         if (requestSequence !== mutationSequence.current) return;
 
@@ -65,6 +69,7 @@ function useSeatHoldManager({
         if (requestSequence !== mutationSequence.current) return;
 
         setHoldMessage(seatHoldErrorMessage(error));
+        admission?.onPurchaseError(error);
         await refreshSeats(selectedPerformance);
         if (error?.response?.status === 401) navigate("/login");
       } finally {
@@ -75,6 +80,7 @@ function useSeatHoldManager({
     },
     [
       concertId,
+      admission,
       holdPending,
       isLoggedIn,
       navigate,

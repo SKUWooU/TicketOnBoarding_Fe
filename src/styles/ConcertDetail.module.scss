@@ -602,3 +602,21 @@
     margin-right: 0;
   }
 }
+.admissionPanel {
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 12px;
+  padding: 16px;
+  border: 1px solid #c8b5e4;
+  border-radius: 8px;
+  background: #f7f3fc;
+  color: #332449;
+  overflow-wrap: anywhere;
+  p { margin: 8px 0; font-size: 14px; }
+}
+.admissionActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  button { padding: 8px 12px; cursor: pointer; }
+}

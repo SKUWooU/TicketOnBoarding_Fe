@@ -4,6 +4,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import axiosBackend from "../AxiosConfig";
 import ConcertReservation from "./ConcertReservation";
+import { getAdmissionPolicy, getAdmission, joinAdmission } from "../api/admissionApi";
+
+vi.mock("../api/admissionApi", async (importOriginal) => ({
+  ...await importOriginal(),
+  getAdmissionPolicy: vi.fn(), getAdmission: vi.fn(), joinAdmission: vi.fn(), leaveAdmission: vi.fn(),
+}));
 
 const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }));
 
@@ -187,7 +193,68 @@ function mockConcertRequests(firstSeatResponse, secondSeatResponse) {
 }
 
 describe("ConcertReservation seat selection", () => {
+  const admissionToken = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+  function enableAdmission() {
+    getAdmissionPolicy.mockResolvedValue({ enabled: true, generation: "g1", opensAt: "2030-01-01T00:00:00Z", pollIntervalMillis: 5000 });
+    getAdmission.mockRejectedValue({ response: { status: 404, data: { code: "ADMISSION_NOT_JOINED" } } });
+    joinAdmission.mockResolvedValue({ generation: "g1", serverNow: "2030-01-01T00:00:00Z", admission: {
+      state: "ADMITTED", queueEntryId: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", token: admissionToken,
+      expiresAt: "2030-01-01T00:01:00Z", position: 0,
+    } });
+  }
+  async function selectTimeAndEnter() {
+    render(<ConcertReservation />);
+    await screen.findByText("Fixture 공연");
+    fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
+    fireEvent.click((await screen.findByText("17:00")).closest("div"));
+    const seat = await screen.findByRole("button", { name: "A1, 선택 가능" });
+    expect(seat).toBeDisabled();
+    fireEvent.click(await screen.findByRole("button", { name: "대기 등록" }));
+    await waitFor(() => expect(seat).toBeEnabled());
+    fireEvent.click(seat);
+    await waitFor(() => expect(screen.getByRole("button", { name: "A1, 내가 선택한 좌석" })).toBeEnabled());
+  }
+  it("blocks new holds until admission and sends token only to purchase preparation", async () => {
+    enableAdmission(); await selectTimeAndEnter();
+    const hold = axiosBackend.post.mock.calls.find(([url]) => url.endsWith("/seat-holds"));
+    expect(hold[2].headers["X-Admission-Token"]).toBe(admissionToken);
+    fireEvent.click(screen.getByRole("button", { name: "일반 결제" }));
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith("/payment", expect.anything()));
+    const checkout = axiosBackend.post.mock.calls.find(([url]) => url.endsWith("/checkouts"));
+    expect(checkout[2].headers["X-Admission-Token"]).toBe(admissionToken);
+    expect(JSON.stringify(sessionStorage)).not.toContain(admissionToken);
+  });
+  it("still releases owned holds after admission failure", async () => {
+    enableAdmission(); await selectTimeAndEnter();
+    axiosBackend.post.mockRejectedValueOnce({ response: { status: 403, data: { code: "ADMISSION_REQUIRED" } } });
+    fireEvent.click(screen.getByRole("button", { name: "A3, 선택 가능" }));
+    await screen.findByRole("button", { name: "입장 상태 다시 확인" });
+    const owned = screen.getByRole("button", { name: "A1, 내가 선택한 좌석" });
+    await waitFor(() => expect(owned).toBeEnabled()); fireEvent.click(owned);
+    await waitFor(() => expect(axiosBackend.delete).toHaveBeenCalledWith("/main/detail/concert-1/seat-holds", {
+      withCredentials: true, data: { concertTimeId: 1, seatNumberList: ["A1"] },
+    }));
+  });
+  it("retries the same Checkout key without a fresh token after an admission outage", async () => {
+    enableAdmission(); await selectTimeAndEnter();
+    const prepare = axiosBackend.post.getMockImplementation();
+    let first = true;
+    axiosBackend.post.mockImplementation((...args) => {
+      if (args[0].endsWith("/checkouts") && first) { first = false; return Promise.reject({ response: { status: 503, data: { code: "ADMISSION_UNAVAILABLE" } } }); }
+      return prepare(...args);
+    });
+    fireEvent.click(screen.getByRole("button", { name: "일반 결제" }));
+    await screen.findByRole("button", { name: "입장 상태 다시 확인" });
+    await waitFor(() => expect(screen.getByRole("button", { name: "일반 결제" })).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: "일반 결제" }));
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith("/payment", expect.anything()));
+    const calls = axiosBackend.post.mock.calls.filter(([url]) => url.endsWith("/checkouts"));
+    expect(calls[0][2].headers["Idempotency-Key"]).toBe(calls[1][2].headers["Idempotency-Key"]);
+    expect(calls[1][2].headers["X-Admission-Token"]).toBeUndefined();
+  });
   beforeEach(() => {
+    getAdmissionPolicy.mockResolvedValue({ enabled: false });
+    getAdmission.mockReset(); joinAdmission.mockReset();
     vi.clearAllMocks();
     axiosBackend.delete.mockResolvedValue({ status: 204 });
     axiosBackend.post.mockImplementation((...requestArguments) => {
@@ -467,22 +534,20 @@ describe("ConcertReservation seat selection", () => {
     fireEvent.click(screen.getByRole("button", { name: "2024-06-15 선택" }));
     fireEvent.click((await screen.findByText("17:00")).closest("div"));
     fireEvent.click(
-      await screen.findByRole("button", { name: /R001-S001, 선택 가능/ }),
+      await screen.findByLabelText("R001-S001, 선택 가능"),
     );
     expect(
-      await screen.findByRole("button", {
-        name: /R001-S001, 내가 선택한 좌석/,
-      }),
+      await screen.findByLabelText("R001-S001, 내가 선택한 좌석"),
     ).toBeVisible();
 
-    fireEvent.click(screen.getByRole("button", { name: /2구역/ }));
-    expect(await screen.findByRole("button", { name: /R006-S001/ })).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: /1구역/ }));
+    const secondSection = screen.getByText("2구역").closest("button");
+    await waitFor(() => expect(secondSection).toBeEnabled());
+    fireEvent.click(secondSection);
+    expect(await screen.findByLabelText("R006-S001, 선택 가능")).toBeVisible();
+    fireEvent.click(screen.getByText("1구역").closest("button"));
 
     expect(
-      await screen.findByRole("button", {
-        name: /R001-S001, 내가 선택한 좌석/,
-      }),
+      await screen.findByLabelText("R001-S001, 내가 선택한 좌석"),
     ).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByText(/선택한 좌석 수 : 1/)).toBeVisible();
   });

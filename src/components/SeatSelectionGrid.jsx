@@ -51,6 +51,7 @@ function SeatSelectionGrid({
   seats,
   selectedSeats,
   interactionDisabled = false,
+  newSelectionDisabled = false,
   onSeatClick,
 }) {
   const buttonRefs = useRef(new Map());
@@ -121,7 +122,7 @@ function SeatSelectionGrid({
                         type="button"
                         disabled={
                           interactionDisabled ||
-                          (!selected && !isSeatSelectable(seat))
+                          (!selected && (newSelectionDisabled || !isSeatSelectable(seat)))
                         }
                         aria-pressed={selected}
                         aria-label={accessibleLabel}
@@ -178,6 +179,7 @@ SeatSelectionGrid.propTypes = {
   seats: PropTypes.array.isRequired,
   selectedSeats: PropTypes.arrayOf(PropTypes.string).isRequired,
   interactionDisabled: PropTypes.bool,
+  newSelectionDisabled: PropTypes.bool,
   onSeatClick: PropTypes.func.isRequired,
 };
 

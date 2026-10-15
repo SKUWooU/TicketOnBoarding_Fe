@@ -51,6 +51,7 @@ async function installReservationFixture(page) {
     if (request.method() === "GET" && path === "/auth/valid") {
       return json({ valid: true, code: 1, nickName: "fixture" });
     }
+    if (request.method() === "GET" && path.endsWith("/admission-policy")) return json({ enabled: false });
     if (request.method() === "GET" && path === `/main/detail/${CONCERT_ID}`) {
       return json({
         concertName: "가상 고경합 부하 공연",
@@ -94,6 +95,35 @@ test.beforeEach(async ({ page }) => {
   await installReservationFixture(page);
   await page.goto(`/concertReservation/${CONCERT_ID}`);
   await expect(page.getByRole("heading", { name: "가상 고경합 부하 공연" })).toBeVisible();
+});
+
+test("requires queue admission before a hold and sends its token", async ({ page }) => {
+  const token = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+  let entered = false;
+  await page.route(`**/times/${CONCERT_TIME_ID}/admission*`, (route) => {
+    const policy = { enabled: true, generation: "browser-g1", opensAt: "2030-01-01T00:00:00Z", pollIntervalMillis: 5000 };
+    let status = 200;
+    let body;
+    if (route.request().url().endsWith("admission-policy")) body = policy;
+    else if (route.request().method() === "POST" || entered) {
+      entered = true;
+      body = { generation: "browser-g1", serverNow: "2030-01-01T00:00:00Z", admission: {
+        state: "ADMITTED", queueEntryId: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", token,
+        expiresAt: "2030-01-01T00:01:00Z", position: 0,
+      } };
+    } else { status = 404; body = { code: "ADMISSION_NOT_JOINED" }; }
+    return route.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) });
+  });
+  await page.locator(".MuiPickersDay-today").click();
+  await page.getByText("잔여석 : 2000").click();
+  const seat = page.getByRole("button", { name: "R001-S001, 선택 가능", exact: true });
+  await expect(seat).toBeDisabled();
+  await page.getByRole("button", { name: "대기 등록", exact: true }).click();
+  await expect(seat).toBeEnabled(); expect(entered).toBe(true);
+  const request = page.waitForRequest((req) => req.method() === "POST" && req.url().endsWith("/seat-holds"));
+  await seat.click();
+  expect((await request).headers()["x-admission-token"]).toBe(token);
+  await expect(page.getByRole("button", { name: "R001-S001, 내가 선택한 좌석", exact: true })).toBeVisible();
 });
 
 test("renders one server-owned section, scrolls its 200 seats, and keeps a 409 at hold", async ({ page }, testInfo) => {
