@@ -35,6 +35,7 @@ beforeEach(() => {
         enabled: true,
         generation: "g1",
         opensAt: manifest.opensAt,
+        pollIntervalMillis: 5000,
       });
     if (url.endsWith("/auth/valid"))
       return json({
@@ -140,4 +141,31 @@ it("rejects nonmatching generation and an already registered actor", async () =>
   await expect(verifyLocalAdmission(manifest, fetchImpl)).rejects.toThrow(
     "fixture already joined",
   );
+});
+
+it("matches an explicit 2s policy and rejects a wrong server interval with reads only", async () => {
+  const normal = fetchImpl.getMockImplementation();
+  const expected = { ...manifest, pollIntervalMillis: 2000 };
+  await expect(verifyLocalAdmission(expected, fetchImpl)).rejects.toThrow(
+    "policy mismatch",
+  );
+  fetchImpl.mockImplementation((url, options) =>
+    url.endsWith("admission-policy")
+      ? json({
+          enabled: true,
+          generation: manifest.generation,
+          opensAt: manifest.opensAt,
+          pollIntervalMillis: 2000,
+        })
+      : normal(url, options),
+  );
+  await expect(
+    verifyLocalAdmission(expected, fetchImpl),
+  ).resolves.toMatchObject({ preflight: "PASS" });
+  expect(() =>
+    validateAdmissionManifest({ ...manifest, pollIntervalMillis: 1 }),
+  ).toThrow("invalid prepared local manifest");
+  expect(
+    fetchImpl.mock.calls.every(([, options]) => options.method === "GET"),
+  ).toBe(true);
 });

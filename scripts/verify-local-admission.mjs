@@ -29,6 +29,8 @@ export function validateAdmissionManifest(value) {
     !/^[a-f0-9]{64}$/.test(value.databaseFingerprint) ||
     value.totalSeats !== 20 ||
     value.expectedActive !== 1 ||
+    (value.pollIntervalMillis !== undefined &&
+      ![2000, 5000].includes(value.pollIntervalMillis)) ||
     !Array.isArray(value.users) ||
     value.users.length !== 2 ||
     value.users.some(
@@ -112,7 +114,8 @@ export async function verifyLocalAdmission(manifest, fetchImpl = fetch) {
   if (
     policy.enabled !== true ||
     policy.generation !== manifest.generation ||
-    Date.parse(policy.opensAt) !== Date.parse(manifest.opensAt)
+    Date.parse(policy.opensAt) !== Date.parse(manifest.opensAt) ||
+    policy.pollIntervalMillis !== (manifest.pollIntervalMillis ?? 5000)
   )
     fail("policy mismatch");
   for (const user of manifest.users) {

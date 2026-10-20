@@ -31,6 +31,10 @@ test("two real users queue, hold, cancel Checkout, and reuse the released seat",
   await verifyLocalAdmission(manifest);
   const contexts = [];
   const pages = [];
+  const queuePath = `${ADMISSION_BACKEND}/main/detail/${manifest.concertId}/times/${manifest.concertTimeId}/admission`;
+  const reads = [0, 0];
+  const joins = [0, 0];
+  let observedPollingGapMs = null;
   try {
     for (const user of manifest.users) {
       const context = await browser.newContext({
@@ -62,6 +66,14 @@ test("two real users queue, hold, cancel Checkout, and reuse the released seat",
       expect(calendar.ok()).toBe(true);
       const [performance] = await calendar.json();
       const page = await context.newPage();
+      const index = pages.length;
+      page.on("request", (request) => {
+        const path = new URL(request.url()).pathname;
+        if (path.endsWith(`/times/${manifest.concertTimeId}/admission`)) {
+          if (request.method() === "GET") reads[index]++;
+          if (request.method() === "POST") joins[index]++;
+        }
+      });
       pages.push(page);
       await page.goto(`/concertReservation/${manifest.concertId}`);
       await selectTime(page, performance.date);
@@ -76,6 +88,39 @@ test("two real users queue, hold, cancel Checkout, and reuse the released seat",
       else await expect(page.getByText(/현재 대기 순번 1번/)).toBeVisible();
     }
     const [first, second] = pages;
+    if (manifest.pollIntervalMillis === 2000) {
+      const isRead = (request) =>
+        request.method() === "GET" &&
+        new URL(request.url()).pathname.endsWith(
+          `/times/${manifest.concertTimeId}/admission`,
+        );
+      await second.waitForRequest(isRead);
+      const firstReadAt = Date.now();
+      await second.waitForRequest(isRead);
+      observedPollingGapMs = Date.now() - firstReadAt;
+      expect(observedPollingGapMs).toBeGreaterThanOrEqual(1900);
+      expect(observedPollingGapMs).toBeLessThan(4500);
+    }
+
+    // Reload both states. Neither reconnection should create a second queue entry.
+    const beforeReload = await contexts[1].request.get(queuePath);
+    expect(beforeReload.ok()).toBe(true);
+    const waitingId = (await beforeReload.json()).admission.queueEntryId;
+    const calendarForReload = await contexts[0].request.get(
+      `${ADMISSION_BACKEND}/main/detail/${manifest.concertId}/calendar`,
+    );
+    expect(calendarForReload.ok()).toBe(true);
+    const dateForReload = (await calendarForReload.json())[0].date;
+    await first.reload();
+    await selectTime(first, dateForReload);
+    await expect(first.getByText(/구매 입장 완료/)).toBeVisible();
+    await second.reload();
+    await selectTime(second, dateForReload);
+    await expect(second.getByText(/현재 대기 순번 1번/)).toBeVisible();
+    const afterReload = await contexts[1].request.get(queuePath);
+    expect(afterReload.ok()).toBe(true);
+    expect((await afterReload.json()).admission.queueEntryId).toBe(waitingId);
+    expect(joins).toEqual([1, 1]);
     const denied = await contexts[1].request.post(
       `${ADMISSION_BACKEND}/main/detail/${manifest.concertId}/seat-holds`,
       {
@@ -170,6 +215,11 @@ test("two real users queue, hold, cancel Checkout, and reuse the released seat",
     ).toBeDisabled();
     await first.getByRole("button", { name: "대기실 나가기" }).click();
     await expect(first.getByText("대기실에서 나왔습니다.")).toBeVisible();
+    if (manifest.pollIntervalMillis === 2000) {
+      const stoppedAt = reads[0];
+      await first.waitForTimeout(3500);
+      expect(reads[0]).toBe(stoppedAt);
+    }
     await expect(second.getByText(/구매 입장 완료/)).toBeVisible();
     await second
       .getByRole("button", { name: `${SEAT}, 선택 가능`, exact: true })
@@ -215,6 +265,11 @@ test("two real users queue, hold, cancel Checkout, and reuse the released seat",
         users: 2,
         seats: 20,
         expectedActive: 1,
+        policyPollIntervalMillis: manifest.pollIntervalMillis ?? 5000,
+        observedPollingGapMs,
+        admittedAndWaitingRestoredAfterReload: true,
+        joinRequests: joins.reduce((total, count) => total + count, 0),
+        pollingStoppedAfterLeave: manifest.pollIntervalMillis === 2000,
         waitingHoldStatus: denied.status(),
         waitingCheckoutStatus: deniedCheckout.status(),
         checkout: "READY->CANCELED",
