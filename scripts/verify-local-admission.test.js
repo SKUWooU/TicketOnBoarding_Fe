@@ -1,4 +1,6 @@
 import { beforeEach, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   validateAdmissionManifest,
   verifyLocalAdmission,
@@ -168,4 +170,46 @@ it("matches an explicit 2s policy and rejects a wrong server interval with reads
   expect(
     fetchImpl.mock.calls.every(([, options]) => options.method === "GET"),
   ).toBe(true);
+});
+
+it("keeps published local polling evidence bounded and free of credentials", () => {
+  const text = readFileSync(
+    resolve(
+      "docs/project-improvement/evidence/local-admission-poll-policy.json",
+    ),
+    "utf8",
+  );
+  const evidence = JSON.parse(text);
+  expect(evidence.fixture.policyPollIntervalMillis).toBe(2000);
+  expect(evidence.fixture.maxActive).toBe(1);
+  expect(evidence.results.observedAutomaticPollGapMs).toBeGreaterThanOrEqual(
+    1900,
+  );
+  expect(evidence.results.observedAutomaticPollGapMs).toBeLessThan(4500);
+  expect(evidence.results.totalJoinRequests).toBe(2);
+  expect(evidence.results.runtimeCleanup).toBe("COMPLETE");
+  expect(evidence.results.finalInventory).toMatchObject({
+    remainingSeats: 20,
+    activeHeldSeats: 0,
+    bookings: 0,
+    payments: 0,
+    invariantSatisfied: true,
+  });
+  const visit = (value) => {
+    if (!value || typeof value !== "object") return;
+    for (const [key, child] of Object.entries(value)) {
+      expect(key).not.toMatch(
+        /^(accessToken|token|cookie|password|users|username)$/i,
+      );
+      visit(child);
+    }
+  };
+  // Numeric users count is intentional; no user objects or identifying values are published.
+  const sanitized = structuredClone(evidence);
+  expect(sanitized.fixture.users).toBe(2);
+  delete sanitized.fixture.users;
+  visit(sanitized);
+  expect(text).not.toMatch(
+    /[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/,
+  );
 });
