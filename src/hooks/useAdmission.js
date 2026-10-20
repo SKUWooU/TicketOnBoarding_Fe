@@ -23,12 +23,17 @@ function checkedPolicy(policy) {
     !Number.isFinite(Date.parse(policy.opensAt))
   )
     throw new Error("Invalid policy");
+  const interval = policy.pollIntervalMillis ?? 5000;
+  if (
+    policy.pollIntervalMillis === null ||
+    !Number.isSafeInteger(interval) ||
+    interval < 1000 ||
+    interval > 30000
+  )
+    throw new Error("Invalid polling interval");
   return {
     ...policy,
-    pollIntervalMillis: Math.max(
-      5000,
-      Math.min(30000, Number(policy.pollIntervalMillis) || 5000),
-    ),
+    pollIntervalMillis: interval,
   };
 }
 

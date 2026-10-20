@@ -1,0 +1,73 @@
+{
+  "scenario": "local-admission-poll-policy",
+  "date": "2026-10-20",
+  "backendIssue": 244,
+  "frontendIssue": 57,
+  "backendCommit": "cde55737f27cc5f723902dea70816246a8d99684",
+  "frontendCommit": "19d44bac68987d0658e981726abb9a65149f0392",
+  "runId": "policy57-d614c897",
+  "environment": {
+    "hostMemoryGiB": 15.81,
+    "backendMaxHeapMiB": 384,
+    "backendMaxMetaspaceMiB": 192,
+    "hikariMaximum": 4,
+    "mariaDbVersion": "10.11.8",
+    "mariaDbContainerLimitMiB": 512,
+    "redisVersion": "7.4.7-alpine",
+    "redisContainerLimitMiB": 128,
+    "redisMaxMemoryMiB": 64,
+    "browser": "Chromium headless",
+    "viewport": [1440, 900],
+    "backendProfiles": ["local", "loadtest"]
+  },
+  "fixture": {
+    "performances": 1,
+    "times": 1,
+    "seats": 20,
+    "users": 2,
+    "maxActive": 1,
+    "maxWaiting": 4,
+    "batchSize": 1,
+    "workerDelayMs": 1000,
+    "waitingTtlSeconds": 300,
+    "admissionTtlSeconds": 120,
+    "policyPollIntervalMillis": 2000
+  },
+  "results": {
+    "preflight": "PASS",
+    "browserScenariosPassed": 1,
+    "observedAutomaticPollGapMs": 2581,
+    "pollGapAssertionRangeMs": [1900, 4500],
+    "admittedAndWaitingRestoredAfterReload": true,
+    "waitingEntryIdentityPreserved": true,
+    "totalJoinRequests": 2,
+    "pollingStoppedAfterLeaveForMs": 3500,
+    "waitingHoldStatus": 403,
+    "waitingCheckoutStatus": 403,
+    "checkoutTransitions": ["READY", "CANCELED"],
+    "nextUserReusedReleasedSeat": true,
+    "finalInventory": {
+      "expectedTotalSeats": 20,
+      "actualSeatCount": 20,
+      "remainingSeats": 20,
+      "activeHeldSeats": 0,
+      "holdRows": 0,
+      "partialHoldStates": 0,
+      "reservedSeats": 0,
+      "reservations": 0,
+      "bookings": 0,
+      "payments": 0,
+      "invariantSatisfied": true
+    },
+    "runtimeCleanup": "COMPLETE"
+  },
+  "limitations": [
+    "One observed polling interval is contract evidence, not p95 or throughput.",
+    "Functional two-user/one-admission-slot scenario, not the active=4 load comparison.",
+    "Default server polling remains 5000ms; only the explicit fixture used 2000ms.",
+    "Actual UI includes 0..999ms jitter and response/processing time unlike the synthetic k6 polling experiment.",
+    "No API response mocking in local scenario; fixture JWT injection is not OAuth/login UI validation.",
+    "No real PG/KOPIS calls, payment approval, production traffic, Redis outage or multiple Backend instances."
+  ],
+  "privacy": "No credentials, raw HTTP, trace or private manifest included. Owned containers and temporary credential files removed."
+}

@@ -92,7 +92,7 @@ Backend에서 같은 사용자의 재요청은 기존 점유 만료 시각을 �
 
 회차를 선택하면 `GET /main/detail/{concertId}/times/{timeId}/admission-policy`를 먼저 조회한다. `enabled:false`인 경우 기존 선택 흐름을 유지한다. 정책을 못 읽거나 잘못된 응답을 받으면 비활성으로 추정하지 않고 신규 구매를 차단한다. 활성 회차는 본인 상태 GET으로 기존 등록/입장을 복구한다. 최초 404 `ADMISSION_NOT_JOINED`는 등록 버튼을 보여주며 자동 JOIN하지 않는다.
 
-사용자가 명시적으로 등록하면 WAITING 순번 또는 ADMITTED 입장권을 표시한다. WAITING/ADMITTED 상태는 5초 이상 + 0~999ms jitter로 순차 polling한다. 이전 GET이 끝나기 전 다음 GET을 중첩하지 않으며, polling은 TTL을 늘리지 않는다. `expiresAt-serverNow`의 서버 기준 잔여 기간과 브라우저 monotonic clock으로 countdown을 계산한다. 로컬 wall-clock이 다르더라도 서버 시각과 직접 비교하지 않는다. UI 시간/권한은 안내이며 최종 입장·재고 검사는 서버가 수행한다.
+사용자가 명시적으로 등록하면 WAITING 순번 또는 ADMITTED 입장권을 표시한다. WAITING/ADMITTED 상태는 서버가 안내한 주기(기본 5초, FE #57부터 1000~30000ms 정수 검증) + 0~999ms jitter로 순차 polling한다. 이전 GET이 끝나기 전 다음 GET을 중첩하지 않으며, polling은 TTL을 늘리지 않는다. `expiresAt-serverNow`의 서버 기준 잔여 기간과 브라우저 monotonic clock으로 countdown을 계산한다. 로컬 wall-clock이 다르더라도 서버 시각과 직접 비교하지 않는다. UI 시간/권한은 안내이며 최종 입장·재고 검사는 서버가 수행한다.
 
 입장 전·만료·401·429·503·잘못된 generation 응답에서는 새 좌석 점유를 막는다. 429는 자동 재등록을 반복하지 않고 수동 재시도를 안내한다. 503은 상태 재확인 버튼을 제공한다. 본인이 이미 점유한 좌석의 DELETE는 입장권 없이 계속 가능하다. `X-Admission-Token`은 활성 입장의 신규 Hold/Checkout 준비에만 붙인다. API 전역 header·cookie·local/session storage에는 저장하지 않으며 결제 세션에도 복사하지 않는다. 결제 검증/Checkout 취소에는 추가하지 않는다.
 

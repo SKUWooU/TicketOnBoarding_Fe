@@ -1,4 +1,6 @@
 import { beforeEach, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   validateAdmissionManifest,
   verifyLocalAdmission,
@@ -35,6 +37,7 @@ beforeEach(() => {
         enabled: true,
         generation: "g1",
         opensAt: manifest.opensAt,
+        pollIntervalMillis: 5000,
       });
     if (url.endsWith("/auth/valid"))
       return json({
@@ -139,5 +142,74 @@ it("rejects nonmatching generation and an already registered actor", async () =>
   );
   await expect(verifyLocalAdmission(manifest, fetchImpl)).rejects.toThrow(
     "fixture already joined",
+  );
+});
+
+it("matches an explicit 2s policy and rejects a wrong server interval with reads only", async () => {
+  const normal = fetchImpl.getMockImplementation();
+  const expected = { ...manifest, pollIntervalMillis: 2000 };
+  await expect(verifyLocalAdmission(expected, fetchImpl)).rejects.toThrow(
+    "policy mismatch",
+  );
+  fetchImpl.mockImplementation((url, options) =>
+    url.endsWith("admission-policy")
+      ? json({
+          enabled: true,
+          generation: manifest.generation,
+          opensAt: manifest.opensAt,
+          pollIntervalMillis: 2000,
+        })
+      : normal(url, options),
+  );
+  await expect(
+    verifyLocalAdmission(expected, fetchImpl),
+  ).resolves.toMatchObject({ preflight: "PASS" });
+  expect(() =>
+    validateAdmissionManifest({ ...manifest, pollIntervalMillis: 1 }),
+  ).toThrow("invalid prepared local manifest");
+  expect(
+    fetchImpl.mock.calls.every(([, options]) => options.method === "GET"),
+  ).toBe(true);
+});
+
+it("keeps published local polling evidence bounded and free of credentials", () => {
+  const text = readFileSync(
+    resolve(
+      "docs/project-improvement/evidence/local-admission-poll-policy.json",
+    ),
+    "utf8",
+  );
+  const evidence = JSON.parse(text);
+  expect(evidence.fixture.policyPollIntervalMillis).toBe(2000);
+  expect(evidence.fixture.maxActive).toBe(1);
+  expect(evidence.results.observedAutomaticPollGapMs).toBeGreaterThanOrEqual(
+    1900,
+  );
+  expect(evidence.results.observedAutomaticPollGapMs).toBeLessThan(4500);
+  expect(evidence.results.totalJoinRequests).toBe(2);
+  expect(evidence.results.runtimeCleanup).toBe("COMPLETE");
+  expect(evidence.results.finalInventory).toMatchObject({
+    remainingSeats: 20,
+    activeHeldSeats: 0,
+    bookings: 0,
+    payments: 0,
+    invariantSatisfied: true,
+  });
+  const visit = (value) => {
+    if (!value || typeof value !== "object") return;
+    for (const [key, child] of Object.entries(value)) {
+      expect(key).not.toMatch(
+        /^(accessToken|token|cookie|password|users|username)$/i,
+      );
+      visit(child);
+    }
+  };
+  // Numeric users count is intentional; no user objects or identifying values are published.
+  const sanitized = structuredClone(evidence);
+  expect(sanitized.fixture.users).toBe(2);
+  delete sanitized.fixture.users;
+  visit(sanitized);
+  expect(text).not.toMatch(
+    /[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/,
   );
 });

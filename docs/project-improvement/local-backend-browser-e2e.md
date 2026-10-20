@@ -65,3 +65,20 @@ Backend·MariaDB를 npm script가 자동 기동하지는 않는다. 실행 중�
 이 결과는 단일 Backend·단일 Redis의 로컬 합성 fixture다. 실제 PG 승인·KOPIS 적재·로그인 UI·다중 Backend·Redis 장애/유실 복구·고부하·입장 제어 전후 부하 감소는 검증하지 않았다. 다음은 이 흐름을 유지한 제한된 공유/장애 경계와 점진 부하 비교다.
 
 최종 검증은 신규 Checkout 거절/DB 무변경과 이탈 직전 WAITING 조건을 보강한 뒤 새 DB·Redis·fixture/generation에서 다시 통과했다. 전체 unit 20파일/98개, 새 사전검사 6개, lint·build·diff --check 통과. 기본 mock browser 목록은 기존 6개뿐임을 `playwright test --config playwright.config.js --list`로 확인했다. 초기 smoke와 보강 후 최종 실행을 동일 코드의 반복 부하 시험으로 집계하지 않는다. CI·독립 리뷰는 FE #55의 연결 PR에서 확인한다.
+
+## 서버 polling 안내와 실제 UI 연결 (FE #57 / BE #244)
+
+BE #242의 k6 실험은 active 4에서 클라이언트 polling 5/2/1초를 비교했지만 실제 FE는 최소 5초로 보정해 2초를 소비하지 못했다. BE #244가 `onticket.admission.poll-interval-millis`를 설정화하고 FE #57이 같은 범위(1000~30000ms 정수)를 검증해 소비하도록 연결했다. 미설정 시 기본 5초, jitter 0~999ms, 직전 요청 완료 후 다음 요청 예약은 유지한다. 잘못된 응답은 짧은 주기로 보정하지 않고 신규 구매를 차단한다.
+
+### 재현과 실제 확인 범위
+
+위 FE #55 준비 순서를 재사용하되 최신 BE #244 코드의 JAR와 FE #57을 사용한다. bootstrap 파일에는 기존 allowlist 키만 넣고, **서버 전용 additional properties 또는 실행 인자**에 `onticket.admission.poll-interval-millis=2000`을 추가한다. UI 안내 주기는 Redis 원자 정책 fingerprint에 포함되지 않으며 CLI에 새 키를 통과시키지 않는다. 임시 manifest에는 `pollIntervalMillis:2000`을 추가한다. 생략 시 preflight는 기존 5000을 기대한다. `npm.cmd run test:e2e:local-admission`은 서버 안내와 manifest를 GET으로 대조한 뒤 기존 실제 브라우저 시나리오를 실행한다.
+
+2026-10-20 실행은 새 전용 MariaDB/Redis(default bridge·loopback 13307/17379, 512/128MiB·Redis maxmemory 64MiB), Java heap 384MiB/metaspace 192MiB·Hikari 4, fixture 20석·두 사용자·active 1·worker 1초·batch 1·waiting TTL 5분/입장 TTL 2분을 사용했다. active 1은 두 사용자의 대기와 승격을 확실히 확인하기 위한 기능 검증 조건이며, 앞선 active 4 부하 실험과 혼합하지 않는다. 브라우저는 Chromium headless 1440×900이며 외부 origin·trace/video/screenshot을 차단했다.
+
+- 실제 서버 2000ms 안내를 확인하고 WAITING 사용자의 연속 자동 조회 한 구간 **2,581ms**를 관측했다. 단위 테스트는 2000ms+jitter를 정확히 검증하고, 실제 브라우저는 느슨한 1900~4500ms 범위로 과거 최소 5초 보정이 남지 않았는지 확인한다. 한 구간은 p95/성능 개선 수치가 아니다.
+- ADMITTED/WAITING 사용자를 각각 새로고침하고 회차를 다시 선택해 상태 복원·대기 entry ID 유지를 확인했다. 전체 JOIN은 사용자당 1회, 총 2회로 자동 재등록이 없었다.
+- 명시적 이탈 후 3.5초 동안 해당 페이지의 추가 입장 GET이 없었다. 회차 전환/unmount의 abort·느린 조회 비중첩·잘못된 정책과 5초 기본값은 fake timer 회귀로 함께 확인했다. 이동 자체가 서버 entry를 자동 삭제하는 정책으로 바뀐 것은 아니다.
+- 대기 중 Hold/Checkout 403·첫 사용자 Checkout READY→CANCELED·이탈 뒤 다음 사용자의 같은 좌석 점유/해제와 최종 총/잔여 20·Hold/예약/Booking/Payment 0·재고 불변식을 통과했다.
+
+[요약 원자료](evidence/local-admission-poll-policy.json)에 실행 코드 commit·조건·검증 결과·cleanup COMPLETE를 보존했다. 전용 Backend·컨테이너와 임시 JWT/정책 파일은 정리했고 기존 DB/Redis·볼륨은 건드리지 않았다. 이 단계는 실제 로컬 UI 계약 검증이며 k6 개선율을 UI 수치로 옮기거나 운영 최적값으로 확정하지 않는다. 실 PG 승인·KOPIS·로그인 화면·고부하·다중 Backend·장애복구는 제외했다. 입장 제어의 비용 비교→설정 계약→실제 구매 흐름 연결 단계는 여기서 정리하고 추가 증량을 필수 후속으로 두지 않는다.
